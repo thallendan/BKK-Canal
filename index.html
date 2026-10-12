@@ -44,29 +44,82 @@
         </div>
     </header>
 
-    <!-- KPI Summary Section -->
+    <!-- KPI Summary Section with Hover Description Boxes -->
     <section class="max-w-7xl mx-auto w-full px-4 pt-4">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-cyan-400">
-                <p class="text-xs text-slate-400 font-medium">Pak Nam Gulf Tide Elevation</p>
+            
+            <!-- KPI 1: Pak Nam Gulf Tide Elevation -->
+            <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-cyan-400 relative group cursor-pointer">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs text-slate-400 font-medium">Pak Nam Gulf Tide Elevation</p>
+                    <i class="fa-solid fa-circle-info text-cyan-400/70 hover:text-cyan-300 text-xs"></i>
+                </div>
                 <h3 id="kpi-tide-val" class="text-2xl font-extrabold text-cyan-300 font-mono mt-1">+0.00 m</h3>
                 <p id="kpi-tide-state" class="text-xs text-slate-400 mt-0.5">MSL Datum</p>
+
+                <!-- Hover Description Box -->
+                <div class="absolute left-0 top-full mt-2 w-72 p-3 bg-slate-900/95 border border-cyan-500/40 rounded-xl shadow-2xl backdrop-blur-md opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50 text-xs text-slate-300 space-y-1">
+                    <p class="font-bold text-cyan-300 border-b border-slate-800 pb-1">Pak Nam Estuary Tide Gauge</p>
+                    <p class="text-[11px] leading-relaxed">
+                        Measures live coastal sea water elevation at Pak Nam (Samut Prakan) relative to Mean Sea Level (MSL). When Gulf tides exceed <strong>+1.30m MSL</strong>, seawater pushes inland and restricts natural river drainage.
+                    </p>
+                </div>
             </div>
-            <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-amber-400">
-                <p class="text-xs text-slate-400 font-medium">Gravity Drainage Status</p>
+
+            <!-- KPI 2: Gravity Drainage Status -->
+            <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-amber-400 relative group cursor-pointer">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs text-slate-400 font-medium">Gravity Drainage Status</p>
+                    <i class="fa-solid fa-circle-info text-amber-400/70 hover:text-amber-300 text-xs"></i>
+                </div>
                 <h3 id="kpi-drainage-val" class="text-xl font-bold text-amber-300 mt-1">--</h3>
                 <p class="text-xs text-slate-400 mt-0.5">Hydraulic Head Offset</p>
+
+                <!-- Hover Description Box -->
+                <div class="absolute left-0 top-full mt-2 w-72 p-3 bg-slate-900/95 border border-amber-500/40 rounded-xl shadow-2xl backdrop-blur-md opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50 text-xs text-slate-300 space-y-1">
+                    <p class="font-bold text-amber-300 border-b border-slate-800 pb-1">Hydraulic Gate Control State</p>
+                    <p class="text-[11px] leading-relaxed">
+                        Calculated by comparing canal water level against estuary tide height. When tide height exceeds canal height, sluice gates close to prevent backflow (<strong>LOCKED</strong>), making drainage 100% dependent on mechanical pumps.
+                    </p>
+                </div>
             </div>
-            <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-blue-500">
-                <p class="text-xs text-slate-400 font-medium">Active Pump Stations</p>
+
+            <!-- KPI 3: Active Pump Stations -->
+            <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-blue-500 relative group cursor-pointer">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs text-slate-400 font-medium">Active Pump Stations</p>
+                    <i class="fa-solid fa-circle-info text-blue-400/70 hover:text-blue-300 text-xs"></i>
+                </div>
                 <h3 id="kpi-pumps-val" class="text-2xl font-extrabold text-blue-300 mt-1">-- / 20</h3>
                 <p class="text-xs text-slate-400 mt-0.5">Mechanical Discharge</p>
+
+                <!-- Hover Description Box -->
+                <div class="absolute left-0 top-full mt-2 w-72 p-3 bg-slate-900/95 border border-blue-500/40 rounded-xl shadow-2xl backdrop-blur-md opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50 text-xs text-slate-300 space-y-1">
+                    <p class="font-bold text-blue-300 border-b border-slate-800 pb-1">Mechanical Pumping Stations</p>
+                    <p class="text-[11px] leading-relaxed">
+                        The total number of major water control gates actively running motor pumps. When high tides lock gravity drainage, these station pumps actively lift canal water over flood barriers into the Chao Phraya River and Gulf.
+                    </p>
+                </div>
             </div>
-            <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-emerald-400">
-                <p class="text-xs text-slate-400 font-medium">Avg Canal Capacity Used</p>
+
+            <!-- KPI 4: Avg Canal Capacity Used -->
+            <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-emerald-400 relative group cursor-pointer">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs text-slate-400 font-medium">Avg Canal Capacity Used</p>
+                    <i class="fa-solid fa-circle-info text-emerald-400/70 hover:text-emerald-300 text-xs"></i>
+                </div>
                 <h3 id="kpi-capacity-val" class="text-2xl font-extrabold text-emerald-300 mt-1">--%</h3>
                 <p class="text-xs text-slate-400 mt-0.5">Bank Retention Margin</p>
+
+                <!-- Hover Description Box -->
+                <div class="absolute right-0 top-full mt-2 w-72 p-3 bg-slate-900/95 border border-emerald-500/40 rounded-xl shadow-2xl backdrop-blur-md opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50 text-xs text-slate-300 space-y-1">
+                    <p class="font-bold text-emerald-300 border-b border-slate-800 pb-1">Regional Flood Storage Buffer</p>
+                    <p class="text-[11px] leading-relaxed">
+                        The average filled capacity across all 20 monitored canal sectors relative to their concrete floodwall limits. Lower percentages mean more buffer storage is available to absorb intense localized rainfall.
+                    </p>
+                </div>
             </div>
+
         </div>
     </section>
 
@@ -114,10 +167,16 @@
         const MAP_BOUNDS = [[13.2159, 99.7504], [14.2830, 101.3983]];
 
         function initMap() {
+            // Initialize map with mouse drag and scroll-wheel zoom disabled for clean page scrolling
             map = L.map('map', {
                 zoomControl: true,
+                scrollWheelZoom: false,  // Disables mouse wheel zoom while scrolling page
+                dragging: false,         // Disables map panning when mouse is over image
+                doubleClickZoom: false,  // Disables double click zooming
+                touchZoom: false,        // Disables touch pinch zooming
+                boxZoom: false,          // Disables box zoom
                 maxBounds: MAP_BOUNDS,
-                maxBoundsViscosity: 0.8
+                maxBoundsViscosity: 1.0
             });
 
             map.fitBounds(MAP_BOUNDS);
