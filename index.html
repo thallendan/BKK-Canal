@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bangkok & Samut Prakan Canal & Tide Monitor</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Font Awesome & Chart.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body { background-color: #080d1a; color: #f8fafc; font-family: sans-serif; }
+        .glass-panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-card { background: rgba(30, 41, 59, 0.65); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .leaflet-container { background: #0b1120 !important; }
+        .leaflet-popup-content-wrapper { background: rgba(15, 23, 42, 0.95) !important; color: #f8fafc !important; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px !important; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="glass-panel sticky top-0 z-50 px-6 py-3 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="p-2.5 bg-blue-600 rounded-xl text-white">
+                    <i class="fa-solid fa-water text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-white tracking-wide">BANGKOK & SAMUT PRAKAN CANAL MONITOR</h1>
+                    <p class="text-xs text-slate-400 font-mono" id="sync-time">Last Sync: --:--:-- ICT</p>
+                </div>
+            </div>
+            <button onclick="loadData()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-1.5 rounded-lg border border-slate-700 text-cyan-400 flex items-center gap-2">
+                <i class="fa-solid fa-rotate" id="refresh-icon"></i> Refresh Data
+            </button>
+        </div>
+    </header>
+
+    <!-- KPI Summary Section -->
+    <section class="max-w-7xl mx-auto w-full px-4 pt-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-cyan-400">
+                <p class="text-xs text-slate-400 font-medium">Pak Nam Gulf Tide Elevation</p>
+                <h3 id="kpi-tide-val" class="text-2xl font-extrabold text-cyan-300 font-mono mt-1">+0.00 m</h3>
+                <p id="kpi-tide-state" class="text-xs text-slate-400 mt-0.5">MSL Datum</p>
+            </div>
+            <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-amber-400">
+                <p class="text-xs text-slate-400 font-medium">Gravity Drainage Status</p>
+                <h3 id="kpi-drainage-val" class="text-xl font-bold text-amber-300 mt-1">--</h3>
+                <p class="text-xs text-slate-400 mt-0.5">Hydraulic Head Offset</p>
+            </div>
+            <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-blue-500">
+                <p class="text-xs text-slate-400 font-medium">Active Pump Stations</p>
+                <h3 id="kpi-pumps-val" class="text-2xl font-extrabold text-blue-300 mt-1">-- / 20</h3>
+                <p class="text-xs text-slate-400 mt-0.5">Mechanical Discharge</p>
+            </div>
+            <div class="glass-card p-3.5 rounded-xl border-l-4 border-l-emerald-400">
+                <p class="text-xs text-slate-400 font-medium">Avg Canal Capacity Used</p>
+                <h3 id="kpi-capacity-val" class="text-2xl font-extrabold text-emerald-300 mt-1">--%</h3>
+                <p class="text-xs text-slate-400 mt-0.5">Bank Retention Margin</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Workspace -->
+    <main class="max-w-7xl mx-auto w-full flex-1 px-4 py-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
+        
+        <!-- Left Map Overlay Container (8 cols) -->
+        <section class="lg:col-span-8 glass-panel rounded-2xl overflow-hidden border border-slate-800 min-h-[520px] relative">
+            <div id="map" class="w-full h-full min-h-[520px]"></div>
+        </section>
+
+        <!-- Right Side Panel: Station List & Tide Graph (4 cols) -->
+        <aside class="lg:col-span-4 flex flex-col gap-4">
+            
+            <!-- 24-Hour Tide Chart -->
+            <div class="glass-panel p-3.5 rounded-2xl border border-slate-800 space-y-2">
+                <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-cyan-400"></i>
+                    24-Hour Estuary Tide Forecast
+                </h3>
+                <div class="h-36 w-full">
+                    <canvas id="tideChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Canal Station Status List -->
+            <div class="glass-panel p-3.5 rounded-2xl border border-slate-800 flex-1 overflow-hidden flex flex-col space-y-2">
+                <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-cyan-400"></i>
+                    20 Key Canal Sectors
+                </h3>
+                <div id="station-list" class="overflow-y-auto max-h-[320px] space-y-2 pr-1">
+                    <!-- Dynamic station rows -->
+                </div>
+            </div>
+
+        </aside>
+
+    </main>
+
+    <script>
+        let map, overlayLayer, canalGroup, stationGroup, tideChartInstance;
+        
+        // Target coordinate bounds array exported from GetStaticMap_v2.html
+        const MAP_BOUNDS = [[13.2159, 99.7504], [14.2830, 101.3983]];
+
+        function initMap() {
+            map = L.map('map', {
+                zoomControl: true,
+                maxBounds: MAP_BOUNDS,
+                maxBoundsViscosity: 0.8
+            });
+
+            map.fitBounds(MAP_BOUNDS);
+
+            // Overlay static PNG image
+            L.imageOverlay('bkk_map.png', MAP_BOUNDS).addTo(map);
+
+            canalGroup = L.layerGroup().addTo(map);
+            stationGroup = L.layerGroup().addTo(map);
+        }
+
+        async function loadData() {
+            const icon = document.getElementById('refresh-icon');
+            if(icon) icon.classList.add('fa-spin');
+
+            try {
+                const res = await fetch('data.json', { cache: 'no-cache' });
+                const data = await res.json();
+
+                if(data.summary) {
+                    document.getElementById('kpi-tide-val').innerText = `+${data.summary.paknam_tide_msl.toFixed(2)} m`;
+                    document.getElementById('kpi-drainage-val').innerText = data.summary.gravity_drainage_window;
+                    document.getElementById('kpi-pumps-val').innerText = `${data.summary.active_pumping_stations} / 20`;
+                    document.getElementById('kpi-capacity-val').innerText = `${data.summary.avg_canal_capacity_pct}%`;
+                    document.getElementById('sync-time').innerText = `Updated: ${new Date(data.updated_at_utc).toLocaleTimeString()} ICT`;
+                }
+
+                renderCanalsAndStations(data.canals);
+                renderTideChart(data.tide_forecast_24h);
+            } catch(e) {
+                console.error("Error loading data.json:", e);
+            } finally {
+                if(icon) setTimeout(() => icon.classList.remove('fa-spin'), 500);
+            }
+        }
+
+        function renderCanalsAndStations(canals) {
+            canalGroup.clearLayers();
+            stationGroup.clearLayers();
+            const listEl = document.getElementById('station-list');
+            listEl.innerHTML = '';
+
+            canals.forEach(c => {
+                // Color coding based on capacity
+                let lineColor = '#10b981'; // Green
+                if(c.risk_level === 'ELEVATED') lineColor = '#f59e0b'; // Amber
+                if(c.risk_level === 'HIGH') lineColor = '#ef4444'; // Red
+
+                // Render Colored Canal Path
+                const polyline = L.polyline(c.path, {
+                    color: lineColor,
+                    weight: 4,
+                    opacity: 0.85
+                });
+                polyline.bindPopup(`<b>${c.name}</b><br>Capacity: ${c.capacity_pct}%`);
+                canalGroup.addLayer(polyline);
+
+                // Render Pumping Station Marker
+                const marker = L.circleMarker([c.station_lat, c.station_lon], {
+                    radius: 7,
+                    fillColor: lineColor,
+                    color: '#ffffff',
+                    weight: 2,
+                    fillOpacity: 0.95
+                });
+
+                marker.bindPopup(`
+                    <div class="space-y-1">
+                        <h4 class="font-bold text-sm text-cyan-300">${c.pump_station}</h4>
+                        <p class="text-xs text-slate-300"><b>Canal:</b> ${c.name}</p>
+                        <p class="text-xs text-slate-300"><b>Water Level:</b> +${c.water_level_msl}m MSL</p>
+                        <p class="text-xs text-slate-300"><b>Remaining Buffer:</b> ${c.buffer_remaining_m}m</p>
+                        <p class="text-xs text-slate-300"><b>Mode:</b> ${c.drainage_mode}</p>
+                    </div>
+                `);
+                stationGroup.addLayer(marker);
+
+                // Add to Side Panel List
+                const row = document.createElement('div');
+                row.className = 'glass-card p-2 rounded-lg flex items-center justify-between text-xs';
+                row.innerHTML = `
+                    <div>
+                        <div class="font-bold text-slate-200">${c.name}</div>
+                        <div class="text-[10px] text-slate-400">${c.district}</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-mono font-bold text-cyan-300">+${c.water_level_msl}m</span>
+                        <span class="block text-[9px] font-semibold text-slate-400">${c.capacity_pct}%</span>
+                    </div>
+                `;
+                listEl.appendChild(row);
+            });
+        }
+
+        function renderTideChart(tideData) {
+            if(!tideData) return;
+            const ctx = document.getElementById('tideChart').getContext('2d');
+            if(tideChartInstance) tideChartInstance.destroy();
+
+            const labels = tideData.map(d => d.hour_label);
+            const values = tideData.map(d => d.tide_msl);
+
+            tideChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Tide Height (m MSL)',
+                        data: values,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#64748b', font: { size: 9 } } },
+                        y: { ticks: { color: '#64748b', font: { size: 9 } } }
+                    }
+                }
+            });
+        }
+
+        window.onload = function() {
+            initMap();
+            loadData();
+        };
+    </script>
+</body>
+</html>
