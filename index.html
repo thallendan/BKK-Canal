@@ -57,7 +57,7 @@
                 <h3 id="kpi-tide-val" class="text-2xl font-extrabold text-cyan-300 font-mono mt-1">+0.00 m</h3>
                 <p id="kpi-tide-state" class="text-xs text-slate-400 mt-0.5">MSL Datum</p>
 
-                <!-- Hover Description Box -->
+                <!-- Hover Description Box (Desktop) -->
                 <div class="absolute left-0 top-full mt-2 w-72 p-3 bg-slate-900/95 border border-cyan-500/40 rounded-xl shadow-2xl backdrop-blur-md opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50 text-xs text-slate-300 space-y-1">
                     <p class="font-bold text-cyan-300 border-b border-slate-800 pb-1">Pak Nam Estuary Tide Gauge</p>
                     <p class="text-[11px] leading-relaxed">
@@ -75,7 +75,7 @@
                 <h3 id="kpi-drainage-val" class="text-xl font-bold text-amber-300 mt-1">--</h3>
                 <p class="text-xs text-slate-400 mt-0.5">Hydraulic Head Offset</p>
 
-                <!-- Hover Description Box -->
+                <!-- Hover Description Box (Desktop) -->
                 <div class="absolute left-0 top-full mt-2 w-72 p-3 bg-slate-900/95 border border-amber-500/40 rounded-xl shadow-2xl backdrop-blur-md opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50 text-xs text-slate-300 space-y-1">
                     <p class="font-bold text-amber-300 border-b border-slate-800 pb-1">Hydraulic Gate Control State</p>
                     <p class="text-[11px] leading-relaxed">
@@ -93,7 +93,7 @@
                 <h3 id="kpi-pumps-val" class="text-2xl font-extrabold text-blue-300 mt-1">-- / 20</h3>
                 <p class="text-xs text-slate-400 mt-0.5">Mechanical Discharge</p>
 
-                <!-- Hover Description Box -->
+                <!-- Hover Description Box (Desktop) -->
                 <div class="absolute left-0 top-full mt-2 w-72 p-3 bg-slate-900/95 border border-blue-500/40 rounded-xl shadow-2xl backdrop-blur-md opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50 text-xs text-slate-300 space-y-1">
                     <p class="font-bold text-blue-300 border-b border-slate-800 pb-1">Mechanical Pumping Stations</p>
                     <p class="text-[11px] leading-relaxed">
@@ -111,7 +111,7 @@
                 <h3 id="kpi-capacity-val" class="text-2xl font-extrabold text-emerald-300 mt-1">--%</h3>
                 <p class="text-xs text-slate-400 mt-0.5">Bank Retention Margin</p>
 
-                <!-- Hover Description Box -->
+                <!-- Hover Description Box (Desktop) -->
                 <div class="absolute right-0 top-full mt-2 w-72 p-3 bg-slate-900/95 border border-emerald-500/40 rounded-xl shadow-2xl backdrop-blur-md opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50 text-xs text-slate-300 space-y-1">
                     <p class="font-bold text-emerald-300 border-b border-slate-800 pb-1">Regional Flood Storage Buffer</p>
                     <p class="text-[11px] leading-relaxed">
@@ -160,6 +160,75 @@
 
     </main>
 
+    <!-- Metric Explanations Guide (Permanent Bottom Section) -->
+    <section class="max-w-7xl mx-auto w-full px-4 pb-6">
+        <div class="glass-panel p-4 rounded-2xl border border-slate-800 space-y-3">
+            <h2 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-book-open text-cyan-400"></i>
+                Key Metric Guide & Hydrological Definitions
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                
+                <!-- Box 1 -->
+                <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-1.5">
+                    <div class="font-bold text-cyan-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-gauge-high text-cyan-400"></i>
+                        Pak Nam Tide Elevation
+                    </div>
+                    <p class="text-slate-300 leading-relaxed text-[11px]">
+                        Measures live coastal sea water elevation at the Chao Phraya river mouth (Pak Nam, Samut Prakan) relative to Mean Sea Level (MSL).
+                    </p>
+                    <p class="text-[10px] text-slate-400 font-mono border-t border-slate-800/80 pt-1">
+                        Threshold: &gt; +1.30m MSL restricts natural gravity discharge into the Gulf.
+                    </p>
+                </div>
+
+                <!-- Box 2 -->
+                <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-1.5">
+                    <div class="font-bold text-amber-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-filter-circle-xmark text-amber-400"></i>
+                        Gravity Drainage Status
+                    </div>
+                    <p class="text-slate-300 leading-relaxed text-[11px]">
+                        Calculates hydraulic head offset (Canal Level minus Tide Height). When sea tide exceeds canal height, floodgates lock to prevent seawater backflow.
+                    </p>
+                    <p class="text-[10px] text-slate-400 font-mono border-t border-slate-800/80 pt-1">
+                        LOCKED: Natural gravity flow stopped; 100% dependent on mechanical pumps.
+                    </p>
+                </div>
+
+                <!-- Box 3 -->
+                <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-1.5">
+                    <div class="font-bold text-blue-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-gears text-blue-400"></i>
+                        Active Pump Stations
+                    </div>
+                    <p class="text-slate-300 leading-relaxed text-[11px]">
+                        Total primary sluice gates and drainage tunnel complexes actively running motor pumps to lift canal water over flood barriers.
+                    </p>
+                    <p class="text-[10px] text-slate-400 font-mono border-t border-slate-800/80 pt-1">
+                        Role: Pushing urban stormwater out against high sea levels.
+                    </p>
+                </div>
+
+                <!-- Box 4 -->
+                <div class="glass-card p-3 rounded-xl border border-slate-800 space-y-1.5">
+                    <div class="font-bold text-emerald-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-chart-pie text-emerald-400"></i>
+                        Avg Capacity Used
+                    </div>
+                    <p class="text-slate-300 leading-relaxed text-[11px]">
+                        Average water level across all 20 canal sectors relative to concrete floodwall capacity.
+                    </p>
+                    <p class="text-[10px] text-slate-400 font-mono border-t border-slate-800/80 pt-1">
+                        Buffer Margin: Lower % indicates more capacity to absorb flash flood runoff.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
     <script>
         let map, overlayLayer, canalGroup, stationGroup, tideChartInstance;
         
@@ -167,19 +236,21 @@
         const MAP_BOUNDS = [[13.2159, 99.7504], [14.2830, 101.3983]];
 
         function initMap() {
-            // Initialize map with mouse drag and scroll-wheel zoom disabled for clean page scrolling
+            // Map configuration: dragging allowed, scrollWheelZoom disabled for page scrolling
             map = L.map('map', {
                 zoomControl: true,
-                scrollWheelZoom: false,  // Disables mouse wheel zoom while scrolling page
-                dragging: false,         // Disables map panning when mouse is over image
+                scrollWheelZoom: false,  // Prevents mouse wheel from zooming map when scrolling page
+                dragging: true,          // Allows click & drag panning
                 doubleClickZoom: false,  // Disables double click zooming
-                touchZoom: false,        // Disables touch pinch zooming
+                touchZoom: true,         // Allows touch drag/pan on mobile screens
                 boxZoom: false,          // Disables box zoom
                 maxBounds: MAP_BOUNDS,
-                maxBoundsViscosity: 1.0
+                maxBoundsViscosity: 0.8
             });
 
+            // Set initial bounds and zoom in 1 step closer
             map.fitBounds(MAP_BOUNDS);
+            map.setZoom(map.getZoom() + 1);
 
             // Overlay static PNG image
             L.imageOverlay('bkk_map.png', MAP_BOUNDS).addTo(map);
