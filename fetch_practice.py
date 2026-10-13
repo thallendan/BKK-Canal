@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 import json
+import ssl
 import urllib.request
 
 # Primary Live Telemetry Endpoint
@@ -12,7 +13,10 @@ HEADERS = {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,"
         " like Gecko) Chrome/120.0.0.0 Safari/537.36"
     ),
-    "Accept": "application/json, text/html, */*",
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.9,th;q=0.8",
+    "Origin": "https://www.thaiwater.net",
+    "Referer": "https://www.thaiwater.net/",
 }
 
 # 20 Target Canal Sectors with Coordinates & Search Keywords
@@ -335,14 +339,18 @@ CANAL_DEFINITIONS = [
 
 
 def fetch_live_json(url):
-  """Fetches raw JSON response from live remote endpoint."""
+  """Fetches raw JSON response from live remote endpoint with error handling."""
+  ctx = ssl.create_default_context()
+  ctx.check_hostname = False
+  ctx.verify_mode = ssl.CERT_NONE
+
   try:
     req = urllib.request.Request(url, headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=15) as response:
+    with urllib.request.urlopen(req, timeout=20, context=ctx) as response:
       raw = response.read().decode("utf-8", errors="ignore")
       return json.loads(raw)
   except Exception as e:
-    print(f"HTTP fetch error from {url}: {e}")
+    print(f"HTTP Fetch Exception from {url}: {e}")
     return None
 
 
@@ -436,7 +444,7 @@ def find_matching_live_station_strict_keywords(canal, live_stations):
         st_id = get_station_id(st)
         return st, st_id, st_name, msl
 
-  # NO SPATIAL DISTANCE FALLBACK - Return None if no keywords match
+  # NO SPATIAL DISTANCE FALLBACK
   return None, None, None, None
 
 
@@ -589,7 +597,7 @@ def main():
           "matched_station_name": st_name,
       })
     else:
-      # Explicit unmatched case: No spatial fallback or value fabrication
+      # Unmatched case: No spatial fallback or value fabrication
       canals_data.append({
           "id": canal["id"],
           "name": canal["name"],
