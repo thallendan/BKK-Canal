@@ -1,6 +1,6 @@
 {
   "status": "OK",
-  "updated_at_utc": "2026-10-12T18:05:56.468824+00:00",
+  "updated_at_utc": "2026-10-13T00:53:23.603087+00:00",
   "summary": {
     "paknam_tide_msl": 1.48,
     "tide_state": "SPRING_HIGH_TIDE",
@@ -9,30 +9,6 @@
     "avg_canal_capacity_pct": 55.4
   },
   "tide_forecast_24h": [
-    {
-      "hour_label": "18:00",
-      "tide_msl": 1.65
-    },
-    {
-      "hour_label": "19:00",
-      "tide_msl": 1.73
-    },
-    {
-      "hour_label": "20:00",
-      "tide_msl": 1.81
-    },
-    {
-      "hour_label": "21:00",
-      "tide_msl": 1.88
-    },
-    {
-      "hour_label": "22:00",
-      "tide_msl": 1.95
-    },
-    {
-      "hour_label": "23:00",
-      "tide_msl": 1.95
-    },
     {
       "hour_label": "00:00",
       "tide_msl": 1.18
@@ -104,6 +80,30 @@
     {
       "hour_label": "17:00",
       "tide_msl": 1.57
+    },
+    {
+      "hour_label": "18:00",
+      "tide_msl": 1.65
+    },
+    {
+      "hour_label": "19:00",
+      "tide_msl": 1.73
+    },
+    {
+      "hour_label": "20:00",
+      "tide_msl": 1.81
+    },
+    {
+      "hour_label": "21:00",
+      "tide_msl": 1.88
+    },
+    {
+      "hour_label": "22:00",
+      "tide_msl": 1.95
+    },
+    {
+      "hour_label": "23:00",
+      "tide_msl": 1.95
     }
   ],
   "canals": [
