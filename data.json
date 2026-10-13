@@ -1,111 +1,16 @@
 {
-  "status": "OK",
-  "updated_at_utc": "2026-10-13T07:17:22.587090+00:00",
+  "is_live": false,
+  "status": "FETCH_FAILED",
+  "updated_at_utc": "2026-10-13T15:11:38.129686+00:00",
+  "error_message": "Unable to connect to live ThaiWater telemetry endpoint (api-v3.thaiwater.net). Data is unavailable.",
   "summary": {
-    "paknam_tide_msl": 1.48,
-    "tide_state": "SPRING_HIGH_TIDE",
-    "gravity_drainage_window": "LOCKED (High Tide)",
-    "active_pumping_stations": 20,
-    "avg_canal_capacity_pct": 55.4
+    "paknam_tide_msl": null,
+    "tide_state": "DATA_UNAVAILABLE",
+    "gravity_drainage_window": "DATA_UNAVAILABLE (Endpoint Offline)",
+    "active_pumping_stations": null,
+    "avg_canal_capacity_pct": null
   },
-  "tide_forecast_24h": [
-    {
-      "hour_label": "07:00",
-      "tide_msl": 1.57
-    },
-    {
-      "hour_label": "08:00",
-      "tide_msl": 1.65
-    },
-    {
-      "hour_label": "09:00",
-      "tide_msl": 1.73
-    },
-    {
-      "hour_label": "10:00",
-      "tide_msl": 1.81
-    },
-    {
-      "hour_label": "11:00",
-      "tide_msl": 1.88
-    },
-    {
-      "hour_label": "12:00",
-      "tide_msl": 1.95
-    },
-    {
-      "hour_label": "13:00",
-      "tide_msl": 1.95
-    },
-    {
-      "hour_label": "14:00",
-      "tide_msl": 1.18
-    },
-    {
-      "hour_label": "15:00",
-      "tide_msl": 1.26
-    },
-    {
-      "hour_label": "16:00",
-      "tide_msl": 1.34
-    },
-    {
-      "hour_label": "17:00",
-      "tide_msl": 1.42
-    },
-    {
-      "hour_label": "18:00",
-      "tide_msl": 1.49
-    },
-    {
-      "hour_label": "19:00",
-      "tide_msl": 1.57
-    },
-    {
-      "hour_label": "20:00",
-      "tide_msl": 1.65
-    },
-    {
-      "hour_label": "21:00",
-      "tide_msl": 1.73
-    },
-    {
-      "hour_label": "22:00",
-      "tide_msl": 1.81
-    },
-    {
-      "hour_label": "23:00",
-      "tide_msl": 1.88
-    },
-    {
-      "hour_label": "00:00",
-      "tide_msl": 1.95
-    },
-    {
-      "hour_label": "01:00",
-      "tide_msl": 1.95
-    },
-    {
-      "hour_label": "02:00",
-      "tide_msl": 1.18
-    },
-    {
-      "hour_label": "03:00",
-      "tide_msl": 1.26
-    },
-    {
-      "hour_label": "04:00",
-      "tide_msl": 1.34
-    },
-    {
-      "hour_label": "05:00",
-      "tide_msl": 1.42
-    },
-    {
-      "hour_label": "06:00",
-      "tide_msl": 1.49
-    }
-  ],
+  "tide_forecast_24h": [],
   "canals": [
     {
       "id": "C01",
@@ -132,14 +37,16 @@
           100.592
         ]
       ],
-      "water_level_msl": 0.55,
       "bank_limit_msl": 1.2,
-      "buffer_remaining_m": 0.65,
-      "capacity_pct": 45.8,
-      "delta_h_meters": -0.93,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C02",
@@ -162,14 +69,16 @@
           100.583
         ]
       ],
-      "water_level_msl": 0.8,
       "bank_limit_msl": 1.5,
-      "buffer_remaining_m": 0.7,
-      "capacity_pct": 53.3,
-      "delta_h_meters": -0.68,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C03",
@@ -196,14 +105,16 @@
           100.78
         ]
       ],
-      "water_level_msl": 0.66,
       "bank_limit_msl": 1.1,
-      "buffer_remaining_m": 0.44,
-      "capacity_pct": 60.0,
-      "delta_h_meters": -0.82,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C04",
@@ -226,14 +137,16 @@
           100.73
         ]
       ],
-      "water_level_msl": 0.9,
       "bank_limit_msl": 1.0,
-      "buffer_remaining_m": 0.1,
-      "capacity_pct": 90.0,
-      "delta_h_meters": -0.58,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "HIGH"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C05",
@@ -256,14 +169,16 @@
           100.502
         ]
       ],
-      "water_level_msl": 0.76,
       "bank_limit_msl": 1.3,
-      "buffer_remaining_m": 0.54,
-      "capacity_pct": 58.5,
-      "delta_h_meters": -0.72,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C06",
@@ -286,14 +201,16 @@
           100.52
         ]
       ],
-      "water_level_msl": 0.62,
       "bank_limit_msl": 1.25,
-      "buffer_remaining_m": 0.63,
-      "capacity_pct": 49.6,
-      "delta_h_meters": -0.86,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C07",
@@ -316,14 +233,16 @@
           100.58
         ]
       ],
-      "water_level_msl": 0.86,
       "bank_limit_msl": 1.15,
-      "buffer_remaining_m": 0.29,
-      "capacity_pct": 74.8,
-      "delta_h_meters": -0.62,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "ELEVATED"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C08",
@@ -346,14 +265,16 @@
           100.53
         ]
       ],
-      "water_level_msl": 0.73,
       "bank_limit_msl": 1.35,
-      "buffer_remaining_m": 0.62,
-      "capacity_pct": 54.1,
-      "delta_h_meters": -0.75,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C09",
@@ -376,14 +297,16 @@
           100.585
         ]
       ],
-      "water_level_msl": 0.59,
       "bank_limit_msl": 1.2,
-      "buffer_remaining_m": 0.61,
-      "capacity_pct": 49.2,
-      "delta_h_meters": -0.89,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C10",
@@ -406,14 +329,16 @@
           100.75
         ]
       ],
-      "water_level_msl": 0.83,
       "bank_limit_msl": 1.6,
-      "buffer_remaining_m": 0.77,
-      "capacity_pct": 51.9,
-      "delta_h_meters": -0.65,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C11",
@@ -436,14 +361,16 @@
           100.493
         ]
       ],
-      "water_level_msl": 0.69,
       "bank_limit_msl": 1.4,
-      "buffer_remaining_m": 0.71,
-      "capacity_pct": 49.3,
-      "delta_h_meters": -0.79,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C12",
@@ -466,14 +393,16 @@
           100.485
         ]
       ],
-      "water_level_msl": 0.55,
       "bank_limit_msl": 1.45,
-      "buffer_remaining_m": 0.9,
-      "capacity_pct": 37.9,
-      "delta_h_meters": -0.93,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C13",
@@ -496,14 +425,16 @@
           100.32
         ]
       ],
-      "water_level_msl": 0.8,
       "bank_limit_msl": 1.1,
-      "buffer_remaining_m": 0.3,
-      "capacity_pct": 72.7,
-      "delta_h_meters": -0.68,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "ELEVATED"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C14",
@@ -526,14 +457,16 @@
           100.4
         ]
       ],
-      "water_level_msl": 0.66,
       "bank_limit_msl": 1.2,
-      "buffer_remaining_m": 0.54,
-      "capacity_pct": 55.0,
-      "delta_h_meters": -0.82,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C15",
@@ -556,14 +489,16 @@
           100.28
         ]
       ],
-      "water_level_msl": 0.9,
       "bank_limit_msl": 1.5,
-      "buffer_remaining_m": 0.6,
-      "capacity_pct": 60.0,
-      "delta_h_meters": -0.58,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C16",
@@ -586,14 +521,16 @@
           100.598
         ]
       ],
-      "water_level_msl": 0.76,
       "bank_limit_msl": 1.8,
-      "buffer_remaining_m": 1.04,
-      "capacity_pct": 42.2,
-      "delta_h_meters": -0.72,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C17",
@@ -616,14 +553,16 @@
           100.82
         ]
       ],
-      "water_level_msl": 0.62,
       "bank_limit_msl": 1.7,
-      "buffer_remaining_m": 1.08,
-      "capacity_pct": 36.5,
-      "delta_h_meters": -0.86,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C18",
@@ -646,14 +585,16 @@
           100.77
         ]
       ],
-      "water_level_msl": 0.86,
       "bank_limit_msl": 1.3,
-      "buffer_remaining_m": 0.44,
-      "capacity_pct": 66.2,
-      "delta_h_meters": -0.62,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "ELEVATED"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C19",
@@ -676,14 +617,16 @@
           100.75
         ]
       ],
-      "water_level_msl": 0.73,
       "bank_limit_msl": 1.35,
-      "buffer_remaining_m": 0.62,
-      "capacity_pct": 54.1,
-      "delta_h_meters": -0.75,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     },
     {
       "id": "C20",
@@ -706,14 +649,16 @@
           100.84
         ]
       ],
-      "water_level_msl": 0.59,
       "bank_limit_msl": 1.25,
-      "buffer_remaining_m": 0.66,
-      "capacity_pct": 47.2,
-      "delta_h_meters": -0.89,
-      "drainage_mode": "PUMP_REQUIRED",
-      "pump_status": "ACTIVE_PUMPING",
-      "risk_level": "NORMAL"
+      "water_level_msl": null,
+      "buffer_remaining_m": null,
+      "capacity_pct": null,
+      "delta_h_meters": null,
+      "drainage_mode": "DATA_UNAVAILABLE",
+      "pump_status": "UNKNOWN",
+      "risk_level": "NO_DATA",
+      "live_data_found": false,
+      "matched_station_name": null
     }
   ]
 }
