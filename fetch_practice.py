@@ -1,11 +1,15 @@
 from datetime import datetime, timezone
 import json
+import re
 import ssl
 import urllib.request
 
-# Primary Live Telemetry Endpoint
-URL_THAIWATER_LEVELS = (
-    "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load"
+# Alternative Public Thai Hydrological Endpoints (Globally Accessible)
+URL_PUBLIC_THAIWATER_CANAL = (
+    "https://twa-api-public.thaiwater.net/v2/waterlevel/canal"
+)
+URL_HII_CANAL_REPORT = (
+    "https://tiwrmdev.hii.or.th/DATA/REPORT/php/canal_table.php?lang=en"
 )
 
 HEADERS = {
@@ -13,10 +17,11 @@ HEADERS = {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,"
         " like Gecko) Chrome/120.0.0.0 Safari/537.36"
     ),
-    "Accept": "application/json, text/plain, */*",
+    "Accept": (
+        "application/json, text/html, application/xhtml+xml,"
+        " application/xml;q=0.9, */*;q=0.8"
+    ),
     "Accept-Language": "en-US,en;q=0.9,th;q=0.8",
-    "Origin": "https://www.thaiwater.net",
-    "Referer": "https://www.thaiwater.net/",
 }
 
 # 20 Target Canal Sectors with Coordinates & Search Keywords
@@ -338,8 +343,8 @@ CANAL_DEFINITIONS = [
 ]
 
 
-def fetch_live_json(url):
-  """Fetches raw JSON response from live remote endpoint with error handling."""
+def fetch_raw_text(url):
+  """Fetches raw text/JSON from a remote endpoint with SSL verification disabled for Linux runners."""
   ctx = ssl.create_default_context()
   ctx.check_hostname = False
   ctx.verify_mode = ssl.CERT_NONE
@@ -347,26 +352,75 @@ def fetch_live_json(url):
   try:
     req = urllib.request.Request(url, headers=HEADERS)
     with urllib.request.urlopen(req, timeout=20, context=ctx) as response:
-      raw = response.read().decode("utf-8", errors="ignore")
-      return json.loads(raw)
+      return response.read().decode("utf-8", errors="ignore")
   except Exception as e:
-    print(f"HTTP Fetch Exception from {url}: {e}")
+    print(f"HTTP Fetch Error from {url}: {e}")
     return None
 
 
-def extract_station_list(json_data):
-  """Safely unpacks station list from various ThaiWater JSON wrappers."""
-  if isinstance(json_data, list):
-    return json_data
-  if isinstance(json_data, dict):
-    for key in ["data", "waterlevel_data", "waterlevel", "result"]:
-      if key in json_data and isinstance(json_data[key], list):
-        return json_data[key]
-  return []
+def fetch_alternative_public_stations():
+  """Queries public ThaiWater v2 REST API or HII public report routes."""
+  # Attempt Endpoint 1: ThaiWater Public REST v2
+  raw_1 = fetch_raw_text(URL_PUBLIC_THAIWATER_CANAL)
+  if raw_1:
+    try:
+      parsed = json.loads(raw_1)
+      stations = (
+          parsed if isinstance(parsed, list) else parsed.get("data", [])
+      )
+      if stations:
+        print(
+            "Successfully fetched live stations from Public ThaiWater v2"
+            " REST API."
+        )
+        return stations, "twa-api-public.thaiwater.net"
+    except Exception as e:
+      print(f"Error parsing Public ThaiWater JSON: {e}")
+
+  # Attempt Endpoint 2: HII Public Daily Canal Telemetry
+  raw_2 = fetch_raw_text(URL_HII_CANAL_REPORT)
+  if raw_2:
+    try:
+      stations = parse_hii_canal_html(raw_2)
+      if stations:
+        print("Successfully parsed live stations from HII Public HTML Report.")
+        return stations, "tiwrmdev.hii.or.th"
+    except Exception as e:
+      print(f"Error parsing HII HTML Report: {e}")
+
+  return [], None
+
+
+def parse_hii_canal_html(html_str):
+  """Parses telemetry table rows from HII public canal HTML report."""
+  extracted = []
+  rows = re.findall(
+      r"<tr[^>]*>(.*?)</tr>", html_str, re.DOTALL | re.IGNORECASE
+  )
+  for idx, r in enumerate(rows):
+    cells = re.findall(r"<td[^>]*>(.*?)</td>", r, re.DOTALL | re.IGNORECASE)
+    clean_cells = [
+        re.sub(r"<[^>]+>", "", c).strip().replace(",", "") for c in cells
+    ]
+    if len(clean_cells) >= 3:
+      name = clean_cells[0]
+      vals = []
+      for c in clean_cells[1:]:
+        try:
+          vals.append(float(c))
+        except ValueError:
+          pass
+      if vals:
+        extracted.append({
+            "station": {"id": f"HII_{idx}", "tele_station_name": name},
+            "waterlevel_msl": vals[0],
+            "lat": None,
+            "lon": None,
+        })
+  return extracted
 
 
 def get_station_coords(st):
-  """Extracts latitude and longitude from station dictionary."""
   station_obj = st.get("station", st)
   lat = (
       station_obj.get("lat")
@@ -388,7 +442,6 @@ def get_station_coords(st):
 
 
 def get_station_id(st):
-  """Extracts station ID from station dictionary."""
   station_obj = st.get("station", st)
   return (
       station_obj.get("id")
@@ -399,7 +452,6 @@ def get_station_id(st):
 
 
 def get_station_name(st):
-  """Extracts Thai and English station names from station dictionary."""
   station_obj = st.get("station", st)
   name_field = station_obj.get("tele_station_name") or station_obj.get(
       "station_name"
@@ -414,7 +466,6 @@ def get_station_name(st):
 
 
 def get_water_level_msl(st):
-  """Extracts reported water level in meters MSL."""
   val = st.get("waterlevel_msl")
   if val is None:
     val = st.get("waterlevel_m")
@@ -427,29 +478,25 @@ def get_water_level_msl(st):
 
 
 def find_matching_live_station_strict_keywords(canal, live_stations):
-  """Finds matching live station by STRICT KEYWORD MATCHING ONLY.
+  """Strict Keyword Match Only.
 
-  Zero spatial fallback. If no keyword matches, returns None.
+  Zero Spatial Fallback.
   """
   for st in live_stations:
     st_name = get_station_name(st)
     msl = get_water_level_msl(st)
-
     if msl is None:
       continue
 
-    # Strict Keyword Match Check
     for kw in canal["keywords"]:
       if kw.lower() in st_name.lower():
         st_id = get_station_id(st)
         return st, st_id, st_name, msl
 
-  # NO SPATIAL DISTANCE FALLBACK
   return None, None, None, None
 
 
 def parse_live_tide_gauge(live_stations):
-  """Searches live telemetry for coastal/estuary tide gauges around Pak Nam / Gulf."""
   tide_keywords = ["ปากน้ำ", "ป้อมพระจุล", "สมุทรปราการ", "Bangkok Port", "Fort Chula"]
   for st in live_stations:
     st_name = get_station_name(st)
@@ -468,10 +515,8 @@ def parse_live_tide_gauge(live_stations):
 def main():
   utc_now = datetime.now(timezone.utc).isoformat()
 
-  raw_json = fetch_live_json(URL_THAIWATER_LEVELS)
-  live_stations = extract_station_list(raw_json) if raw_json else []
+  live_stations, source_host = fetch_alternative_public_stations()
 
-  # Capture full list of raw live stations for inspectability
   raw_station_catalog = []
   for st in live_stations:
     st_id = get_station_id(st)
@@ -492,8 +537,8 @@ def main():
         "status": "FETCH_FAILED",
         "updated_at_utc": utc_now,
         "error_message": (
-            "Unable to connect to live ThaiWater telemetry endpoint"
-            " (api-v3.thaiwater.net)."
+            "Unable to connect to alternative public Thai hydrological"
+            " endpoints."
         ),
         "summary": {
             "paknam_tide_msl": None,
@@ -597,7 +642,6 @@ def main():
           "matched_station_name": st_name,
       })
     else:
-      # Unmatched case: No spatial fallback or value fabrication
       canals_data.append({
           "id": canal["id"],
           "name": canal["name"],
@@ -625,25 +669,21 @@ def main():
       else None
   )
 
-  if matched_count == 20:
-    status_str = "OK"
-    err_msg = None
-  elif matched_count > 0:
-    status_str = "PARTIAL"
-    err_msg = (
-        f"Strict keyword match found live telemetry for {matched_count} of 20"
-        f" canal sectors. {20 - matched_count} sectors have no matching station"
-        " name in the live feed."
-    )
-  else:
-    status_str = "FETCH_FAILED"
-    err_msg = (
-        "No matching station keywords found on live ThaiWater endpoints."
-    )
+  status_str = (
+      "OK"
+      if matched_count == 20
+      else ("PARTIAL" if matched_count > 0 else "FETCH_FAILED")
+  )
+  err_msg = (
+      None
+      if status_str == "OK"
+      else f"Strict match found {matched_count}/20 sectors from {source_host}."
+  )
 
   payload = {
       "is_live": matched_count > 0,
       "status": status_str,
+      "source_host": source_host,
       "updated_at_utc": utc_now,
       "error_message": err_msg,
       "summary": {
@@ -680,8 +720,7 @@ def main():
     json.dump(payload, f, indent=2)
 
   print(
-      f"Practice sync completed: Matched {matched_count}/20 sectors. Saved to"
-      " data_practice.json."
+      f"Sync complete from {source_host}: Matched {matched_count}/20 sectors."
   )
 
 
