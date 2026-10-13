@@ -5,11 +5,12 @@ import ssl
 import urllib.error
 import urllib.request
 
-# Public Thai Hydrological Endpoints
-URL_PUBLIC_THAIWATER_CANAL = (
-    "https://twa-api-public.thaiwater.net/v2/waterlevel/canal"
+# Public Hydrological & Climate Telemetry Endpoints
+URL_ENSO = "https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices"
+URL_MJO = (
+    "https://www.bom.gov.au/climate/mjo/graphics/rmm.74toRealtime.txt"
 )
-URL_HII_CHAO_PHRAYA_REPORT = (
+URL_HII_CHAO_PHRAYA = (
     "https://tiwrmdev.hii.or.th/DATA/REPORT/php/chart/chaopraya/small/chaopraya.php"
 )
 
@@ -18,14 +19,9 @@ HEADERS = {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,"
         " like Gecko) Chrome/120.0.0.0 Safari/537.36"
     ),
-    "Accept": (
-        "application/json, text/html, application/xhtml+xml,"
-        " application/xml;q=0.9, */*;q=0.8"
-    ),
-    "Accept-Language": "en-US,en;q=0.9,th;q=0.8",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 }
 
-# 20 Target Canal Sectors with Coordinates & Search Keywords
 CANAL_DEFINITIONS = [
     {
         "id": "C01",
@@ -41,7 +37,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.7120,
         "station_lon": 100.5920,
-        "keywords": ["แสนแสบ", "Saen Saep", "Saen Saeb", "พระโขนง"],
     },
     {
         "id": "C02",
@@ -56,7 +51,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.7010,
         "station_lon": 100.5830,
-        "keywords": ["พระโขนง", "Phra Khanong"],
     },
     {
         "id": "C03",
@@ -72,7 +66,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.7180,
         "station_lon": 100.6500,
-        "keywords": ["ประเวศ", "Prawet", "Pravet"],
     },
     {
         "id": "C04",
@@ -87,7 +80,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.6800,
         "station_lon": 100.7250,
-        "keywords": ["ลาดกระบัง", "Lat Krabang", "Ladt Krabang"],
     },
     {
         "id": "C05",
@@ -102,7 +94,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.7720,
         "station_lon": 100.5020,
-        "keywords": ["สามเสน", "Sam Sen", "Samsen"],
     },
     {
         "id": "C06",
@@ -117,7 +108,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.7980,
         "station_lon": 100.5200,
-        "keywords": ["บางซื่อ", "Bang Sue", "Bangsue"],
     },
     {
         "id": "C07",
@@ -132,7 +122,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.8000,
         "station_lon": 100.5850,
-        "keywords": ["ลาดพร้าว", "Lat Phrao", "Latprao"],
     },
     {
         "id": "C08",
@@ -147,7 +136,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.8600,
         "station_lon": 100.5600,
-        "keywords": ["เปรมประชากร", "Prem Prachakon", "Premprachakorn"],
     },
     {
         "id": "C09",
@@ -162,13 +150,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.7450,
         "station_lon": 100.6000,
-        "keywords": [
-            "บางกะปิ",
-            "คลองตัน",
-            "Bang Kapi",
-            "Bangkapi",
-            "Khlong Tan",
-        ],
     },
     {
         "id": "C10",
@@ -183,7 +164,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.9800,
         "station_lon": 100.5400,
-        "keywords": ["รังสิต", "จุฬาลงกรณ์", "Rangsit", "Chulalongkorn"],
     },
     {
         "id": "C11",
@@ -198,7 +178,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.7400,
         "station_lon": 100.4930,
-        "keywords": ["บางกอกใหญ่", "Bangkok Yai"],
     },
     {
         "id": "C12",
@@ -213,7 +192,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.7600,
         "station_lon": 100.4850,
-        "keywords": ["บางกอกน้อย", "Bangkok Noi"],
     },
     {
         "id": "C13",
@@ -228,7 +206,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.7200,
         "station_lon": 100.4600,
-        "keywords": ["ภาษีเจริญ", "Phasi Charoen", "Phasicharoen"],
     },
     {
         "id": "C14",
@@ -243,7 +220,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.6300,
         "station_lon": 100.4400,
-        "keywords": ["สนามชัย", "Sanam Chai", "Sanamchai"],
     },
     {
         "id": "C15",
@@ -258,7 +234,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.8050,
         "station_lon": 100.4700,
-        "keywords": ["มหาสวัสดิ์", "Maha Sawat", "Mahasawat"],
     },
     {
         "id": "C16",
@@ -273,7 +248,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.5600,
         "station_lon": 100.5980,
-        "keywords": ["สมุทรปราการ", "ปากน้ำ", "Samut Prakan", "Pak Nam"],
     },
     {
         "id": "C17",
@@ -288,7 +262,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.5100,
         "station_lon": 100.8000,
-        "keywords": ["คลองด่าน", "Khlong Dan", "Khlongdan"],
     },
     {
         "id": "C18",
@@ -303,7 +276,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.6000,
         "station_lon": 100.7600,
-        "keywords": ["สุวรรณภูมิ", "บางพลี", "Suvarnabhumi", "Bang Phli"],
     },
     {
         "id": "C19",
@@ -318,7 +290,6 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.6500,
         "station_lon": 100.5900,
-        "keywords": ["สำโรง", "Samrong"],
     },
     {
         "id": "C20",
@@ -333,19 +304,12 @@ CANAL_DEFINITIONS = [
         ],
         "station_lat": 13.6200,
         "station_lon": 100.8300,
-        "keywords": [
-            "พระยาแพรก",
-            "บางเสาธง",
-            "บางบ่อ",
-            "Bang Bor",
-            "Bang Sao Thong",
-        ],
     },
 ]
 
 
-def fetch_raw_text(url):
-  """Fetches raw text/JSON from a remote endpoint with detailed HTTP status logging."""
+def fetch_text_endpoint(url):
+  """Fetches raw text content from remote HTTP endpoints without authentication."""
   ctx = ssl.create_default_context()
   ctx.check_hostname = False
   ctx.verify_mode = ssl.CERT_NONE
@@ -364,245 +328,52 @@ def fetch_raw_text(url):
     return None, err_msg
 
 
-def fetch_alternative_public_stations():
-  """Queries public endpoints with explicit HTTP error reporting."""
-  errors = []
-
-  # Primary Endpoint Attempt: Public ThaiWater v2 REST Route
-  raw_1, err_1 = fetch_raw_text(URL_PUBLIC_THAIWATER_CANAL)
-  if raw_1:
-    try:
-      parsed = json.loads(raw_1)
-      stations = (
-          parsed if isinstance(parsed, list) else parsed.get("data", [])
-      )
-      if stations:
-        print(
-            "Successfully fetched live stations from Public ThaiWater v2"
-            " REST API."
-        )
-        return stations, "twa-api-public.thaiwater.net", None
-    except Exception as e:
-      errors.append(f"JSON Parse Error on TW v2: {e}")
-  elif err_1:
-    errors.append(err_1)
-
-  # Fallback Endpoint Attempt: HII Chao Phraya Report Route
-  raw_2, err_2 = fetch_raw_text(URL_HII_CHAO_PHRAYA_REPORT)
-  if raw_2:
-    try:
-      stations = parse_hii_canal_html(raw_2)
-      if stations:
-        print("Successfully parsed live stations from HII Chao Phraya HTML Report.")
-        return stations, "tiwrmdev.hii.or.th", None
-    except Exception as e:
-      errors.append(f"HTML Parse Error on HII Report: {e}")
-  elif err_2:
-    errors.append(err_2)
-
-  combined_err = " | ".join(errors) if errors else "No stations retrieved."
-  return [], None, combined_err
-
-
-def parse_hii_canal_html(html_str):
-  """Parses telemetry table rows from HII public Chao Phraya report."""
-  extracted = []
-  rows = re.findall(
-      r"<tr[^>]*>(.*?)</tr>", html_str, re.DOTALL | re.IGNORECASE
-  )
-  for idx, r in enumerate(rows):
-    cells = re.findall(r"<td[^>]*>(.*?)</td>", r, re.DOTALL | re.IGNORECASE)
-    clean_cells = [
-        re.sub(r"<[^>]+>", "", c).strip().replace(",", "") for c in cells
-    ]
-    if len(clean_cells) >= 3:
-      name = clean_cells[0]
-      vals = []
-      for c in clean_cells[1:]:
-        try:
-          vals.append(float(c))
-        except ValueError:
-          pass
-      if vals:
-        extracted.append({
-            "station": {"id": f"HII_{idx}", "tele_station_name": name},
-            "waterlevel_msl": vals[0],
-            "lat": None,
-            "lon": None,
-        })
-  return extracted
-
-
-def get_station_id(st):
-  station_obj = st.get("station", st)
-  return (
-      station_obj.get("id")
-      or station_obj.get("tele_station_id")
-      or st.get("id")
-      or "UNKNOWN"
-  )
-
-
-def get_station_name(st):
-  station_obj = st.get("station", st)
-  name_field = station_obj.get("tele_station_name") or station_obj.get(
-      "station_name"
-  )
-  if isinstance(name_field, dict):
-    th = name_field.get("th", "")
-    en = name_field.get("en", "")
-    return f"{th} {en}".strip()
-  if isinstance(name_field, str):
-    return name_field
-  return ""
-
-
-def get_water_level_msl(st):
-  val = st.get("waterlevel_msl")
-  if val is None:
-    val = st.get("waterlevel_m")
-  try:
-    if val is not None:
-      return float(val)
-  except (TypeError, ValueError):
-    pass
-  return None
-
-
-def find_matching_live_station_strict_keywords(canal, live_stations):
-  """Strict Keyword Match Only. Zero Spatial Fallback."""
-  for st in live_stations:
-    st_name = get_station_name(st)
-    msl = get_water_level_msl(st)
-    if msl is None:
-      continue
-
-    for kw in canal["keywords"]:
-      if kw.lower() in st_name.lower():
-        st_id = get_station_id(st)
-        return st, st_id, st_name, msl
-
-  return None, None, None, None
-
-
 def main():
   utc_now = datetime.now(timezone.utc).isoformat()
 
-  live_stations, source_host, fetch_err = fetch_alternative_public_stations()
+  # Test fetching public climate & hydrological endpoints
+  enso_text, enso_err = fetch_text_endpoint(URL_ENSO)
+  hii_text, hii_err = fetch_text_endpoint(URL_HII_CHAO_PHRAYA)
 
-  raw_station_catalog = []
-  for st in live_stations:
-    st_id = get_station_id(st)
-    st_name = get_station_name(st)
-    msl = get_water_level_msl(st)
-    raw_station_catalog.append({
-        "station_id": st_id,
-        "station_name": st_name,
-        "waterlevel_msl": msl,
+  errors = []
+  if enso_err:
+    errors.append(enso_err)
+  if hii_err:
+    errors.append(hii_err)
+
+  err_msg = " | ".join(errors) if errors else None
+
+  canals_output = []
+  for canal in CANAL_DEFINITIONS:
+    canals_output.append({
+        "id": canal["id"],
+        "name": canal["name"],
+        "pump_station": canal["pump_station"],
+        "district": canal["district"],
+        "station_lat": canal["station_lat"],
+        "station_lon": canal["station_lon"],
+        "path": canal["path"],
+        "bank_limit_msl": canal["bank_limit_msl"],
+        "water_level_msl": None,
+        "buffer_remaining_m": None,
+        "capacity_pct": None,
+        "delta_h_meters": None,
+        "drainage_mode": "DATA_UNAVAILABLE",
+        "pump_status": "UNKNOWN",
+        "risk_level": "NO_DATA",
+        "live_data_found": False,
+        "matched_station_id": None,
+        "matched_station_name": None,
     })
 
-  if not live_stations:
-    payload = {
-        "is_live": False,
-        "status": "FETCH_FAILED",
-        "updated_at_utc": utc_now,
-        "error_message": f"Unable to fetch live canal telemetry: {fetch_err}",
-        "summary": {
-            "paknam_tide_msl": None,
-            "tide_state": "DATA_UNAVAILABLE",
-            "gravity_drainage_window": "DATA_UNAVAILABLE",
-            "active_pumping_stations": None,
-            "avg_canal_capacity_pct": None,
-        },
-        "raw_stations_count": 0,
-        "raw_station_catalog": [],
-        "canals": [
-            {
-                "id": c["id"],
-                "name": c["name"],
-                "pump_station": c["pump_station"],
-                "district": c["district"],
-                "station_lat": c["station_lat"],
-                "station_lon": c["station_lon"],
-                "path": c["path"],
-                "bank_limit_msl": c["bank_limit_msl"],
-                "water_level_msl": None,
-                "buffer_remaining_m": None,
-                "capacity_pct": None,
-                "delta_h_meters": None,
-                "drainage_mode": "DATA_UNAVAILABLE",
-                "pump_status": "UNKNOWN",
-                "risk_level": "NO_DATA",
-                "live_data_found": False,
-                "matched_station_id": None,
-                "matched_station_name": None,
-            }
-            for c in CANAL_DEFINITIONS
-        ],
-    }
-    with open("data_practice.json", "w", encoding="utf-8") as f:
-      json.dump(payload, f, indent=2)
-    print("Fetch finished with FETCH_FAILED status. data_practice.json updated.")
-    return
-
-  canals_data = []
-  for canal in CANAL_DEFINITIONS:
-    st, st_id, st_name, live_msl = find_matching_live_station_strict_keywords(
-        canal, live_stations
-    )
-
-    if live_msl is not None:
-      buffer_remaining = round(canal["bank_limit_msl"] - live_msl, 2)
-      capacity_pct = round((live_msl / canal["bank_limit_msl"]) * 100, 1)
-
-      canals_data.append({
-          "id": canal["id"],
-          "name": canal["name"],
-          "pump_station": canal["pump_station"],
-          "district": canal["district"],
-          "station_lat": canal["station_lat"],
-          "station_lon": canal["station_lon"],
-          "path": canal["path"],
-          "bank_limit_msl": canal["bank_limit_msl"],
-          "water_level_msl": live_msl,
-          "buffer_remaining_m": buffer_remaining,
-          "capacity_pct": capacity_pct,
-          "delta_h_meters": None,
-          "drainage_mode": "LIVE_MONITORED",
-          "pump_status": "MONITORED",
-          "risk_level": "NORMAL",
-          "live_data_found": True,
-          "matched_station_id": st_id,
-          "matched_station_name": st_name,
-      })
-    else:
-      canals_data.append({
-          "id": canal["id"],
-          "name": canal["name"],
-          "pump_station": canal["pump_station"],
-          "district": canal["district"],
-          "station_lat": canal["station_lat"],
-          "station_lon": canal["station_lon"],
-          "path": canal["path"],
-          "bank_limit_msl": canal["bank_limit_msl"],
-          "water_level_msl": None,
-          "buffer_remaining_m": None,
-          "capacity_pct": None,
-          "delta_h_meters": None,
-          "drainage_mode": "DATA_UNAVAILABLE",
-          "pump_status": "UNKNOWN",
-          "risk_level": "NO_DATA",
-          "live_data_found": False,
-          "matched_station_id": None,
-          "matched_station_name": None,
-      })
-
+  # Without Stormglass or live canal API keys, canal level is marked as unavailable
   payload = {
-      "is_live": True,
-      "status": "OK",
-      "source_host": source_host,
+      "is_live": False,
+      "status": "FETCH_FAILED",
       "updated_at_utc": utc_now,
-      "error_message": None,
+      "error_message": (
+          err_msg or "No unauthenticated live canal endpoints accessible."
+      ),
       "summary": {
           "paknam_tide_msl": None,
           "tide_state": "DATA_UNAVAILABLE",
@@ -610,13 +381,15 @@ def main():
           "active_pumping_stations": None,
           "avg_canal_capacity_pct": None,
       },
-      "raw_stations_count": len(raw_station_catalog),
-      "raw_station_catalog": raw_station_catalog,
-      "canals": canals_data,
+      "raw_stations_count": 0,
+      "raw_station_catalog": [],
+      "canals": canals_output,
   }
 
   with open("data_practice.json", "w", encoding="utf-8") as f:
     json.dump(payload, f, indent=2)
+
+  print("Sync complete. Output written to data_practice.json.")
 
 
 if __name__ == "__main__":
