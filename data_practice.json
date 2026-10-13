@@ -1,8 +1,8 @@
 {
   "is_live": false,
   "status": "FETCH_FAILED",
-  "updated_at_utc": "2026-10-13T14:31:23.870951+00:00",
-  "error_message": "Unable to connect to live ThaiWater telemetry endpoint (api-v3.thaiwater.net).",
+  "updated_at_utc": "2026-10-13T14:48:38.183689+00:00",
+  "error_message": "Unable to connect to alternative public Thai hydrological endpoints.",
   "summary": {
     "paknam_tide_msl": null,
     "tide_state": "DATA_UNAVAILABLE",
