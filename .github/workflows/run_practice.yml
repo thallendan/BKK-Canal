@@ -3,6 +3,10 @@ name: Run Practice Fetch Script
 on:
   workflow_dispatch: # Enables the manual "Run workflow" button in GitHub
 
+# Grant GITHUB_TOKEN permissions to push commits back to the repository
+permissions:
+  contents: write
+
 jobs:
   run-script:
     runs-on: ubuntu-latest
@@ -10,6 +14,8 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
