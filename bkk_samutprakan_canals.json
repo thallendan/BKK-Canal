@@ -1,18 +1,18 @@
 {
-  "timestamp_utc": "2026-10-14T14:43:41.289890+00:00",
+  "timestamp_utc": "2026-10-14T21:04:27.405958+00:00",
   "target_provinces": [
     "Bangkok",
     "Samut Prakan"
   ],
   "diagnostic": {
     "endpoint_url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
-    "fetch_timestamp_utc": "2026-10-14T14:43:37.133838+00:00",
+    "fetch_timestamp_utc": "2026-10-14T21:04:23.998143+00:00",
     "success": true,
     "status_code": 200,
-    "response_time_sec": 2.066,
+    "response_time_sec": 1.728,
     "error": null
   },
-  "total_raw_stations": 804,
+  "total_raw_stations": 803,
   "record_count": 13,
   "stations": [
     {
@@ -118,211 +118,7 @@
       }
     },
     {
-      "station_id": 1324696231,
-      "province_en": "Bangkok",
-      "province_th": "กรุงเทพมหานคร",
-      "station_name": "Krung Thep 3",
-      "station_name_detail": {
-        "en": "Krung Thep 3",
-        "th": "คลองมหาสวัสดิ บางกรวย-สวนผัก"
-      },
-      "river_or_canal": "คลองมหาสวัสดิ์",
-      "water_level_m_msl": "2.18",
-      "water_level_m_ground": null,
-      "bank_height_m_msl": null,
-      "situation_level": 5,
-      "station_type": "tele_waterlevel",
-      "telemetry_time": "2026-10-14 20:50",
-      "raw_station_data": {
-        "id": 1324696231,
-        "waterlevel_datetime": "2026-10-14 20:50",
-        "waterlevel_m": null,
-        "waterlevel_msl": "2.18",
-        "waterlevel_msl_previous": "1.83",
-        "flow_rate": null,
-        "discharge": null,
-        "storage_percent": "102.11",
-        "sort_order": null,
-        "station_type": "tele_waterlevel",
-        "situation_level": 5,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 10,
-          "basin_code": 10,
-          "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
-          }
-        },
-        "station": {
-          "id": 5,
-          "tele_station_name": {
-            "en": "Krung Thep 3",
-            "th": "คลองมหาสวัสดิ บางกรวย-สวนผัก"
-          },
-          "tele_station_lat": 13.79965,
-          "tele_station_long": 100.43863,
-          "tele_station_oldcode": "BKK003",
-          "tele_station_type": "tele_waterlevel",
-          "left_bank": 2.069,
-          "right_bank": 2.152,
-          "min_bank": 2.07,
-          "ground_level": -3.101,
-          "offset": null,
-          "sub_basin_id": 240,
-          "agency_id": 9,
-          "geocode_id": 95,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "1",
-          "area_name": {
-            "th": "กรุงเทพมหานคร",
-            "en": "Bangkok"
-          },
-          "amphoe_code": "19",
-          "amphoe_name": {
-            "th": "ตลิ่งชัน",
-            "en": "Taling Chan District"
-          },
-          "tumbon_code": "02",
-          "tumbon_name": {
-            "th": "ตลิ่งชัน",
-            "en": "Taling Chan"
-          },
-          "province_code": "10",
-          "province_name": {
-            "th": "กรุงเทพมหานคร",
-            "en": "Bangkok"
-          }
-        },
-        "diff_wl_bank": "0.11",
-        "diff_wl_bank_text": "ล้นตลิ่ง (ม.)",
-        "river_gid": 186752,
-        "river_name": "คลองมหาสวัสดิ์"
-      }
-    },
-    {
-      "station_id": 1324714135,
-      "province_en": "Samut Prakan",
-      "province_th": "สมุทรปราการ",
-      "station_name": "Wat Bangkachao Nok Gate",
-      "station_name_detail": {
-        "en": "Wat Bangkachao Nok Gate",
-        "th": "ปตร.วัดบางกระเจ้านอก"
-      },
-      "river_or_canal": "คลองบางกะเจ้า",
-      "water_level_m_msl": "1.21",
-      "water_level_m_ground": null,
-      "bank_height_m_msl": null,
-      "situation_level": 4,
-      "station_type": "tele_waterlevel",
-      "telemetry_time": "2026-10-14 21:30",
-      "raw_station_data": {
-        "id": 1324714135,
-        "waterlevel_datetime": "2026-10-14 21:30",
-        "waterlevel_m": null,
-        "waterlevel_msl": "1.21",
-        "waterlevel_msl_previous": "1.32",
-        "flow_rate": null,
-        "discharge": null,
-        "storage_percent": "98.13",
-        "sort_order": null,
-        "station_type": "tele_waterlevel",
-        "situation_level": 4,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 10,
-          "basin_code": 10,
-          "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
-          }
-        },
-        "station": {
-          "id": 575566,
-          "tele_station_name": {
-            "en": "Wat Bangkachao Nok Gate",
-            "th": "ปตร.วัดบางกระเจ้านอก"
-          },
-          "tele_station_lat": 13.689612,
-          "tele_station_long": 100.554886,
-          "tele_station_oldcode": "BKC002",
-          "tele_station_type": "tele_waterlevel",
-          "left_bank": 1.74,
-          "right_bank": 1.26,
-          "min_bank": 1.26,
-          "ground_level": -1.41,
-          "offset": null,
-          "sub_basin_id": 240,
-          "agency_id": 9,
-          "geocode_id": 250,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "2",
-          "area_name": {
-            "th": "ภาคกลาง",
-            "en": "Central"
-          },
-          "amphoe_code": "04",
-          "amphoe_name": {
-            "th": "พระประแดง",
-            "en": "Phra Pradaeng District"
-          },
-          "tumbon_code": "09",
-          "tumbon_name": {
-            "th": "บางกระเจ้า",
-            "en": "Bang Krachao"
-          },
-          "province_code": "11",
-          "province_name": {
-            "th": "สมุทรปราการ",
-            "en": "Samut Prakan"
-          }
-        },
-        "diff_wl_bank": "0.05",
-        "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
-        "river_gid": 188003,
-        "river_name": "คลองบางกะเจ้า"
-      }
-    },
-    {
-      "station_id": 1324679174,
+      "station_id": 1324790670,
       "province_en": "Bangkok",
       "province_th": "กรุงเทพมหานคร",
       "station_name": "กรมชลประทานสามเสน",
@@ -330,21 +126,21 @@
         "th": "กรมชลประทานสามเสน"
       },
       "river_or_canal": "แม่น้ำเจ้าพระยา",
-      "water_level_m_msl": "1.91",
+      "water_level_m_msl": "0.98",
       "water_level_m_ground": null,
       "bank_height_m_msl": null,
       "situation_level": 4,
       "station_type": "tele_waterlevel",
-      "telemetry_time": "2026-10-14 20:00",
+      "telemetry_time": "2026-10-15 03:00",
       "raw_station_data": {
-        "id": 1324679174,
-        "waterlevel_datetime": "2026-10-14 20:00",
+        "id": 1324790670,
+        "waterlevel_datetime": "2026-10-15 03:00",
         "waterlevel_m": null,
-        "waterlevel_msl": "1.91",
-        "waterlevel_msl_previous": "1.85",
+        "waterlevel_msl": "0.98",
+        "waterlevel_msl_previous": "1.09",
         "flow_rate": null,
         "discharge": null,
-        "storage_percent": "97.91",
+        "storage_percent": "92.37",
         "sort_order": null,
         "station_type": "tele_waterlevel",
         "situation_level": 4,
@@ -415,116 +211,14 @@
             "en": "Bangkok"
           }
         },
-        "diff_wl_bank": "0.35",
+        "diff_wl_bank": "1.28",
         "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
         "river_gid": 186854,
         "river_name": "แม่น้ำเจ้าพระยา"
       }
     },
     {
-      "station_id": 1324714199,
-      "province_en": "Bangkok",
-      "province_th": "กรุงเทพมหานคร",
-      "station_name": "Chao Phraya 15",
-      "station_name_detail": {
-        "en": "Chao Phraya 15",
-        "th": "สะพานกรุงเทพ"
-      },
-      "river_or_canal": "แม่น้ำเจ้าพระยา",
-      "water_level_m_msl": "1.10",
-      "water_level_m_ground": null,
-      "bank_height_m_msl": null,
-      "situation_level": 4,
-      "station_type": "tele_waterlevel",
-      "telemetry_time": "2026-10-14 21:30",
-      "raw_station_data": {
-        "id": 1324714199,
-        "waterlevel_datetime": "2026-10-14 21:30",
-        "waterlevel_m": null,
-        "waterlevel_msl": "1.10",
-        "waterlevel_msl_previous": "1.41",
-        "flow_rate": null,
-        "discharge": null,
-        "storage_percent": "94.06",
-        "sort_order": null,
-        "station_type": "tele_waterlevel",
-        "situation_level": 4,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 10,
-          "basin_code": 10,
-          "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
-          }
-        },
-        "station": {
-          "id": 4,
-          "tele_station_name": {
-            "en": "Chao Phraya 15",
-            "th": "สะพานกรุงเทพ"
-          },
-          "tele_station_lat": 13.700301,
-          "tele_station_long": 100.49277,
-          "tele_station_oldcode": "CPY015",
-          "tele_station_type": "tele_waterlevel",
-          "left_bank": 2.201,
-          "right_bank": 2.161,
-          "min_bank": 2.16,
-          "ground_level": -15.697,
-          "offset": null,
-          "sub_basin_id": 240,
-          "agency_id": 9,
-          "geocode_id": 80,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "2",
-          "area_name": {
-            "th": "กรุงเทพมหานคร",
-            "en": "Bangkok"
-          },
-          "amphoe_code": "15",
-          "amphoe_name": {
-            "th": "ธนบุรี",
-            "en": "Thon Buri District"
-          },
-          "tumbon_code": "06",
-          "tumbon_name": {
-            "th": "ดาวคะนอง",
-            "en": "Dao Khanong"
-          },
-          "province_code": "10",
-          "province_name": {
-            "th": "กรุงเทพมหานคร",
-            "en": "Bangkok"
-          }
-        },
-        "diff_wl_bank": "1.06",
-        "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
-        "river_gid": 187850,
-        "river_name": "แม่น้ำเจ้าพระยา"
-      }
-    },
-    {
-      "station_id": 1324714144,
+      "station_id": 1324800553,
       "province_en": "Bangkok",
       "province_th": "กรุงเทพมหานคร",
       "station_name": "Krung Thep 9",
@@ -533,21 +227,21 @@
         "th": "คลองลำปลาทิว ลาดกระบัง"
       },
       "river_or_canal": "คลองลำปลาทิว",
-      "water_level_m_msl": "0.33",
+      "water_level_m_msl": "0.32",
       "water_level_m_ground": null,
       "bank_height_m_msl": null,
       "situation_level": 4,
       "station_type": "tele_waterlevel",
-      "telemetry_time": "2026-10-14 21:30",
+      "telemetry_time": "2026-10-15 03:50",
       "raw_station_data": {
-        "id": 1324714144,
-        "waterlevel_datetime": "2026-10-14 21:30",
+        "id": 1324800553,
+        "waterlevel_datetime": "2026-10-15 03:50",
         "waterlevel_m": null,
-        "waterlevel_msl": "0.33",
-        "waterlevel_msl_previous": "0.33",
+        "waterlevel_msl": "0.32",
+        "waterlevel_msl_previous": "0.32",
         "flow_rate": null,
         "discharge": null,
-        "storage_percent": "92.26",
+        "storage_percent": "91.99",
         "sort_order": null,
         "station_type": "tele_waterlevel",
         "situation_level": 4,
@@ -619,14 +313,14 @@
             "en": "Bangkok"
           }
         },
-        "diff_wl_bank": "0.29",
+        "diff_wl_bank": "0.30",
         "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
         "river_gid": 196969,
         "river_name": "คลองลำปลาทิว"
       }
     },
     {
-      "station_id": 1324714148,
+      "station_id": 1324800557,
       "province_en": "Samut Prakan",
       "province_th": "สมุทรปราการ",
       "station_name": "Sri Varee Noi Temple",
@@ -635,21 +329,21 @@
         "th": "คลองจระเข้ใหญ่ บางเสาธง (วัดศรีวารีน้อย)"
       },
       "river_or_canal": "คลองหัวตะเข้",
-      "water_level_m_msl": "0.14",
+      "water_level_m_msl": "0.13",
       "water_level_m_ground": null,
       "bank_height_m_msl": null,
       "situation_level": 4,
       "station_type": "tele_waterlevel",
-      "telemetry_time": "2026-10-14 21:30",
+      "telemetry_time": "2026-10-15 03:50",
       "raw_station_data": {
-        "id": 1324714148,
-        "waterlevel_datetime": "2026-10-14 21:30",
+        "id": 1324800557,
+        "waterlevel_datetime": "2026-10-15 03:50",
         "waterlevel_m": null,
-        "waterlevel_msl": "0.14",
-        "waterlevel_msl_previous": "0.14",
+        "waterlevel_msl": "0.13",
+        "waterlevel_msl_previous": "0.13",
         "flow_rate": null,
         "discharge": null,
-        "storage_percent": "88.79",
+        "storage_percent": "88.52",
         "sort_order": null,
         "station_type": "tele_waterlevel",
         "situation_level": 4,
@@ -721,37 +415,37 @@
             "en": "Samut Prakan"
           }
         },
-        "diff_wl_bank": "0.29",
+        "diff_wl_bank": "0.30",
         "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
         "river_gid": 197605,
         "river_name": "คลองหัวตะเข้"
       }
     },
     {
-      "station_id": 1324714136,
-      "province_en": "Samut Prakan",
-      "province_th": "สมุทรปราการ",
-      "station_name": "Khlong Lat Bang Yo 1 Gate",
+      "station_id": 1324800606,
+      "province_en": "Bangkok",
+      "province_th": "กรุงเทพมหานคร",
+      "station_name": "Chao Phraya 15",
       "station_name_detail": {
-        "en": "Khlong Lat Bang Yo 1 Gate",
-        "th": "ปตร. คลองลัดบางยอ 1"
+        "en": "Chao Phraya 15",
+        "th": "สะพานกรุงเทพ"
       },
       "river_or_canal": "แม่น้ำเจ้าพระยา",
-      "water_level_m_msl": "1.17",
+      "water_level_m_msl": "-0.03",
       "water_level_m_ground": null,
       "bank_height_m_msl": null,
       "situation_level": 4,
       "station_type": "tele_waterlevel",
-      "telemetry_time": "2026-10-14 21:30",
+      "telemetry_time": "2026-10-15 03:50",
       "raw_station_data": {
-        "id": 1324714136,
-        "waterlevel_datetime": "2026-10-14 21:30",
+        "id": 1324800606,
+        "waterlevel_datetime": "2026-10-15 03:50",
         "waterlevel_m": null,
-        "waterlevel_msl": "1.17",
-        "waterlevel_msl_previous": "1.32",
+        "waterlevel_msl": "-0.03",
+        "waterlevel_msl_previous": "-0.02",
         "flow_rate": null,
         "discharge": null,
-        "storage_percent": "85.83",
+        "storage_percent": "87.73",
         "sort_order": null,
         "station_type": "tele_waterlevel",
         "situation_level": 4,
@@ -777,23 +471,23 @@
           }
         },
         "station": {
-          "id": 575567,
+          "id": 4,
           "tele_station_name": {
-            "en": "Khlong Lat Bang Yo 1 Gate",
-            "th": "ปตร. คลองลัดบางยอ 1"
+            "en": "Chao Phraya 15",
+            "th": "สะพานกรุงเทพ"
           },
-          "tele_station_lat": 13.676162,
-          "tele_station_long": 100.553085,
-          "tele_station_oldcode": "BKC003",
+          "tele_station_lat": 13.700301,
+          "tele_station_long": 100.49277,
+          "tele_station_oldcode": "CPY015",
           "tele_station_type": "tele_waterlevel",
-          "left_bank": 1.513,
-          "right_bank": 1.899,
-          "min_bank": 1.51,
-          "ground_level": -0.907,
+          "left_bank": 2.201,
+          "right_bank": 2.161,
+          "min_bank": 2.16,
+          "ground_level": -15.697,
           "offset": null,
           "sub_basin_id": 240,
           "agency_id": 9,
-          "geocode_id": 249,
+          "geocode_id": 80,
           "hydro_id": null,
           "qmax": null,
           "is_key_station": false,
@@ -804,33 +498,135 @@
         "geocode": {
           "area_code": "2",
           "area_name": {
-            "th": "ภาคกลาง",
-            "en": "Central"
+            "th": "กรุงเทพมหานคร",
+            "en": "Bangkok"
           },
-          "amphoe_code": "04",
+          "amphoe_code": "15",
           "amphoe_name": {
-            "th": "พระประแดง",
-            "en": "Phra Pradaeng District"
+            "th": "ธนบุรี",
+            "en": "Thon Buri District"
           },
-          "tumbon_code": "08",
+          "tumbon_code": "06",
           "tumbon_name": {
-            "th": "บางยอ",
-            "en": "Bang Yo"
+            "th": "ดาวคะนอง",
+            "en": "Dao Khanong"
           },
-          "province_code": "11",
+          "province_code": "10",
           "province_name": {
-            "th": "สมุทรปราการ",
-            "en": "Samut Prakan"
+            "th": "กรุงเทพมหานคร",
+            "en": "Bangkok"
           }
         },
-        "diff_wl_bank": "0.34",
+        "diff_wl_bank": "2.19",
         "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
-        "river_gid": 188249,
+        "river_gid": 187850,
         "river_name": "แม่น้ำเจ้าพระยา"
       }
     },
     {
-      "station_id": 1324714151,
+      "station_id": 1324800548,
+      "province_en": "Bangkok",
+      "province_th": "กรุงเทพมหานคร",
+      "station_name": "Krung Thep 3",
+      "station_name_detail": {
+        "en": "Krung Thep 3",
+        "th": "คลองมหาสวัสดิ บางกรวย-สวนผัก"
+      },
+      "river_or_canal": "คลองมหาสวัสดิ์",
+      "water_level_m_msl": "1.33",
+      "water_level_m_ground": null,
+      "bank_height_m_msl": null,
+      "situation_level": 4,
+      "station_type": "tele_waterlevel",
+      "telemetry_time": "2026-10-15 03:50",
+      "raw_station_data": {
+        "id": 1324800548,
+        "waterlevel_datetime": "2026-10-15 03:50",
+        "waterlevel_m": null,
+        "waterlevel_msl": "1.33",
+        "waterlevel_msl_previous": "1.36",
+        "flow_rate": null,
+        "discharge": null,
+        "storage_percent": "85.67",
+        "sort_order": null,
+        "station_type": "tele_waterlevel",
+        "situation_level": 4,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 10,
+          "basin_code": 10,
+          "basin_name": {
+            "th": "ลุ่มน้ำเจ้าพระยา",
+            "en": "Chao Phraya Basin"
+          }
+        },
+        "station": {
+          "id": 5,
+          "tele_station_name": {
+            "en": "Krung Thep 3",
+            "th": "คลองมหาสวัสดิ บางกรวย-สวนผัก"
+          },
+          "tele_station_lat": 13.79965,
+          "tele_station_long": 100.43863,
+          "tele_station_oldcode": "BKK003",
+          "tele_station_type": "tele_waterlevel",
+          "left_bank": 2.069,
+          "right_bank": 2.152,
+          "min_bank": 2.07,
+          "ground_level": -3.101,
+          "offset": null,
+          "sub_basin_id": 240,
+          "agency_id": 9,
+          "geocode_id": 95,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "1",
+          "area_name": {
+            "th": "กรุงเทพมหานคร",
+            "en": "Bangkok"
+          },
+          "amphoe_code": "19",
+          "amphoe_name": {
+            "th": "ตลิ่งชัน",
+            "en": "Taling Chan District"
+          },
+          "tumbon_code": "02",
+          "tumbon_name": {
+            "th": "ตลิ่งชัน",
+            "en": "Taling Chan"
+          },
+          "province_code": "10",
+          "province_name": {
+            "th": "กรุงเทพมหานคร",
+            "en": "Bangkok"
+          }
+        },
+        "diff_wl_bank": "0.74",
+        "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
+        "river_gid": 186752,
+        "river_name": "คลองมหาสวัสดิ์"
+      }
+    },
+    {
+      "station_id": 1324800560,
       "province_en": "Bangkok",
       "province_th": "กรุงเทพมหานคร",
       "station_name": "Klong Ladprao Klong 2 Sai Tai",
@@ -844,13 +640,13 @@
       "bank_height_m_msl": null,
       "situation_level": 4,
       "station_type": "tele_waterlevel",
-      "telemetry_time": "2026-10-14 21:30",
+      "telemetry_time": "2026-10-15 03:50",
       "raw_station_data": {
-        "id": 1324714151,
-        "waterlevel_datetime": "2026-10-14 21:30",
+        "id": 1324800560,
+        "waterlevel_datetime": "2026-10-15 03:50",
         "waterlevel_m": null,
         "waterlevel_msl": "1.51",
-        "waterlevel_msl_previous": "1.50",
+        "waterlevel_msl_previous": "1.51",
         "flow_rate": null,
         "discharge": null,
         "storage_percent": "84.53",
@@ -932,7 +728,7 @@
       }
     },
     {
-      "station_id": 1324714152,
+      "station_id": 1324800561,
       "province_en": "Bangkok",
       "province_th": "กรุงเทพมหานคร",
       "station_name": "Klong Ladprao Bang Bua Temple",
@@ -941,24 +737,24 @@
         "th": "คลองลาดพร้าว วัดบางบัว"
       },
       "river_or_canal": "คลองบางบัว",
-      "water_level_m_msl": "1.47",
+      "water_level_m_msl": "1.40",
       "water_level_m_ground": null,
       "bank_height_m_msl": null,
-      "situation_level": 4,
+      "situation_level": 3,
       "station_type": "tele_waterlevel",
-      "telemetry_time": "2026-10-14 21:30",
+      "telemetry_time": "2026-10-15 03:50",
       "raw_station_data": {
-        "id": 1324714152,
-        "waterlevel_datetime": "2026-10-14 21:30",
+        "id": 1324800561,
+        "waterlevel_datetime": "2026-10-15 03:50",
         "waterlevel_m": null,
-        "waterlevel_msl": "1.47",
-        "waterlevel_msl_previous": "1.47",
+        "waterlevel_msl": "1.40",
+        "waterlevel_msl_previous": "1.41",
         "flow_rate": null,
         "discharge": null,
-        "storage_percent": "71.11",
+        "storage_percent": "68.46",
         "sort_order": null,
         "station_type": "tele_waterlevel",
-        "situation_level": 4,
+        "situation_level": 3,
         "agency": {
           "id": 9,
           "agency_name": {
@@ -1027,139 +823,37 @@
             "en": "Bangkok"
           }
         },
-        "diff_wl_bank": "0.73",
+        "diff_wl_bank": "0.80",
         "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
         "river_gid": 186304,
         "river_name": "คลองบางบัว"
       }
     },
     {
-      "station_id": 1324714140,
-      "province_en": "Bangkok",
-      "province_th": "กรุงเทพมหานคร",
-      "station_name": "Krung Thep 5",
-      "station_name_detail": {
-        "en": "Krung Thep 5",
-        "th": "คลองภาษีเจริญ เพชรเกษม69"
-      },
-      "river_or_canal": "คลองภาษีเจริญ",
-      "water_level_m_msl": "-2.21",
-      "water_level_m_ground": null,
-      "bank_height_m_msl": null,
-      "situation_level": 3,
-      "station_type": "tele_waterlevel",
-      "telemetry_time": "2026-10-14 21:30",
-      "raw_station_data": {
-        "id": 1324714140,
-        "waterlevel_datetime": "2026-10-14 21:30",
-        "waterlevel_m": null,
-        "waterlevel_msl": "-2.21",
-        "waterlevel_msl_previous": "-5.50",
-        "flow_rate": null,
-        "discharge": null,
-        "storage_percent": "54.79",
-        "sort_order": null,
-        "station_type": "tele_waterlevel",
-        "situation_level": 3,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 10,
-          "basin_code": 10,
-          "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
-          }
-        },
-        "station": {
-          "id": 10,
-          "tele_station_name": {
-            "en": "Krung Thep 5",
-            "th": "คลองภาษีเจริญ เพชรเกษม69"
-          },
-          "tele_station_lat": 13.69158,
-          "tele_station_long": 100.38127,
-          "tele_station_oldcode": "BKK005",
-          "tele_station_type": "tele_waterlevel",
-          "left_bank": 1.637,
-          "right_bank": 1.415,
-          "min_bank": 1.42,
-          "ground_level": -6.605,
-          "offset": null,
-          "sub_basin_id": 240,
-          "agency_id": 9,
-          "geocode_id": 180,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "1",
-          "area_name": {
-            "th": "กรุงเทพมหานคร",
-            "en": "Bangkok"
-          },
-          "amphoe_code": "40",
-          "amphoe_name": {
-            "th": "บางแค",
-            "en": "Bang Khae District"
-          },
-          "tumbon_code": "04",
-          "tumbon_name": {
-            "th": "หลักสอง",
-            "en": "Lak Song"
-          },
-          "province_code": "10",
-          "province_name": {
-            "th": "กรุงเทพมหานคร",
-            "en": "Bangkok"
-          }
-        },
-        "diff_wl_bank": "3.63",
-        "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
-        "river_gid": 187977,
-        "river_name": "คลองภาษีเจริญ"
-      }
-    },
-    {
-      "station_id": 1324714241,
+      "station_id": 1324800543,
       "province_en": "Samut Prakan",
       "province_th": "สมุทรปราการ",
-      "station_name": "Chulachomklao Fortress",
+      "station_name": "Wat Bangkachao Nok Gate",
       "station_name_detail": {
-        "en": "Chulachomklao Fortress",
-        "th": "ป้อมพระจุลจอมเกล้า"
+        "en": "Wat Bangkachao Nok Gate",
+        "th": "ปตร.วัดบางกระเจ้านอก"
       },
-      "river_or_canal": "คลองสรรพสามิต",
-      "water_level_m_msl": "0.11",
+      "river_or_canal": "คลองบางกะเจ้า",
+      "water_level_m_msl": "-0.05",
       "water_level_m_ground": null,
       "bank_height_m_msl": null,
       "situation_level": 3,
       "station_type": "tele_waterlevel",
-      "telemetry_time": "2026-10-14 21:30",
+      "telemetry_time": "2026-10-15 03:50",
       "raw_station_data": {
-        "id": 1324714241,
-        "waterlevel_datetime": "2026-10-14 21:30",
+        "id": 1324800543,
+        "waterlevel_datetime": "2026-10-15 03:50",
         "waterlevel_m": null,
-        "waterlevel_msl": "0.11",
-        "waterlevel_msl_previous": "0.28",
+        "waterlevel_msl": "-0.05",
+        "waterlevel_msl_previous": "-0.06",
         "flow_rate": null,
         "discharge": null,
-        "storage_percent": "49.05",
+        "storage_percent": "50.94",
         "sort_order": null,
         "station_type": "tele_waterlevel",
         "situation_level": 3,
@@ -1185,23 +879,23 @@
           }
         },
         "station": {
-          "id": 17,
+          "id": 575566,
           "tele_station_name": {
-            "en": "Chulachomklao Fortress",
-            "th": "ป้อมพระจุลจอมเกล้า"
+            "en": "Wat Bangkachao Nok Gate",
+            "th": "ปตร.วัดบางกระเจ้านอก"
           },
-          "tele_station_lat": 13.57378,
-          "tele_station_long": 100.57396,
-          "tele_station_oldcode": "GLF001",
+          "tele_station_lat": 13.689612,
+          "tele_station_long": 100.554886,
+          "tele_station_oldcode": "BKC002",
           "tele_station_type": "tele_waterlevel",
-          "left_bank": 1.856,
-          "right_bank": 1.949,
-          "min_bank": 1.86,
-          "ground_level": -1.573,
+          "left_bank": 1.74,
+          "right_bank": 1.26,
+          "min_bank": 1.26,
+          "ground_level": -1.41,
           "offset": null,
           "sub_basin_id": 240,
           "agency_id": 9,
-          "geocode_id": 260,
+          "geocode_id": 250,
           "hydro_id": null,
           "qmax": null,
           "is_key_station": false,
@@ -1215,15 +909,15 @@
             "th": "ภาคกลาง",
             "en": "Central"
           },
-          "amphoe_code": "05",
+          "amphoe_code": "04",
           "amphoe_name": {
-            "th": "พระสมุทรเจดีย์",
-            "en": "Phra Samut Chedi District"
+            "th": "พระประแดง",
+            "en": "Phra Pradaeng District"
           },
-          "tumbon_code": "03",
+          "tumbon_code": "09",
           "tumbon_name": {
-            "th": "แหลมฟ้าผ่า",
-            "en": "Laem Fa Pha"
+            "th": "บางกระเจ้า",
+            "en": "Bang Krachao"
           },
           "province_code": "11",
           "province_name": {
@@ -1231,14 +925,14 @@
             "en": "Samut Prakan"
           }
         },
-        "diff_wl_bank": "1.75",
+        "diff_wl_bank": "1.31",
         "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
-        "river_gid": 189550,
-        "river_name": "คลองสรรพสามิต"
+        "river_gid": 188003,
+        "river_name": "คลองบางกะเจ้า"
       }
     },
     {
-      "station_id": 1324714107,
+      "station_id": 1324800515,
       "province_en": "Bangkok",
       "province_th": "กรุงเทพมหานคร",
       "station_name": "Asok",
@@ -1247,21 +941,21 @@
         "th": "อโศก"
       },
       "river_or_canal": "คลองแสนแสบ",
-      "water_level_m_msl": "1.27",
+      "water_level_m_msl": "1.31",
       "water_level_m_ground": null,
       "bank_height_m_msl": null,
       "situation_level": 3,
       "station_type": "tele_waterlevel",
-      "telemetry_time": "2026-10-14 21:30",
+      "telemetry_time": "2026-10-15 03:50",
       "raw_station_data": {
-        "id": 1324714107,
-        "waterlevel_datetime": "2026-10-14 21:30",
+        "id": 1324800515,
+        "waterlevel_datetime": "2026-10-15 03:50",
         "waterlevel_m": null,
-        "waterlevel_msl": "1.27",
-        "waterlevel_msl_previous": "1.29",
+        "waterlevel_msl": "1.31",
+        "waterlevel_msl_previous": "1.30",
         "flow_rate": null,
         "discharge": null,
-        "storage_percent": "40.74",
+        "storage_percent": "42.86",
         "sort_order": null,
         "station_type": "tele_waterlevel",
         "situation_level": 3,
@@ -1333,10 +1027,316 @@
             "en": "Bangkok"
           }
         },
-        "diff_wl_bank": "1.12",
+        "diff_wl_bank": "1.08",
         "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
         "river_gid": 187330,
         "river_name": "คลองแสนแสบ"
+      }
+    },
+    {
+      "station_id": 1324800544,
+      "province_en": "Samut Prakan",
+      "province_th": "สมุทรปราการ",
+      "station_name": "Khlong Lat Bang Yo 1 Gate",
+      "station_name_detail": {
+        "en": "Khlong Lat Bang Yo 1 Gate",
+        "th": "ปตร. คลองลัดบางยอ 1"
+      },
+      "river_or_canal": "แม่น้ำเจ้าพระยา",
+      "water_level_m_msl": "-0.06",
+      "water_level_m_ground": null,
+      "bank_height_m_msl": null,
+      "situation_level": 3,
+      "station_type": "tele_waterlevel",
+      "telemetry_time": "2026-10-15 03:50",
+      "raw_station_data": {
+        "id": 1324800544,
+        "waterlevel_datetime": "2026-10-15 03:50",
+        "waterlevel_m": null,
+        "waterlevel_msl": "-0.06",
+        "waterlevel_msl_previous": "-0.06",
+        "flow_rate": null,
+        "discharge": null,
+        "storage_percent": "35.00",
+        "sort_order": null,
+        "station_type": "tele_waterlevel",
+        "situation_level": 3,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 10,
+          "basin_code": 10,
+          "basin_name": {
+            "th": "ลุ่มน้ำเจ้าพระยา",
+            "en": "Chao Phraya Basin"
+          }
+        },
+        "station": {
+          "id": 575567,
+          "tele_station_name": {
+            "en": "Khlong Lat Bang Yo 1 Gate",
+            "th": "ปตร. คลองลัดบางยอ 1"
+          },
+          "tele_station_lat": 13.676162,
+          "tele_station_long": 100.553085,
+          "tele_station_oldcode": "BKC003",
+          "tele_station_type": "tele_waterlevel",
+          "left_bank": 1.513,
+          "right_bank": 1.899,
+          "min_bank": 1.51,
+          "ground_level": -0.907,
+          "offset": null,
+          "sub_basin_id": 240,
+          "agency_id": 9,
+          "geocode_id": 249,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "2",
+          "area_name": {
+            "th": "ภาคกลาง",
+            "en": "Central"
+          },
+          "amphoe_code": "04",
+          "amphoe_name": {
+            "th": "พระประแดง",
+            "en": "Phra Pradaeng District"
+          },
+          "tumbon_code": "08",
+          "tumbon_name": {
+            "th": "บางยอ",
+            "en": "Bang Yo"
+          },
+          "province_code": "11",
+          "province_name": {
+            "th": "สมุทรปราการ",
+            "en": "Samut Prakan"
+          }
+        },
+        "diff_wl_bank": "1.57",
+        "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
+        "river_gid": 188249,
+        "river_name": "แม่น้ำเจ้าพระยา"
+      }
+    },
+    {
+      "station_id": 1324800646,
+      "province_en": "Samut Prakan",
+      "province_th": "สมุทรปราการ",
+      "station_name": "Chulachomklao Fortress",
+      "station_name_detail": {
+        "en": "Chulachomklao Fortress",
+        "th": "ป้อมพระจุลจอมเกล้า"
+      },
+      "river_or_canal": "คลองสรรพสามิต",
+      "water_level_m_msl": "-0.63",
+      "water_level_m_ground": null,
+      "bank_height_m_msl": null,
+      "situation_level": 2,
+      "station_type": "tele_waterlevel",
+      "telemetry_time": "2026-10-15 03:50",
+      "raw_station_data": {
+        "id": 1324800646,
+        "waterlevel_datetime": "2026-10-15 03:50",
+        "waterlevel_m": null,
+        "waterlevel_msl": "-0.63",
+        "waterlevel_msl_previous": "-0.75",
+        "flow_rate": null,
+        "discharge": null,
+        "storage_percent": "27.53",
+        "sort_order": null,
+        "station_type": "tele_waterlevel",
+        "situation_level": 2,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 10,
+          "basin_code": 10,
+          "basin_name": {
+            "th": "ลุ่มน้ำเจ้าพระยา",
+            "en": "Chao Phraya Basin"
+          }
+        },
+        "station": {
+          "id": 17,
+          "tele_station_name": {
+            "en": "Chulachomklao Fortress",
+            "th": "ป้อมพระจุลจอมเกล้า"
+          },
+          "tele_station_lat": 13.57378,
+          "tele_station_long": 100.57396,
+          "tele_station_oldcode": "GLF001",
+          "tele_station_type": "tele_waterlevel",
+          "left_bank": 1.856,
+          "right_bank": 1.949,
+          "min_bank": 1.86,
+          "ground_level": -1.573,
+          "offset": null,
+          "sub_basin_id": 240,
+          "agency_id": 9,
+          "geocode_id": 260,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "2",
+          "area_name": {
+            "th": "ภาคกลาง",
+            "en": "Central"
+          },
+          "amphoe_code": "05",
+          "amphoe_name": {
+            "th": "พระสมุทรเจดีย์",
+            "en": "Phra Samut Chedi District"
+          },
+          "tumbon_code": "03",
+          "tumbon_name": {
+            "th": "แหลมฟ้าผ่า",
+            "en": "Laem Fa Pha"
+          },
+          "province_code": "11",
+          "province_name": {
+            "th": "สมุทรปราการ",
+            "en": "Samut Prakan"
+          }
+        },
+        "diff_wl_bank": "2.49",
+        "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
+        "river_gid": 189550,
+        "river_name": "คลองสรรพสามิต"
+      }
+    },
+    {
+      "station_id": 1324800549,
+      "province_en": "Bangkok",
+      "province_th": "กรุงเทพมหานคร",
+      "station_name": "Krung Thep 5",
+      "station_name_detail": {
+        "en": "Krung Thep 5",
+        "th": "คลองภาษีเจริญ เพชรเกษม69"
+      },
+      "river_or_canal": "คลองภาษีเจริญ",
+      "water_level_m_msl": "-5.69",
+      "water_level_m_ground": null,
+      "bank_height_m_msl": null,
+      "situation_level": 2,
+      "station_type": "tele_waterlevel",
+      "telemetry_time": "2026-10-15 03:50",
+      "raw_station_data": {
+        "id": 1324800549,
+        "waterlevel_datetime": "2026-10-15 03:50",
+        "waterlevel_m": null,
+        "waterlevel_msl": "-5.69",
+        "waterlevel_msl_previous": "-5.69",
+        "flow_rate": null,
+        "discharge": null,
+        "storage_percent": "11.45",
+        "sort_order": null,
+        "station_type": "tele_waterlevel",
+        "situation_level": 2,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 10,
+          "basin_code": 10,
+          "basin_name": {
+            "th": "ลุ่มน้ำเจ้าพระยา",
+            "en": "Chao Phraya Basin"
+          }
+        },
+        "station": {
+          "id": 10,
+          "tele_station_name": {
+            "en": "Krung Thep 5",
+            "th": "คลองภาษีเจริญ เพชรเกษม69"
+          },
+          "tele_station_lat": 13.69158,
+          "tele_station_long": 100.38127,
+          "tele_station_oldcode": "BKK005",
+          "tele_station_type": "tele_waterlevel",
+          "left_bank": 1.637,
+          "right_bank": 1.415,
+          "min_bank": 1.42,
+          "ground_level": -6.605,
+          "offset": null,
+          "sub_basin_id": 240,
+          "agency_id": 9,
+          "geocode_id": 180,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "1",
+          "area_name": {
+            "th": "กรุงเทพมหานคร",
+            "en": "Bangkok"
+          },
+          "amphoe_code": "40",
+          "amphoe_name": {
+            "th": "บางแค",
+            "en": "Bang Khae District"
+          },
+          "tumbon_code": "04",
+          "tumbon_name": {
+            "th": "หลักสอง",
+            "en": "Lak Song"
+          },
+          "province_code": "10",
+          "province_name": {
+            "th": "กรุงเทพมหานคร",
+            "en": "Bangkok"
+          }
+        },
+        "diff_wl_bank": "7.10",
+        "diff_wl_bank_text": "ต่ำกว่าตลิ่ง (ม.)",
+        "river_gid": 187977,
+        "river_name": "คลองภาษีเจริญ"
       }
     }
   ]
