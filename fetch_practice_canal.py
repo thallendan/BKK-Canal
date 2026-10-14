@@ -1,83 +1,168 @@
 #!/usr/bin/env python3
+"""
+fetch_practice_canal.py
+
+Fetches live canal and river water level telemetry from ThaiWater (HII API v3).
+Parses nested station data, filters specifically for Bangkok and Samut Prakan
+waterways, and exports standardized station metrics to 'bkk_samutprakan_canals.json'.
+
+If the live fetch fails, it records the exact error diagnostic without
+simulating or generating fake data.
+"""
+
 import json
-import logging
+import ssl
+import time
+import urllib.request
+import urllib.error
 from datetime import datetime, timezone
-import requests
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-
-API_URL = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load"
+# Live endpoint for ThaiWater public water level telemetry
+CANAL_ENDPOINT_URL = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load"
 OUTPUT_FILE = "bkk_samutprakan_canals.json"
 
-# Province codes for Bangkok (10) and Samut Prakan (11)
-TARGET_PROVINCES = {"10": "Bangkok", "11": "Samut Prakan"}
+TARGET_PROVINCES = {"Bangkok", "Samut Prakan", "กรุงเทพมหานคร", "สมุทรปราการ"}
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-}
 
-def fetch_water_levels():
-    logging.info(f"Fetching water level data from {API_URL}")
-    try:
-        response = requests.get(API_URL, headers=HEADERS, timeout=30)
-        response.raise_for_status()
-        payload = response.json()
-    except Exception as err:
-        logging.error(f"Failed to fetch data: {err}")
-        return None
-
-    waterlevel_list = payload.get("data", {}).get("waterlevel_data", {}).get("data", [])
-    logging.info(f"Total stations returned by API: {len(waterlevel_list)}")
-
-    filtered_stations = []
-    
-    for item in waterlevel_list:
-        geocode = item.get("geocode", {})
-        prov_code = str(geocode.get("province_code", ""))
-        
-        if prov_code in TARGET_PROVINCES:
-            station_info = item.get("station", {})
-            agency_info = item.get("agency", {})
-            basin_info = item.get("basin", {})
-
-            record = {
-                "id": item.get("id"),
-                "station_id": station_info.get("id"),
-                "station_name_th": station_info.get("tele_station_name", {}).get("th") if isinstance(station_info.get("tele_station_name"), dict) else station_info.get("tele_station_name"),
-                "station_name_en": station_info.get("tele_station_name", {}).get("en") if isinstance(station_info.get("tele_station_name"), dict) else None,
-                "river_or_canal_name": item.get("river_name"),
-                "province_code": prov_code,
-                "province_en": TARGET_PROVINCES[prov_code],
-                "province_th": geocode.get("province_name", {}).get("th"),
-                "district_th": geocode.get("amphoe_name", {}).get("th"),
-                "subdistrict_th": geocode.get("tumbon_name", {}).get("th"),
-                "latitude": station_info.get("tele_station_lat"),
-                "longitude": station_info.get("tele_station_long"),
-                "waterlevel_datetime": item.get("waterlevel_datetime"),
-                "waterlevel_msl": item.get("waterlevel_msl"),
-                "diff_wl_bank": item.get("diff_wl_bank"),
-                "diff_wl_bank_text": item.get("diff_wl_bank_text"),
-                "situation_level": item.get("situation_level"),
-                "min_bank": station_info.get("min_bank"),
-                "agency_short": agency_info.get("agency_shortname", {}).get("en"),
-                "basin_en": basin_info.get("basin_name", {}).get("en")
-            }
-            filtered_stations.append(record)
-
-    logging.info(f"Found {len(filtered_stations)} target canal/river stations in BKK and Samut Prakan.")
-
-    output_data = {
-        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
-        "target_provinces": list(TARGET_PROVINCES.values()),
-        "record_count": len(filtered_stations),
-        "stations": filtered_stations
+def fetch_live_canal_data(url: str) -> tuple[dict, list]:
+    """
+    Fetches raw JSON from the live endpoint and returns diagnostic metadata
+    along with parsed station records.
+    """
+    start_time = time.time()
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Safari/537.36"
+        )
     }
 
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-        json.dump(output_data, f, ensure_ascii=False, indent=2)
+    req = urllib.request.Request(url, headers=headers)
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
 
-    logging.info(f"Successfully saved data to {OUTPUT_FILE}")
+    diagnostic = {
+        "endpoint_url": url,
+        "fetch_timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "success": False,
+        "status_code": None,
+        "response_time_sec": None,
+        "error": None
+    }
+
+    try:
+        with urllib.request.urlopen(req, context=ctx, timeout=20) as response:
+            elapsed = round(time.time() - start_time, 3)
+            status = response.status
+            raw_bytes = response.read()
+
+            diagnostic["success"] = True
+            diagnostic["status_code"] = status
+            diagnostic["response_time_sec"] = elapsed
+
+            payload = json.loads(raw_bytes.decode("utf-8"))
+            
+            # Correct nested pathway: response -> data -> waterlevel_data -> data
+            station_list = (
+                payload.get("data", {})
+                .get("waterlevel_data", {})
+                .get("data", [])
+            )
+            return diagnostic, station_list
+
+    except urllib.error.HTTPError as e:
+        diagnostic["status_code"] = e.code
+        diagnostic["error"] = f"HTTP Error {e.code}: {e.reason}"
+    except urllib.error.URLError as e:
+        diagnostic["error"] = f"URL Connection Error: {e.reason}"
+    except TimeoutError:
+        diagnostic["error"] = "Connection timed out (20s limit)"
+    except Exception as e:
+        diagnostic["error"] = f"Fetch or JSON parsing failed: {str(e)}"
+
+    return diagnostic, []
+
+
+def parse_bkk_samutprakan_stations(raw_stations: list) -> list:
+    """
+    Filters raw telemetry records for Bangkok and Samut Prakan stations,
+    handling nested geocode names and safely formatting fields.
+    """
+    filtered_stations = []
+
+    for item in raw_stations:
+        geocode = item.get("geocode", {})
+        prov_obj = geocode.get("province_name", {})
+        
+        # Safely extract English and Thai province names
+        prov_en = prov_obj.get("en") if isinstance(prov_obj, dict) else None
+        prov_th = prov_obj.get("th") if isinstance(prov_obj, dict) else None
+
+        if prov_en in TARGET_PROVINCES or prov_th in TARGET_PROVINCES:
+            station_info = item.get("station", {})
+            station_name_obj = station_info.get("tele_station_name", {})
+            
+            # Format station name safely even if language keys are missing
+            if isinstance(station_name_obj, dict):
+                st_name_en = station_name_obj.get("en")
+                st_name_th = station_name_obj.get("th")
+                display_name = st_name_en or st_name_th or f"Station {item.get('id')}"
+            else:
+                display_name = str(station_name_obj)
+
+            parsed_record = {
+                "station_id": item.get("id"),
+                "province_en": prov_en,
+                "province_th": prov_th,
+                "station_name": display_name,
+                "station_name_detail": station_name_obj,
+                "river_or_canal": item.get("river_name"),
+                "water_level_m_msl": item.get("waterlevel_msl"),
+                "water_level_m_ground": item.get("waterlevel_m"),
+                "bank_height_m_msl": item.get("ground_level"),
+                "situation_level": item.get("situation_level"),
+                "station_type": item.get("station_type"),
+                "telemetry_time": item.get("waterlevel_datetime"),
+                "raw_station_data": item
+            }
+            filtered_stations.append(parsed_record)
+
+    return filtered_stations
+
+
+def main():
+    print(f"Fetching live canal/river telemetry from {CANAL_ENDPOINT_URL}...")
+    diagnostic, raw_stations = fetch_live_canal_data(CANAL_ENDPOINT_URL)
+
+    if not diagnostic["success"]:
+        print(f"FAILED to fetch live data: {diagnostic['error']}")
+        output_payload = {
+            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "target_provinces": ["Bangkok", "Samut Prakan"],
+            "diagnostic": diagnostic,
+            "record_count": 0,
+            "stations": []
+        }
+    else:
+        filtered = parse_bkk_samutprakan_stations(raw_stations)
+        print(f"Successfully fetched live data. Found {len(filtered)} stations in Bangkok and Samut Prakan.")
+        
+        output_payload = {
+            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "target_provinces": ["Bangkok", "Samut Prakan"],
+            "diagnostic": diagnostic,
+            "total_raw_stations": len(raw_stations),
+            "record_count": len(filtered),
+            "stations": filtered
+        }
+
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        json.dump(output_payload, f, indent=2, ensure_ascii=False)
+
+    print(f"Data saved to '{OUTPUT_FILE}'.")
+
 
 if __name__ == "__main__":
-    fetch_water_levels()
+    main()
