@@ -1,9 +1,18 @@
 {
-  "timestamp_utc": "2026-10-14T13:39:54.543135+00:00",
+  "timestamp_utc": "2026-10-14T14:22:29.167234+00:00",
   "target_provinces": [
     "Bangkok",
     "Samut Prakan"
   ],
+  "diagnostic": {
+    "endpoint_url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
+    "fetch_timestamp_utc": "2026-10-14T14:22:24.734378+00:00",
+    "success": true,
+    "status_code": 200,
+    "response_time_sec": 2.338,
+    "error": null
+  },
+  "total_raw_stations": 0,
   "record_count": 0,
   "stations": []
 }
