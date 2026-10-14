@@ -3,8 +3,9 @@
 fetch_practice_canal.py
 
 Fetches live canal and river water level telemetry from ThaiWater (HII API v3).
-Parses nested station data, filters specifically for Bangkok and Samut Prakan
-waterways, and exports standardized station metrics to 'bkk_samutprakan_canals.json'.
+Parses station data across both raw API payloads and diagnostic file wrappers,
+filters specifically for Bangkok and Samut Prakan waterways, and exports
+standardized station metrics to 'bkk_samutprakan_canals.json'.
 
 If the live fetch fails, it records the exact error diagnostic without
 simulating or generating fake data.
@@ -17,17 +18,43 @@ import urllib.request
 import urllib.error
 from datetime import datetime, timezone
 
-# Live endpoint for ThaiWater public water level telemetry
-CANAL_ENDPOINT_URL = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load"
+# Primary and fallback endpoints for ThaiWater public water level telemetry
+PRIMARY_CANAL_ENDPOINT = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load"
+FALLBACK_CANAL_ENDPOINT = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel"
 OUTPUT_FILE = "bkk_samutprakan_canals.json"
 
 TARGET_PROVINCES = {"Bangkok", "Samut Prakan", "กรุงเทพมหานคร", "สมุทรปราการ"}
 
 
-def fetch_live_canal_data(url: str) -> tuple[dict, list]:
+def extract_raw_station_list(payload: dict) -> list:
     """
-    Fetches raw JSON from the live endpoint and returns diagnostic metadata
-    along with parsed station records.
+    Extracts the station array flexibly, handling both direct live API
+    payloads and wrapped diagnostic file formats.
+    """
+    if not isinstance(payload, dict):
+        return []
+
+    # 1. Direct Live API response: payload["waterlevel_data"]["data"]
+    if "waterlevel_data" in payload and isinstance(payload["waterlevel_data"], dict):
+        return payload["waterlevel_data"].get("data", [])
+
+    # 2. Wrapped diagnostic file format: payload["data"]["waterlevel_data"]["data"]
+    if "data" in payload and isinstance(payload["data"], dict):
+        inner_data = payload["data"]
+        if "waterlevel_data" in inner_data and isinstance(inner_data["waterlevel_data"], dict):
+            return inner_data["waterlevel_data"].get("data", [])
+
+    # 3. Standard list payload fallback
+    if isinstance(payload.get("data"), list):
+        return payload["data"]
+
+    return []
+
+
+def fetch_endpoint_json(url: str) -> tuple[dict, list]:
+    """
+    Fetches JSON from an endpoint and returns diagnostic information
+    along with parsed station objects.
     """
     start_time = time.time()
     headers = {
@@ -58,19 +85,18 @@ def fetch_live_canal_data(url: str) -> tuple[dict, list]:
             status = response.status
             raw_bytes = response.read()
 
-            diagnostic["success"] = True
             diagnostic["status_code"] = status
             diagnostic["response_time_sec"] = elapsed
 
             payload = json.loads(raw_bytes.decode("utf-8"))
-            
-            # Correct nested pathway: response -> data -> waterlevel_data -> data
-            station_list = (
-                payload.get("data", {})
-                .get("waterlevel_data", {})
-                .get("data", [])
-            )
-            return diagnostic, station_list
+            station_list = extract_raw_station_list(payload)
+
+            if station_list:
+                diagnostic["success"] = True
+                return diagnostic, station_list
+            else:
+                diagnostic["error"] = "HTTP 200 OK received, but station array was empty or structure unparseable."
+                return diagnostic, []
 
     except urllib.error.HTTPError as e:
         diagnostic["status_code"] = e.code
@@ -87,24 +113,21 @@ def fetch_live_canal_data(url: str) -> tuple[dict, list]:
 
 def parse_bkk_samutprakan_stations(raw_stations: list) -> list:
     """
-    Filters raw telemetry records for Bangkok and Samut Prakan stations,
-    handling nested geocode names and safely formatting fields.
+    Filters raw telemetry records for Bangkok and Samut Prakan stations.
     """
     filtered_stations = []
 
     for item in raw_stations:
         geocode = item.get("geocode", {})
         prov_obj = geocode.get("province_name", {})
-        
-        # Safely extract English and Thai province names
+
         prov_en = prov_obj.get("en") if isinstance(prov_obj, dict) else None
         prov_th = prov_obj.get("th") if isinstance(prov_obj, dict) else None
 
         if prov_en in TARGET_PROVINCES or prov_th in TARGET_PROVINCES:
             station_info = item.get("station", {})
             station_name_obj = station_info.get("tele_station_name", {})
-            
-            # Format station name safely even if language keys are missing
+
             if isinstance(station_name_obj, dict):
                 st_name_en = station_name_obj.get("en")
                 st_name_th = station_name_obj.get("th")
@@ -133,22 +156,30 @@ def parse_bkk_samutprakan_stations(raw_stations: list) -> list:
 
 
 def main():
-    print(f"Fetching live canal/river telemetry from {CANAL_ENDPOINT_URL}...")
-    diagnostic, raw_stations = fetch_live_canal_data(CANAL_ENDPOINT_URL)
+    print(f"Fetching live canal/river telemetry from primary endpoint: {PRIMARY_CANAL_ENDPOINT}")
+    diagnostic, raw_stations = fetch_endpoint_json(PRIMARY_CANAL_ENDPOINT)
 
-    if not diagnostic["success"]:
-        print(f"FAILED to fetch live data: {diagnostic['error']}")
+    # Secondary fallback attempt if primary endpoint yields no stations
+    if not diagnostic["success"] or not raw_stations:
+        print(f"Primary endpoint failed or returned no stations. Attempting fallback: {FALLBACK_CANAL_ENDPOINT}")
+        fb_diagnostic, fb_stations = fetch_endpoint_json(FALLBACK_CANAL_ENDPOINT)
+        if fb_diagnostic["success"] and fb_stations:
+            diagnostic, raw_stations = fb_diagnostic, fb_stations
+
+    if not diagnostic["success"] or not raw_stations:
+        print(f"FAILED to fetch live canal data: {diagnostic['error']}")
         output_payload = {
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),
             "target_provinces": ["Bangkok", "Samut Prakan"],
             "diagnostic": diagnostic,
+            "total_raw_stations": 0,
             "record_count": 0,
             "stations": []
         }
     else:
         filtered = parse_bkk_samutprakan_stations(raw_stations)
-        print(f"Successfully fetched live data. Found {len(filtered)} stations in Bangkok and Samut Prakan.")
-        
+        print(f"Successfully fetched live data. Found {len(filtered)} stations in Bangkok and Samut Prakan out of {len(raw_stations)} total raw stations.")
+
         output_payload = {
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),
             "target_provinces": ["Bangkok", "Samut Prakan"],
@@ -161,7 +192,7 @@ def main():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(output_payload, f, indent=2, ensure_ascii=False)
 
-    print(f"Data saved to '{OUTPUT_FILE}'.")
+    print(f"Data saved strictly to '{OUTPUT_FILE}'.")
 
 
 if __name__ == "__main__":
