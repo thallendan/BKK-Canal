@@ -1,30 +1,21 @@
 {
-  "timestamp_utc": "2026-10-15T03:36:29.867976+00:00",
-  "updated_at_utc": "2026-10-15T03:36:29.867976+00:00",
+  "timestamp_utc": "2026-10-15T03:44:48.516826+00:00",
+  "updated_at_utc": "2026-10-15T03:44:48.516826+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 2,
   "successful_count": 2,
   "failed_count": 0,
   "parsed_summary": {
+    "chaophraya_compact": {
+      "dams": [],
+      "gates_and_regulators": [],
+      "monitoring_stations": [],
+      "transit_lag_times": []
+    },
     "chaophraya_full": {
-      "regulators_found": [
-        "ATG01",
-        "ATG02",
-        "ATG03",
-        "ATG04",
-        "ATG05",
-        "ATG06",
-        "ATG07",
-        "ATG08",
-        "ATG09",
-        "ATG10",
-        "ATG11",
-        "ATG12",
-        "ATG13",
-        "ATG14",
-        "ATG15"
-      ]
+      "atg_regulators": [],
+      "gauges_and_diversions": []
     }
   },
   "results": [
@@ -35,7 +26,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=utf-8",
-      "response_time_sec": 1.808,
+      "response_time_sec": 2.123,
       "size_bytes": 67403,
       "line_count": 5,
       "data_format": "HTML Document (Web Report)",
@@ -55,19 +46,19 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html",
-      "response_time_sec": 2.281,
-      "size_bytes": 250991,
+      "response_time_sec": 1.711,
+      "size_bytes": 251039,
       "line_count": 1232,
       "data_format": "HTML Document (Web Report)",
       "sample_preview": [
-        "<!-- itc_water2026-10-15 CACHE HIT | total: 1.6541481018066 ms | mtime: 0.0069141387939453 ms | read: 0.12397766113281 ms | unserialize: 1.4758110046387 ms | size: 138214 bytes -->",
-        "<!-- d_dam2026-10-15 CACHE HIT | total: 0.091075897216797 ms | mtime: 0.0059604644775391 ms | read: 0.030040740966797 ms | unserialize: 0.021934509277344 ms | size: 2176 bytes -->",
-        "<!-- ib_data2026-10-1510 CACHE HIT | total: 0.17499923706055 ms | mtime: 0.0050067901611328 ms | read: 0.025033950805664 ms | unserialize: 0.13017654418945 ms | size: 16943 bytes -->",
-        "<!-- v_tele_data2026-10-15 CACHE HIT | total: 21.085023880005 ms | mtime: 0.0050067901611328 ms | read: 0.9000301361084 ms | unserialize: 20.159006118774 ms | size: 1970776 bytes -->",
-        "<!-- v_tele_station_detail_api CACHE HIT | total: 0.49209594726562 ms | mtime: 0.0059604644775391 ms | read: 0.31614303588867 ms | unserialize: 0.11706352233887 ms | size: 706030 bytes -->",
-        "<!-- egat_tele_data2026-10-15 CACHE HIT | total: 0.1070499420166 ms | mtime: 0.0059604644775391 ms | read: 0.046014785766602 ms | unserialize: 0.0030994415283203 ms | size: 6 bytes -->",
-        "<!-- getIbDataById3442026-10-15 CACHE HIT | total: 0.10395050048828 ms | mtime: 0.0059604644775391 ms | read: 0.046014785766602 ms | unserialize: 0.0040531158447266 ms | size: 6 bytes -->",
-        "<!-- getIbDataById3302026-10-15 CACHE HIT | total: 0.03504753112793 ms | mtime: 0.0050067901611328 ms | read: 0.016927719116211 ms | unserialize: 0.0011920928955078 ms | size: 6 bytes -->"
+        "<!-- itc_water2026-10-15 CACHE HIT | total: 2.1049976348877 ms | mtime: 0.013828277587891 ms | read: 0.1828670501709 ms | unserialize: 1.8470287322998 ms | size: 138214 bytes -->",
+        "<!-- d_dam2026-10-15 CACHE HIT | total: 0.12707710266113 ms | mtime: 0.013113021850586 ms | read: 0.040054321289062 ms | unserialize: 0.020027160644531 ms | size: 2176 bytes -->",
+        "<!-- ib_data2026-10-1510 CACHE HIT | total: 0.21886825561523 ms | mtime: 0.012874603271484 ms | read: 0.046014785766602 ms | unserialize: 0.13303756713867 ms | size: 16943 bytes -->",
+        "<!-- v_tele_data2026-10-15 CACHE HIT | total: 21.231174468994 ms | mtime: 0.01215934753418 ms | read: 1.7220973968506 ms | unserialize: 19.455909729004 ms | size: 1970776 bytes -->",
+        "<!-- v_tele_station_detail_api CACHE HIT | total: 0.60606002807617 ms | mtime: 0.013113021850586 ms | read: 0.4119873046875 ms | unserialize: 0.11014938354492 ms | size: 706030 bytes -->",
+        "<!-- egat_tele_data2026-10-15 CACHE HIT | total: 0.12683868408203 ms | mtime: 0.013113021850586 ms | read: 0.04887580871582 ms | unserialize: 0.0019073486328125 ms | size: 6 bytes -->",
+        "<!-- getIbDataById3442026-10-15 CACHE HIT | total: 0.12516975402832 ms | mtime: 0.013113021850586 ms | read: 0.049114227294922 ms | unserialize: 0.0030994415283203 ms | size: 6 bytes -->",
+        "<!-- getIbDataById3302026-10-15 CACHE HIT | total: 0.06103515625 ms | mtime: 0.010967254638672 ms | read: 0.025033950805664 ms | unserialize: 0.00095367431640625 ms | size: 6 bytes -->"
       ],
       "error": null
     }
