@@ -3,22 +3,32 @@
 fetch_canals.py
 
 Fetches live BMA canal telemetry directly from the Bangkok Drainage and 
-Sewerage Department (KlongMap AJAX endpoint) and exports a structured JSON file.
+Sewerage Department using a 2-step session to acquire cookies before querying 
+the AJAX endpoint.
 
 Output file: canals.json
 """
 
 import json
-import ssl
 import time
-import urllib.request
-import urllib.error
+import requests
 from datetime import datetime, timezone
 
-URL = "https://weather.bangkok.go.th/Klongmap/GetDataForUpdate"
+URL_HOME = "https://weather.bangkok.go.th/KlongMap"
+URL_API = "https://weather.bangkok.go.th/Klongmap/GetDataForUpdate"
 OUTPUT_FILE = "canals.json"
 
-HEADERS = {
+HEADERS_HOME = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "th-TH,th;q=0.9,en-US;q=0.8,en;q=0.7",
+}
+
+HEADERS_API = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -31,38 +41,39 @@ HEADERS = {
 }
 
 def fetch_bma_canal_data():
-    """Fetches raw JSON payload from BMA KlongMap endpoint."""
-    req = urllib.request.Request(URL, headers=HEADERS)
-    ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
-
+    """Establishes an ASP.NET session on the homepage before requesting JSON telemetry."""
+    session = requests.Session()
     start_time = time.time()
-    try:
-        with urllib.request.urlopen(req, context=ctx, timeout=20) as response:
-            elapsed = round(time.time() - start_time, 3)
-            raw_bytes = response.read()
-            
-            try:
-                text = raw_bytes.decode("utf-8")
-            except UnicodeDecodeError:
-                text = raw_bytes.decode("latin-1", errors="replace")
 
-            data = json.loads(text)
-            return True, response.status, elapsed, data, None
-    except urllib.error.HTTPError as e:
-        return False, e.code, 0, None, f"HTTP Error {e.code}: {e.reason}"
-    except urllib.error.URLError as e:
-        return False, None, 0, None, f"URL Error: {e.reason}"
-    except Exception as e:
-        return False, None, 0, None, f"Fetch Error: {str(e)}"
+    try:
+        # Step 1: Visit homepage to acquire session cookies and initialize session state
+        resp_home = session.get(URL_HOME, headers=HEADERS_HOME, timeout=15, verify=False)
+        if resp_home.status_code != 200:
+            return False, resp_home.status_code, 0, None, f"Homepage returned HTTP {resp_home.status_code}"
+
+        # Small delay to mimic standard client execution
+        time.sleep(1)
+
+        # Step 2: Query telemetry endpoint with established session context
+        resp_api = session.get(URL_API, headers=HEADERS_API, timeout=15, verify=False)
+        elapsed = round(time.time() - start_time, 3)
+
+        if resp_api.status_code == 200:
+            data = resp_api.json()
+            return True, resp_api.status_code, elapsed, data, None
+        else:
+            return False, resp_api.status_code, elapsed, None, f"API returned HTTP {resp_api.status_code}"
+
+    except requests.exceptions.RequestException as e:
+        return False, None, 0, None, f"Request failed: {str(e)}"
+    except json.JSONDecodeError:
+        return False, 200, 0, None, "Response was not valid JSON"
 
 def process_canal_payload(data):
     """Parses raw BMA telemetry into structured canal and station models."""
     water_stations = data.get("waterStation", [])
     river_maps = data.get("riverMap", [])
     
-    # Map river_map_id to readable English/Thai river names
     river_lookup = {}
     for r in river_maps:
         rid = r.get("river_map_id")
@@ -139,6 +150,9 @@ def process_canal_payload(data):
     }
 
 def main():
+    # Disable SSL warnings for government self-signed chain handling
+    requests.packages.urllib3.disable_warnings()
+
     timestamp_utc = datetime.now(timezone.utc).isoformat()
     print("Fetching live BMA canal telemetry...")
     
