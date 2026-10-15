@@ -1,14 +1,14 @@
 {
-  "timestamp_utc": "2026-10-15T19:58:09.016536+00:00",
-  "updated_at_utc": "2026-10-15T19:58:09.016536+00:00",
+  "timestamp_utc": "2026-10-15T22:55:57.333507+00:00",
+  "updated_at_utc": "2026-10-15T22:55:57.333507+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 10,
-  "successful_count": 9,
-  "failed_count": 1,
+  "successful_count": 10,
+  "failed_count": 0,
   "summary": {
-    "paknam_tide_msl": -1.184,
-    "gravity_drainage_window": "OPEN (+3.12m Head)",
+    "paknam_tide_msl": 0.264,
+    "gravity_drainage_window": "OPEN (+1.68m Head)",
     "critical_alert_sectors": "1 Overtopping / 8 Warning",
     "critical_overflow_count": 1,
     "high_risk_count": 8,
@@ -383,6 +383,13 @@
       "period": "2026-10-13",
       "description": "Madden-Julian Oscillation Index"
     },
+    "iod_dmi_index": {
+      "label": "Indian Ocean Dipole (DMI)",
+      "value": "+0.15",
+      "unit": "°C",
+      "period": "2026-May",
+      "description": "Equatorial Indian Ocean SST Gradient"
+    },
     "cpac850_wind_index": {
       "label": "CPAC 850mb Trade Wind Index",
       "value": "-3.00",
@@ -462,9 +469,9 @@
     },
     "chao_phraya_estuary_realtime_level": {
       "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
-      "value": "-1.184",
+      "value": "+0.264",
       "unit": "m MSL",
-      "period": "2026-10-16 02:50",
+      "period": "2026-10-16 05:50",
       "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
     },
     "chao_phraya_estuary_predicted_tide": {
@@ -483,7 +490,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.376,
+      "response_time_sec": 0.278,
       "error": null
     },
     {
@@ -493,18 +500,18 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.507,
+      "response_time_sec": 0.434,
       "error": null
     },
     {
       "key": "iod",
       "name": "IOD (Indian Ocean Dipole)",
       "url": "https://psl.noaa.gov/data/timeseries/month/data/dmi.had.long.data",
-      "success": false,
-      "status_code": null,
+      "success": true,
+      "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": null,
-      "error": "Fetch failed: HTTP Error 502: Bad Gateway"
+      "response_time_sec": 0.178,
+      "error": null
     },
     {
       "key": "cpac850",
@@ -513,7 +520,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.335,
+      "response_time_sec": 0.271,
       "error": null
     },
     {
@@ -523,7 +530,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.318,
+      "response_time_sec": 0.202,
       "error": null
     },
     {
@@ -533,7 +540,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.266,
+      "response_time_sec": 0.255,
       "error": null
     },
     {
@@ -543,7 +550,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.321,
+      "response_time_sec": 0.233,
       "error": null
     },
     {
@@ -553,7 +560,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 1.868,
+      "response_time_sec": 1.889,
       "error": null
     },
     {
@@ -563,7 +570,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 7.34,
+      "response_time_sec": 10.418,
       "error": null
     },
     {
@@ -572,7 +579,7 @@
       "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 1.764,
+      "response_time_sec": 2.063,
       "error": null
     }
   ]
