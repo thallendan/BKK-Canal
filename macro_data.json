@@ -1,10 +1,10 @@
 {
-  "timestamp_utc": "2026-10-15T19:54:24.111174+00:00",
+  "timestamp_utc": "2026-10-15T23:05:22.668112+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
     "mjo_phase": 1,
-    "mjo_amp": 1.3896867,
+    "mjo_amp": 1.2020627,
     "iod": 0.146,
     "heat_content": 2.93,
     "status": "SUCCESS"
@@ -56,7 +56,7 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4597,
+    "total_nationwide_stations": 4567,
     "max_nationwide_1h_mm": 24,
     "max_nationwide_24h_mm": 156.2,
     "bkk_samut_prakan_count": 27,
@@ -154,7 +154,7 @@
     ]
   },
   "estuary_tide": {
-    "realtime_msl": -1.184,
+    "realtime_msl": 0.364,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
