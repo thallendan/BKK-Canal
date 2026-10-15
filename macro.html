@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chao Phraya Macro Water Analysis - Greater Bangkok & Samut Prakan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+        .card { background-color: #1e293b; border: 1px solid #334155; border-radius: 0.75rem; padding: 1.25rem; }
+        .badge-live { background-color: #065f46; color: #34d399; }
+        .badge-warn { background-color: #78350f; color: #fde047; }
+        .badge-error { background-color: #7f1d1d; color: #fca5a5; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-bold text-white tracking-tight">Bangkok & Chao Phraya Basin Macro Hydrology</h1>
+            <p class="text-slate-400 text-sm mt-1">Multi-Pillar Integration: Climate Drivers, Headwater Storage, River Flow & Urban Telemetry</p>
+        </div>
+        <div id="status-badge" class="px-3 py-1.5 rounded-full text-xs font-semibold badge-warn">
+            Loading Live Telemetry...
+        </div>
+    </header>
+
+    <!-- Error Banner -->
+    <div id="error-banner" class="hidden max-w-7xl mx-auto mb-6 p-4 rounded-lg badge-error text-sm">
+        ⚠️ Warning: One or more telemetry endpoints failed to respond. Affected panels display "DATA UNAVAILABLE" without simulated values.
+    </div>
+
+    <main class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <!-- Pillar 1: Climate Teleconnections -->
+        <div class="card lg:col-span-1">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">1. Climate & Forcing</h2>
+            <div class="space-y-4">
+                <div>
+                    <span class="text-xs text-slate-400">ENSO (Niño 3.4 SST)</span>
+                    <div id="val-enso" class="text-xl font-bold text-sky-400">--</div>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-400">MJO (Phase & Amp)</span>
+                    <div id="val-mjo" class="text-xl font-bold text-emerald-400">--</div>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-400">Indian Ocean Dipole (DMI)</span>
+                    <div id="val-iod" class="text-xl font-bold text-amber-400">--</div>
+                </div>
+                <div>
+                    <span class="text-xs text-slate-400">Pacific Ocean Heat Content</span>
+                    <div id="val-heat" class="text-xl font-bold text-purple-400">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pillar 2: Headwater Storage -->
+        <div class="card lg:col-span-1">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">2. Major Reservoirs</h2>
+            <div class="space-y-3" id="dams-container">
+                <div class="text-sm text-slate-400">Loading dam storage...</div>
+            </div>
+        </div>
+
+        <!-- Pillar 3: River Hydraulics & Flow -->
+        <div class="card lg:col-span-2">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">3. Mainstem River Flow (Chao Phraya)</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-800 text-slate-400 border-b border-slate-700">
+                        <tr>
+                            <th class="p-2">Station</th>
+                            <th class="p-2">Location</th>
+                            <th class="p-2">Level (m)</th>
+                            <th class="p-2">Discharge (m³/s)</th>
+                            <th class="p-2">Capacity</th>
+                        </tr>
+                    </thead>
+                    <tbody id="river-table-body">
+                        <tr><td colspan="5" class="p-2 text-slate-500">Loading river gauges...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pillar 4: Greater BKK & Samut Prakan Rain -->
+        <div class="card lg:col-span-2">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">4. Local Rainfall Telemetry (BKK & Samut Prakan)</h2>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="bg-slate-800/60 p-3 rounded-lg">
+                    <span class="text-xs text-slate-400">Max Local 1h Intensity</span>
+                    <div id="val-rain-1h" class="text-lg font-bold text-amber-400">-- mm/hr</div>
+                </div>
+                <div class="bg-slate-800/60 p-3 rounded-lg">
+                    <span class="text-xs text-slate-400">Max Local 24h Volume</span>
+                    <div id="val-rain-24h" class="text-lg font-bold text-blue-400">-- mm</div>
+                </div>
+            </div>
+            <div class="text-xs font-semibold text-slate-400 mb-2">Top Rain Gauges (24h)</div>
+            <ul id="rain-list" class="space-y-1.5 text-xs text-slate-300">
+                <li class="text-slate-500">Loading rain telemetry...</li>
+            </ul>
+        </div>
+
+        <!-- Estuary Sea Level & Tide Buffer -->
+        <div class="card lg:col-span-2">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">5. Chao Phraya Estuary & Tide (Fort Phrachulachomklao)</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-slate-800/60 p-3 rounded-lg">
+                    <span class="text-xs text-slate-400">Real-Time Sea Level (Station GLF001)</span>
+                    <div id="val-tide-rt" class="text-xl font-bold text-emerald-400">-- m MSL</div>
+                </div>
+                <div class="bg-slate-800/60 p-3 rounded-lg">
+                    <span class="text-xs text-slate-400">Predicted Daily Tide Extremes (Station N03)</span>
+                    <div id="val-tide-bounds" class="text-xs font-medium text-slate-200 mt-1">--</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        async function loadMacroData() {
+            const statusBadge = document.getElementById('status-badge');
+            const errorBanner = document.getElementById('error-banner');
+
+            try {
+                const response = await fetch('macro_data.json');
+                if (!response.ok) throw new Error('Failed to fetch macro_data.json');
+                const data = await response.json();
+
+                statusBadge.textContent = 'Live System Active';
+                statusBadge.className = 'px-3 py-1.5 rounded-full text-xs font-semibold badge-live';
+
+                // 1. Climate
+                const tc = data.teleconnections || {};
+                document.getElementById('val-enso').textContent = tc.enso !== null ? `${tc.enso > 0 ? '+' : ''}${tc.enso} °C` : 'N/A';
+                document.getElementById('val-mjo').textContent = tc.mjo_phase ? `Phase ${tc.mjo_phase} (${tc.mjo_amp})` : 'N/A';
+                document.getElementById('val-iod').textContent = tc.iod !== null ? `${tc.iod > 0 ? '+' : ''}${tc.iod} °C` : 'N/A';
+                document.getElementById('val-heat').textContent = tc.heat_content !== null ? `${tc.heat_content > 0 ? '+' : ''}${tc.heat_content} °C` : 'N/A';
+
+                // 2. Dams
+                const damData = data.dam_storage?.dams || {};
+                const damsContainer = document.getElementById('dams-container');
+                damsContainer.innerHTML = '';
+                
+                if (Object.keys(damData).length === 0) {
+                    damsContainer.innerHTML = '<div class="text-xs text-rose-400">Dam Data Unavailable</div>';
+                } else {
+                    Object.entries(damData).forEach(([key, info]) => {
+                        const pct = info.storage_pct || 0;
+                        const colorClass = pct > 80 ? 'bg-rose-500' : (pct > 50 ? 'bg-blue-500' : 'bg-amber-500');
+                        damsContainer.innerHTML += `
+                            <div>
+                                <div class="flex justify-between text-xs mb-1">
+                                    <span class="capitalize font-medium text-slate-300">${key.replace('_', ' ')}</span>
+                                    <span class="font-bold text-slate-200">${pct}%</span>
+                                </div>
+                                <div class="w-full bg-slate-800 rounded-full h-2">
+                                    <div class="${colorClass} h-2 rounded-full" style="width: ${Math.min(pct, 100)}%"></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                // 3. River
+                const riverStations = data.river_hydraulics?.stations || [];
+                const riverBody = document.getElementById('river-table-body');
+                riverBody.innerHTML = '';
+
+                if (riverStations.length === 0) {
+                    riverBody.innerHTML = '<tr><td colspan="5" class="p-2 text-rose-400">River Telemetry Unavailable</td></tr>';
+                } else {
+                    riverStations.forEach(st => {
+                        riverBody.innerHTML += `
+                            <tr class="border-b border-slate-800 hover:bg-slate-800/40">
+                                <td class="p-2 font-bold text-sky-400">${st.station_code || '--'}</td>
+                                <td class="p-2">${st.name}</td>
+                                <td class="p-2 font-mono">${st.water_level_m !== null ? st.water_level_m : '--'}</td>
+                                <td class="p-2 font-mono text-emerald-400">${st.discharge_m3s !== null ? st.discharge_m3s : '--'}</td>
+                                <td class="p-2 font-mono">${st.bank_capacity_pct !== null ? st.bank_capacity_pct + '%' : '--'}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                // 4. Rain
+                const rain = data.rainfall_telemetry || {};
+                document.getElementById('val-rain-1h').textContent = `${rain.max_nationwide_1h_mm || 0} mm/hr`;
+                document.getElementById('val-rain-24h').textContent = `${rain.max_nationwide_24h_mm || 0} mm`;
+
+                const rainList = document.getElementById('rain-list');
+                rainList.innerHTML = '';
+                const topGauges = rain.top_bkk_samut_stations || [];
+
+                if (topGauges.length === 0) {
+                    rainList.innerHTML = '<li class="text-slate-500">No local station alerts.</li>';
+                } else {
+                    topGauges.forEach(st => {
+                        rainList.innerHTML += `
+                            <li class="flex justify-between items-center bg-slate-800/40 p-1.5 rounded border border-slate-700/50">
+                                <span><strong class="text-slate-200">${st.station_name}</strong> (${st.province})</span>
+                                <span class="font-mono text-sky-400 font-bold">${st.rain_24h_mm} mm</span>
+                            </li>
+                        `;
+                    });
+                }
+
+                // 5. Estuary Tide
+                const tide = data.estuary_tide || {};
+                document.getElementById('val-tide-rt').textContent = tide.realtime_msl !== null ? `${tide.realtime_msl > 0 ? '+' : ''}${tide.realtime_msl} m MSL` : 'Unavailable';
+                document.getElementById('val-tide-bounds').textContent = tide.predicted_bounds || 'N/A';
+
+            } catch (err) {
+                console.error(err);
+                statusBadge.textContent = 'Telemetry System Offline';
+                statusBadge.className = 'px-3 py-1.5 rounded-full text-xs font-semibold badge-error';
+                errorBanner.classList.remove('hidden');
+            }
+        }
+
+        loadMacroData();
+    </script>
+</body>
+</html>
