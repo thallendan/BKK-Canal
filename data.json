@@ -1,664 +1,586 @@
 {
-  "is_live": false,
-  "status": "FETCH_FAILED",
-  "updated_at_utc": "2026-10-14T22:55:48.739765+00:00",
-  "error_message": "Unable to connect to live ThaiWater telemetry endpoint (api-v3.thaiwater.net). Data is unavailable.",
+  "timestamp_utc": "2026-10-15T00:38:20.310098+00:00",
+  "updated_at_utc": "2026-10-15T00:38:20.310098+00:00",
+  "is_live": true,
+  "status": "SUCCESS",
+  "total_endpoints": 10,
+  "successful_count": 10,
+  "failed_count": 0,
   "summary": {
-    "paknam_tide_msl": null,
-    "tide_state": "DATA_UNAVAILABLE",
-    "gravity_drainage_window": "DATA_UNAVAILABLE (Endpoint Offline)",
-    "active_pumping_stations": null,
-    "avg_canal_capacity_pct": null
+    "paknam_tide_msl": 1.444,
+    "gravity_drainage_window": "OPEN (+0.32m Head)",
+    "critical_alert_sectors": "3 Overtopping / 7 Warning",
+    "critical_overflow_count": 3,
+    "high_risk_count": 7,
+    "total_monitored_stations": 13,
+    "avg_canal_capacity_pct": 87.2
   },
-  "tide_forecast_24h": [],
   "canals": [
     {
-      "id": "C01",
-      "name": "Khlong Saen Saep",
-      "pump_station": "Phra Khanong Pumping Complex",
-      "district": "Wattana / Khlong Toei",
-      "station_lat": 13.712,
-      "station_lon": 100.592,
+      "id": 1324883551,
+      "name": "คลองบางกะเจ้า",
+      "district": "Phra Pradaeng District, Samut Prakan",
+      "province": "Samut Prakan",
+      "pump_station": "Wat Bangkachao Nok Gate",
+      "matched_station_name": "Wat Bangkachao Nok Gate",
+      "station_lat": 13.689612,
+      "station_lon": 100.554886,
       "path": [
         [
-          13.7485,
-          100.535
+          13.689612,
+          100.554886
         ],
         [
-          13.749,
-          100.56
-        ],
-        [
-          13.743,
-          100.598
-        ],
-        [
-          13.712,
-          100.592
+          13.692612,
+          100.557886
         ]
       ],
-      "bank_limit_msl": 1.2,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": 1.76,
+      "capacity_pct": 118.73,
+      "buffer_remaining_m": -0.5,
+      "situation_level": 5,
+      "drainage_mode": "OVERFLOW / OVERTOPPING",
+      "risk_level": "HIGH",
+      "live_data_found": true
     },
     {
-      "id": "C02",
-      "name": "Khlong Phra Khanong",
-      "pump_station": "Phra Khanong Sluice Gate",
-      "district": "Phra Khanong",
-      "station_lat": 13.701,
-      "station_lon": 100.583,
+      "id": 1324066411,
+      "name": "แม่น้ำเจ้าพระยา",
+      "district": "Phra Pradaeng District, Samut Prakan",
+      "province": "Samut Prakan",
+      "pump_station": "Khlong Lat Bang Yo 2 Gate",
+      "matched_station_name": "Khlong Lat Bang Yo 2 Gate",
+      "station_lat": 13.661021,
+      "station_lon": 100.56727,
       "path": [
         [
-          13.712,
-          100.592
+          13.661021,
+          100.56727
         ],
         [
-          13.705,
-          100.589
-        ],
-        [
-          13.701,
-          100.583
+          13.664021,
+          100.57027
         ]
       ],
-      "bank_limit_msl": 1.5,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": 1.12,
+      "capacity_pct": 108.48,
+      "buffer_remaining_m": -0.21,
+      "situation_level": 5,
+      "drainage_mode": "OVERFLOW / OVERTOPPING",
+      "risk_level": "HIGH",
+      "live_data_found": true
     },
     {
-      "id": "C03",
-      "name": "Khlong Prawet Buri Rom",
-      "pump_station": "Prawet Control Gate",
-      "district": "Prawet / Lat Krabang",
-      "station_lat": 13.718,
-      "station_lon": 100.65,
+      "id": 1324883552,
+      "name": "แม่น้ำเจ้าพระยา",
+      "district": "Phra Pradaeng District, Samut Prakan",
+      "province": "Samut Prakan",
+      "pump_station": "Khlong Lat Bang Yo 1 Gate",
+      "matched_station_name": "Khlong Lat Bang Yo 1 Gate",
+      "station_lat": 13.676162,
+      "station_lon": 100.553085,
       "path": [
         [
-          13.712,
-          100.592
+          13.676162,
+          100.553085
         ],
         [
-          13.718,
-          100.65
-        ],
-        [
-          13.722,
-          100.72
-        ],
-        [
-          13.725,
-          100.78
+          13.679162,
+          100.556085
         ]
       ],
-      "bank_limit_msl": 1.1,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": 1.71,
+      "capacity_pct": 108.14,
+      "buffer_remaining_m": -0.2,
+      "situation_level": 5,
+      "drainage_mode": "OVERFLOW / OVERTOPPING",
+      "risk_level": "HIGH",
+      "live_data_found": true
     },
     {
-      "id": "C04",
-      "name": "Khlong Lat Krabang",
-      "pump_station": "Lat Krabang Pumping Station",
-      "district": "Lat Krabang",
-      "station_lat": 13.68,
-      "station_lon": 100.725,
+      "id": 1324883614,
+      "name": "แม่น้ำเจ้าพระยา",
+      "district": "Thon Buri District, Bangkok",
+      "province": "Bangkok",
+      "pump_station": "Chao Phraya 15",
+      "matched_station_name": "Chao Phraya 15",
+      "station_lat": 13.700301,
+      "station_lon": 100.49277,
       "path": [
         [
-          13.722,
-          100.72
+          13.700301,
+          100.49277
         ],
         [
-          13.68,
-          100.725
-        ],
-        [
-          13.63,
-          100.73
+          13.703301,
+          100.49577
         ]
       ],
-      "bank_limit_msl": 1.0,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": 1.39,
+      "capacity_pct": 95.68,
+      "buffer_remaining_m": 0.77,
+      "situation_level": 4,
+      "drainage_mode": "HIGH RISK (MONITORING)",
+      "risk_level": "ELEVATED",
+      "live_data_found": true
     },
     {
-      "id": "C05",
-      "name": "Khlong Sam Sen",
-      "pump_station": "Sam Sen Pumping Station",
-      "district": "Phaya Thai / Dusit",
-      "station_lat": 13.772,
-      "station_lon": 100.502,
+      "id": 1324857169,
+      "name": "แม่น้ำเจ้าพระยา",
+      "district": "Dusit District, Bangkok",
+      "province": "Bangkok",
+      "pump_station": "กรมชลประทานสามเสน",
+      "matched_station_name": "กรมชลประทานสามเสน",
+      "station_lat": 13.78815,
+      "station_lon": 100.509148,
       "path": [
         [
-          13.778,
-          100.54
+          13.78815,
+          100.509148
         ],
         [
-          13.775,
-          100.52
-        ],
-        [
-          13.772,
-          100.502
+          13.79115,
+          100.512148
         ]
       ],
-      "bank_limit_msl": 1.3,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": 1.1,
+      "capacity_pct": 93.09,
+      "buffer_remaining_m": 1.16,
+      "situation_level": 4,
+      "drainage_mode": "HIGH RISK (MONITORING)",
+      "risk_level": "ELEVATED",
+      "live_data_found": true
     },
     {
-      "id": "C06",
-      "name": "Khlong Bang Sue",
-      "pump_station": "Bang Sue Drainage Tunnel Complex",
-      "district": "Chatuchak / Bang Sue",
-      "station_lat": 13.798,
-      "station_lon": 100.52,
+      "id": 1324883560,
+      "name": "คลองลำปลาทิว",
+      "district": "Lat Krabang District, Bangkok",
+      "province": "Bangkok",
+      "pump_station": "Krung Thep 9",
+      "matched_station_name": "Krung Thep 9",
+      "station_lat": 13.7407,
+      "station_lon": 100.79468,
       "path": [
         [
-          13.805,
-          100.565
+          13.7407,
+          100.79468
         ],
         [
-          13.802,
-          100.535
-        ],
-        [
-          13.798,
-          100.52
+          13.7437,
+          100.79768
         ]
       ],
-      "bank_limit_msl": 1.25,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": 0.32,
+      "capacity_pct": 91.91,
+      "buffer_remaining_m": 0.3,
+      "situation_level": 4,
+      "drainage_mode": "HIGH RISK (MONITORING)",
+      "risk_level": "ELEVATED",
+      "live_data_found": true
     },
     {
-      "id": "C07",
-      "name": "Khlong Lat Phrao",
-      "pump_station": "Lat Phrao Water Control Station",
-      "district": "Huai Khwang / Lat Phrao",
-      "station_lat": 13.8,
-      "station_lon": 100.585,
+      "id": 1324883564,
+      "name": "คลองหัวตะเข้",
+      "district": "Bang Sao Thong District, Samut Prakan",
+      "province": "Samut Prakan",
+      "pump_station": "Sri Varee Noi Temple",
+      "matched_station_name": "Sri Varee Noi Temple",
+      "station_lat": 13.66949,
+      "station_lon": 100.80058,
       "path": [
         [
-          13.85,
-          100.59
+          13.66949,
+          100.80058
         ],
         [
-          13.8,
-          100.585
-        ],
-        [
-          13.755,
-          100.58
+          13.67249,
+          100.80358
         ]
       ],
-      "bank_limit_msl": 1.15,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": 0.12,
+      "capacity_pct": 88.21,
+      "buffer_remaining_m": 0.31,
+      "situation_level": 4,
+      "drainage_mode": "HIGH RISK (MONITORING)",
+      "risk_level": "ELEVATED",
+      "live_data_found": true
     },
     {
-      "id": "C08",
-      "name": "Khlong Prem Prachakon",
-      "pump_station": "Prem Prachakon Gate",
-      "district": "Don Mueang / Lak Si",
-      "station_lat": 13.86,
-      "station_lon": 100.56,
+      "id": 1324857378,
+      "name": "คลองมหาสวัสดิ์",
+      "district": "Taling Chan District, Bangkok",
+      "province": "Bangkok",
+      "pump_station": "Krung Thep 3",
+      "matched_station_name": "Krung Thep 3",
+      "station_lat": 13.79965,
+      "station_lon": 100.43863,
       "path": [
         [
-          13.92,
-          100.595
+          13.79965,
+          100.43863
         ],
         [
-          13.86,
-          100.56
-        ],
-        [
-          13.77,
-          100.53
+          13.80265,
+          100.44163
         ]
       ],
-      "bank_limit_msl": 1.35,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": 1.37,
+      "capacity_pct": 86.54,
+      "buffer_remaining_m": 0.7,
+      "situation_level": 4,
+      "drainage_mode": "HIGH RISK (MONITORING)",
+      "risk_level": "ELEVATED",
+      "live_data_found": true
     },
     {
-      "id": "C09",
-      "name": "Khlong Tan / Bang Kapi",
-      "pump_station": "Bang Kapi Control Gate",
-      "district": "Bangkapi",
-      "station_lat": 13.745,
-      "station_lon": 100.6,
+      "id": 1324883654,
+      "name": "คลองสรรพสามิต",
+      "district": "Phra Samut Chedi District, Samut Prakan",
+      "province": "Samut Prakan",
+      "pump_station": "Chulachomklao Fortress",
+      "matched_station_name": "Chulachomklao Fortress",
+      "station_lat": 13.57378,
+      "station_lon": 100.57396,
       "path": [
         [
-          13.76,
-          100.62
+          13.57378,
+          100.57396
         ],
         [
-          13.745,
-          100.6
-        ],
-        [
-          13.738,
-          100.585
+          13.57678,
+          100.57696
         ]
       ],
-      "bank_limit_msl": 1.2,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": 1.39,
+      "capacity_pct": 86.53,
+      "buffer_remaining_m": 0.47,
+      "situation_level": 4,
+      "drainage_mode": "HIGH RISK (MONITORING)",
+      "risk_level": "ELEVATED",
+      "live_data_found": true
     },
     {
-      "id": "C10",
-      "name": "Khlong Rangsit Prayunsak",
-      "pump_station": "Chulalongkorn Sluice Gate",
-      "district": "Pathum Thani Boundary",
-      "station_lat": 13.98,
-      "station_lon": 100.54,
+      "id": 1324883567,
+      "name": "คลองหกวา",
+      "district": "Lat Phrao District, Bangkok",
+      "province": "Bangkok",
+      "pump_station": "Klong Ladprao Klong 2 Sai Tai",
+      "matched_station_name": "Klong Ladprao Klong 2 Sai Tai",
+      "station_lat": 13.93183,
+      "station_lon": 100.63952,
       "path": [
         [
-          13.98,
-          100.54
+          13.93183,
+          100.63952
         ],
         [
-          13.982,
-          100.62
-        ],
-        [
-          13.985,
-          100.75
+          13.93483,
+          100.64252
         ]
       ],
-      "bank_limit_msl": 1.6,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": 1.51,
+      "capacity_pct": 84.5,
+      "buffer_remaining_m": 0.46,
+      "situation_level": 4,
+      "drainage_mode": "HIGH RISK (MONITORING)",
+      "risk_level": "ELEVATED",
+      "live_data_found": true
     },
     {
-      "id": "C11",
-      "name": "Khlong Bangkok Yai",
-      "pump_station": "Bangkok Yai Pumping Station",
-      "district": "Thonburi / Bangkok Yai",
-      "station_lat": 13.74,
-      "station_lon": 100.493,
+      "id": 1324883568,
+      "name": "คลองบางบัว",
+      "district": "Bang Khen District, Bangkok",
+      "province": "Bangkok",
+      "pump_station": "Klong Ladprao Bang Bua Temple",
+      "matched_station_name": "Klong Ladprao Bang Bua Temple",
+      "station_lat": 13.85402,
+      "station_lon": 100.58746,
       "path": [
         [
-          13.725,
-          100.47
+          13.85402,
+          100.58746
         ],
         [
-          13.732,
-          100.488
-        ],
-        [
-          13.74,
-          100.493
+          13.85702,
+          100.59046
         ]
       ],
-      "bank_limit_msl": 1.4,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": 1.43,
+      "capacity_pct": 69.68,
+      "buffer_remaining_m": 0.77,
+      "situation_level": 3,
+      "drainage_mode": "NORMAL DISCHARGE",
+      "risk_level": "NORMAL",
+      "live_data_found": true
     },
     {
-      "id": "C12",
-      "name": "Khlong Bangkok Noi",
-      "pump_station": "Bangkok Noi Control Gate",
-      "district": "Bangkok Noi",
-      "station_lat": 13.76,
-      "station_lon": 100.485,
+      "id": 1324883556,
+      "name": "คลองภาษีเจริญ",
+      "district": "Bang Khae District, Bangkok",
+      "province": "Bangkok",
+      "pump_station": "Krung Thep 5",
+      "matched_station_name": "Krung Thep 5",
+      "station_lat": 13.69158,
+      "station_lon": 100.38127,
       "path": [
         [
-          13.8,
-          100.45
+          13.69158,
+          100.38127
         ],
         [
-          13.77,
-          100.47
-        ],
-        [
-          13.76,
-          100.485
+          13.69458,
+          100.38427
         ]
       ],
-      "bank_limit_msl": 1.45,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": -2.34,
+      "capacity_pct": 53.14,
+      "buffer_remaining_m": 3.76,
+      "situation_level": 3,
+      "drainage_mode": "NORMAL DISCHARGE",
+      "risk_level": "NORMAL",
+      "live_data_found": true
     },
     {
-      "id": "C13",
-      "name": "Khlong Phasi Charoen",
-      "pump_station": "Phasi Charoen Station",
-      "district": "Phasi Charoen / Bang Khae",
-      "station_lat": 13.72,
-      "station_lon": 100.46,
+      "id": 1324883523,
+      "name": "คลองแสนแสบ",
+      "district": "Vadhana District, Bangkok",
+      "province": "Bangkok",
+      "pump_station": "Asok",
+      "matched_station_name": "Asok",
+      "station_lat": 13.74325,
+      "station_lon": 100.562164,
       "path": [
         [
-          13.72,
-          100.46
+          13.74325,
+          100.562164
         ],
         [
-          13.712,
-          100.4
-        ],
-        [
-          13.705,
-          100.32
+          13.74625,
+          100.565164
         ]
       ],
-      "bank_limit_msl": 1.1,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "water_level_msl": 1.42,
+      "capacity_pct": 48.68,
+      "buffer_remaining_m": 0.97,
+      "situation_level": 3,
+      "drainage_mode": "NORMAL DISCHARGE",
+      "risk_level": "NORMAL",
+      "live_data_found": true
+    }
+  ],
+  "summary_parameters": {
+    "enso_nino34_anom": {
+      "label": "ENSO (Niño 3.4 SST Anomaly)",
+      "value": "+2.84",
+      "unit": "°C",
+      "period": "2026-09",
+      "description": "Equatorial Pacific Ocean SST Anomaly"
+    },
+    "mjo_phase_amp": {
+      "label": "MJO (Phase & Amplitude)",
+      "value": "Phase 1 (Amp 1.39)",
+      "unit": "index",
+      "period": "2026-10-13",
+      "description": "Madden-Julian Oscillation Index"
+    },
+    "iod_dmi_index": {
+      "label": "Indian Ocean Dipole (DMI)",
+      "value": "+0.15",
+      "unit": "°C",
+      "period": "2026-May",
+      "description": "Equatorial Indian Ocean SST Gradient"
+    },
+    "cpac850_wind_index": {
+      "label": "CPAC 850mb Trade Wind Index",
+      "value": "-3.00",
+      "unit": "m/s anomaly",
+      "period": "2026-Sep",
+      "description": "Central Pacific Zonal Wind Anomaly"
+    },
+    "soi_index": {
+      "label": "Southern Oscillation Index (SOI)",
+      "value": "-2.00",
+      "unit": "index",
+      "period": "2026-Sep",
+      "description": "Tahiti-Darwin Sea Level Pressure Anomaly"
+    },
+    "olr_index": {
+      "label": "Outgoing Longwave Radiation (OLR)",
+      "value": "-1.00",
+      "unit": "W/m² anomaly",
+      "period": "2026-Sep",
+      "description": "Equatorial Pacific Cloudiness Proxy"
+    },
+    "pacific_heat_content": {
+      "label": "Pacific Upper 300m Heat Content",
+      "value": "+2.93",
+      "unit": "°C anomaly",
+      "period": "2026-09",
+      "description": "Equatorial Subsurface Ocean Heat Anomaly (160E-80W)"
+    },
+    "chao_phraya_4dam_combined": {
+      "label": "Chao Phraya 4-Dam Combined Storage",
+      "value": "75.7%",
+      "unit": "18,773 / 24,783 MCM (Usable: 12,065 MCM)",
+      "period": "Latest Report",
+      "description": "Primary BKK & Samut Prakan Water Supply & Salinity Buffer"
+    },
+    "dam_bhumibol": {
+      "label": "Bhumibol Dam (Ping River)",
+      "value": "70.0%",
+      "unit": "9,411 / 13,462 MCM (Usable: 5,611 MCM)",
+      "period": "Latest Report",
+      "description": "Chao Phraya Upper Basin Headwater Storage"
+    },
+    "dam_sirikit": {
+      "label": "Sirikit Dam (Nan River)",
+      "value": "82.0%",
+      "unit": "7,765 / 9,510 MCM (Usable: 4,915 MCM)",
+      "period": "Latest Report",
+      "description": "Chao Phraya Upper Basin Headwater Storage"
+    },
+    "dam_kwai_noi": {
+      "label": "Kwai Noi Bamrung Dan Dam",
+      "value": "84.0%",
+      "unit": "785 / 939 MCM (Usable: 742 MCM)",
+      "period": "Latest Report",
+      "description": "Chao Phraya Mid-Basin Flow Regulation"
+    },
+    "dam_pasak": {
+      "label": "Pasak Jolasid Dam (Pasak River)",
+      "value": "93.0%",
+      "unit": "812 / 872 MCM (Usable: 797 MCM)",
+      "period": "Latest Report",
+      "description": "Lower Chao Phraya / Eastern BKK Flow Buffer"
+    },
+    "dam_srinagarind": {
+      "label": "Srinagarind Dam (Mae Klong Basin)",
+      "value": "98.0%",
+      "unit": "17,337 / 17,745 MCM (Usable: 7,072 MCM)",
+      "period": "Latest Report",
+      "description": "Western Diversion & Samut Prakan Salinity Repulsion"
+    },
+    "dam_vajiralongkorn": {
+      "label": "Vajiralongkorn Dam (Mae Klong Basin)",
+      "value": "97.0%",
+      "unit": "8,606 / 8,860 MCM (Usable: 5,594 MCM)",
+      "period": "Latest Report",
+      "description": "Western Diversion & Samut Prakan Salinity Repulsion"
+    },
+    "chao_phraya_estuary_realtime_level": {
+      "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
+      "value": "+1.444",
+      "unit": "m MSL",
+      "period": "2026-10-15 07:30",
+      "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
+    },
+    "chao_phraya_estuary_predicted_tide": {
+      "label": "Chao Phraya Estuary Daily Tide Bounds (Fort Phrachulachomklao)",
+      "value": "Max: 1.16 (11:00:00) | Min: -0.24 (04:00:00)",
+      "unit": "m MSL (Time)",
+      "period": "Today Forecast",
+      "description": "Royal Thai Navy Predictive Tide Extremes (Station N03)"
+    }
+  },
+  "results": [
+    {
+      "key": "enso",
+      "name": "ENSO (Niño Indices)",
+      "url": "https://www.cpc.ncep.noaa.gov/data/indices/sstoi.indices",
+      "success": true,
+      "status_code": 200,
+      "content_type": "Unknown",
+      "response_time_sec": 0.447,
+      "error": null
     },
     {
-      "id": "C14",
-      "name": "Khlong Sanam Chai",
-      "pump_station": "Sanam Chai Water Gate",
-      "district": "Bang Khun Thian",
-      "station_lat": 13.63,
-      "station_lon": 100.44,
-      "path": [
-        [
-          13.7,
-          100.47
-        ],
-        [
-          13.63,
-          100.44
-        ],
-        [
-          13.55,
-          100.4
-        ]
-      ],
-      "bank_limit_msl": 1.2,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "key": "mjo",
+      "name": "MJO (RMM Index)",
+      "url": "https://www.bom.gov.au/clim_data/IDCKGEM000/rmm.74toRealtime.txt",
+      "success": true,
+      "status_code": 200,
+      "content_type": "text/plain; charset=UTF-8",
+      "response_time_sec": 0.336,
+      "error": null
     },
     {
-      "id": "C15",
-      "name": "Khlong Maha Sawat",
-      "pump_station": "Maha Sawat Control Gate",
-      "district": "Taling Chan / Nonthaburi",
-      "station_lat": 13.805,
-      "station_lon": 100.47,
-      "path": [
-        [
-          13.805,
-          100.47
-        ],
-        [
-          13.802,
-          100.38
-        ],
-        [
-          13.798,
-          100.28
-        ]
-      ],
-      "bank_limit_msl": 1.5,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "key": "iod",
+      "name": "IOD (Indian Ocean Dipole)",
+      "url": "https://psl.noaa.gov/data/timeseries/month/data/dmi.had.long.data",
+      "success": true,
+      "status_code": 200,
+      "content_type": "Unknown",
+      "response_time_sec": 0.216,
+      "error": null
     },
     {
-      "id": "C16",
-      "name": "Khlong Samut Prakan / Pak Nam",
-      "pump_station": "Pak Nam Fort Station",
-      "district": "Mueang Samut Prakan",
-      "station_lat": 13.56,
-      "station_lon": 100.598,
-      "path": [
-        [
-          13.6,
-          100.59
-        ],
-        [
-          13.58,
-          100.595
-        ],
-        [
-          13.56,
-          100.598
-        ]
-      ],
-      "bank_limit_msl": 1.8,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "key": "cpac850",
+      "name": "CPAC850 (Zonal Wind Anomaly)",
+      "url": "https://www.cpc.ncep.noaa.gov/data/indices/cpac850",
+      "success": true,
+      "status_code": 200,
+      "content_type": "Unknown",
+      "response_time_sec": 0.277,
+      "error": null
     },
     {
-      "id": "C17",
-      "name": "Khlong Dan",
-      "pump_station": "Khlong Dan Coastal Station",
-      "district": "Bang Bo (Samut Prakan)",
-      "station_lat": 13.51,
-      "station_lon": 100.8,
-      "path": [
-        [
-          13.55,
-          100.78
-        ],
-        [
-          13.51,
-          100.8
-        ],
-        [
-          13.48,
-          100.82
-        ]
-      ],
-      "bank_limit_msl": 1.7,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "key": "soi",
+      "name": "Tahiti-Darwin Sea Pressure Difference (SOI)",
+      "url": "https://www.cpc.ncep.noaa.gov/data/indices/soi",
+      "success": true,
+      "status_code": 200,
+      "content_type": "Unknown",
+      "response_time_sec": 0.201,
+      "error": null
     },
     {
-      "id": "C18",
-      "name": "Khlong Suvarnabhumi",
-      "pump_station": "Suvarnabhumi Main Canal Station",
-      "district": "Bang Phli (Samut Prakan)",
-      "station_lat": 13.6,
-      "station_lon": 100.76,
-      "path": [
-        [
-          13.68,
-          100.75
-        ],
-        [
-          13.6,
-          100.76
-        ],
-        [
-          13.53,
-          100.77
-        ]
-      ],
-      "bank_limit_msl": 1.3,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "key": "olr",
+      "name": "Outgoing Longwave Radiation (OLR)",
+      "url": "https://www.cpc.ncep.noaa.gov/data/indices/olr",
+      "success": true,
+      "status_code": 200,
+      "content_type": "Unknown",
+      "response_time_sec": 0.244,
+      "error": null
     },
     {
-      "id": "C19",
-      "name": "Khlong Samrong",
-      "pump_station": "Samrong Pumping Station",
-      "district": "Samrong / Mueang Samut Prakan",
-      "station_lat": 13.65,
-      "station_lon": 100.59,
-      "path": [
-        [
-          13.65,
-          100.59
-        ],
-        [
-          13.63,
-          100.65
-        ],
-        [
-          13.61,
-          100.75
-        ]
-      ],
-      "bank_limit_msl": 1.35,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "key": "heat_content",
+      "name": "Pacific Heat Content Index",
+      "url": "https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ocean/index/heat_content_index.txt",
+      "success": true,
+      "status_code": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "response_time_sec": 0.259,
+      "error": null
     },
     {
-      "id": "C20",
-      "name": "Khlong Phra Ya Phren",
-      "pump_station": "Bang Bor Control Gate",
-      "district": "Bang Sao Thong (Samut Prakan)",
-      "station_lat": 13.62,
-      "station_lon": 100.83,
-      "path": [
-        [
-          13.69,
-          100.82
-        ],
-        [
-          13.62,
-          100.83
-        ],
-        [
-          13.55,
-          100.84
-        ]
-      ],
-      "bank_limit_msl": 1.25,
-      "water_level_msl": null,
-      "buffer_remaining_m": null,
-      "capacity_pct": null,
-      "delta_h_meters": null,
-      "drainage_mode": "DATA_UNAVAILABLE",
-      "pump_status": "UNKNOWN",
-      "risk_level": "NO_DATA",
-      "live_data_found": false,
-      "matched_station_name": null
+      "key": "dam_storage",
+      "name": "Thailand Dam Storage (HII/RID)",
+      "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en",
+      "success": true,
+      "status_code": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "response_time_sec": 1.696,
+      "error": null
+    },
+    {
+      "key": "chao_phraya_tide",
+      "name": "Chao Phraya Estuary Sea Level & Tide (Fort Phrachulachomklao)",
+      "url": "https://tiwrmdev.hii.or.th/v3/sealevel",
+      "success": true,
+      "status_code": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "response_time_sec": 7.179,
+      "error": null
+    },
+    {
+      "key": "canal_telemetry",
+      "name": "Bangkok & Samut Prakan Canal Telemetry (HII)",
+      "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
+      "success": true,
+      "status_code": 200,
+      "response_time_sec": 1.963,
+      "error": null
     }
   ]
 }
