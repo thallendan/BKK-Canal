@@ -1,0 +1,9 @@
+{
+  "timestamp_utc": "2026-10-15T15:43:03.247331+00:00",
+  "is_live": false,
+  "status_code": 403,
+  "error": "HTTP Error 403: Forbidden",
+  "summary": null,
+  "canals": [],
+  "stations": []
+}
