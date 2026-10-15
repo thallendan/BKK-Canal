@@ -12,8 +12,9 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Font Awesome -->
+    <!-- Font Awesome & Chart.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         body { background-color: #080d1a; color: #f8fafc; font-family: sans-serif; }
@@ -75,7 +76,7 @@
                 <div class="absolute left-0 top-full mt-2 w-72 p-3 bg-slate-900/95 border border-cyan-500/40 rounded-xl shadow-2xl backdrop-blur-md opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50 text-xs text-slate-300 space-y-1">
                     <p class="font-bold text-cyan-300 border-b border-slate-800 pb-1">Pak Nam Estuary Tide Gauge</p>
                     <p class="text-[11px] leading-relaxed">
-                        Measures live coastal sea water elevation at Pak Nam (Samut Prakan) relative to Mean Sea Level (MSL). High ocean tides restrict natural canal discharge.
+                        Measures live coastal sea water elevation at Pak Nam (Samut Prakan) relative to Mean Sea Level (MSL). When Gulf tides exceed <strong>+1.30m MSL</strong>, seawater restricts natural river discharge.
                     </p>
                 </div>
             </div>
@@ -109,7 +110,7 @@
                 <div class="absolute left-0 top-full mt-2 w-72 p-3 bg-slate-900/95 border border-red-500/40 rounded-xl shadow-2xl backdrop-blur-md opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50 text-xs text-slate-300 space-y-1">
                     <p class="font-bold text-red-300 border-b border-slate-800 pb-1">Direct Live Alert Telemetry</p>
                     <p class="text-[11px] leading-relaxed">
-                        Displays counts of stations in official alert levels directly from HII telemetry: <strong>Situation Level 5</strong> (Active Overtopping/Overflowing) and <strong>Situation Level 4</strong> (High Risk / Warning).
+                        Displays station alert counts directly from HII telemetry: <strong>Situation Level 5</strong> (Active Overtopping/Overflowing) and <strong>Situation Level 4</strong> (High Risk / Warning).
                     </p>
                 </div>
             </div>
@@ -126,7 +127,7 @@
                 <div class="absolute right-0 top-full mt-2 w-72 p-3 bg-slate-900/95 border border-emerald-500/40 rounded-xl shadow-2xl backdrop-blur-md opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50 text-xs text-slate-300 space-y-1">
                     <p class="font-bold text-emerald-300 border-b border-slate-800 pb-1">Regional Flood Storage Buffer</p>
                     <p class="text-[11px] leading-relaxed">
-                        The average filled capacity across all live-monitored canal sectors relative to their concrete floodwall limits.
+                        The average filled capacity percentage across all monitored canal sectors relative to their concrete floodwall limits.
                     </p>
                 </div>
             </div>
@@ -184,7 +185,7 @@
                         Gravity Drainage Status
                     </div>
                     <p class="text-slate-300 leading-relaxed text-[11px]">
-                        Calculates hydraulic head offset (Canal Level minus Tide Height). When sea tide exceeds canal height, flow into the river mouth is restricted.
+                        Calculates hydraulic head offset (Canal Level minus Tide Height). When sea tide exceeds canal height, natural flow is restricted.
                     </p>
                 </div>
 
@@ -194,7 +195,7 @@
                         Critical Alert Sectors
                     </div>
                     <p class="text-slate-300 leading-relaxed text-[11px]">
-                        Official HII alert statuses: Situation Level 5 indicates active canal overtopping/overflow; Situation Level 4 indicates high risk / warning level.
+                        Official HII alert statuses: Situation Level 5 indicates active canal overtopping; Situation Level 4 indicates high risk / warning level.
                     </p>
                 </div>
 
@@ -204,7 +205,7 @@
                         Avg Capacity Used
                     </div>
                     <p class="text-slate-300 leading-relaxed text-[11px]">
-                        Average filled capacity percentage across all live-monitored canal sectors relative to concrete floodwall capacity.
+                        Average water level across all monitored canal sectors relative to concrete floodwall capacity.
                     </p>
                 </div>
 
@@ -231,10 +232,7 @@
             map.fitBounds(MAP_BOUNDS);
             map.setZoom(map.getZoom() + 1);
 
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap &copy; CARTO',
-                maxZoom: 18
-            }).addTo(map);
+            L.imageOverlay('bkk_map.png', MAP_BOUNDS).addTo(map);
 
             canalGroup = L.layerGroup().addTo(map);
             stationGroup = L.layerGroup().addTo(map);
@@ -254,7 +252,7 @@
 
                 if (data.is_live === false || data.status === "FETCH_FAILED" || data.status === "PARTIAL") {
                     if (alertBanner) alertBanner.classList.remove('hidden');
-                    if (alertText) alertText.innerText = data.error_message || 'Live canal telemetry could not be fetched completely from HII ThaiWater.';
+                    if (alertText) alertText.innerText = data.error_message || 'Live telemetry could not be fetched completely from endpoints.';
                     if (alertTime) alertTime.innerText = `Sync: ${data.updated_at_utc ? new Date(data.updated_at_utc).toLocaleTimeString() : 'N/A'}`;
                 } else if (alertBanner) {
                     alertBanner.classList.add('hidden');
@@ -312,13 +310,29 @@
             }
 
             canals.forEach(c => {
-                let lineColor = '#10b981'; // Green for normal
-                if (c.situation_level === 5) lineColor = '#ef4444'; // Red for overtopping
-                else if (c.situation_level === 4) lineColor = '#f59e0b'; // Amber for high risk
+                let lineColor = '#64748b'; // Default gray for missing/no endpoint data
+                if (c.live_data_found) {
+                    if (c.situation_level === 5 || c.risk_level === 'HIGH') lineColor = '#ef4444'; // Red for overtopping
+                    else if (c.situation_level === 4 || c.risk_level === 'ELEVATED') lineColor = '#f59e0b'; // Amber for warning
+                    else lineColor = '#10b981'; // Green for normal
+                }
 
+                // Render canal polyline if path coordinates are present
+                if (c.path && c.path.length >= 2) {
+                    const polyline = L.polyline(c.path, {
+                        color: lineColor,
+                        weight: 4,
+                        opacity: 0.85
+                    });
+                    const capText = (c.capacity_pct !== null && c.capacity_pct !== undefined) ? `${c.capacity_pct}%` : 'Data Unavailable';
+                    polyline.bindPopup(`<b>${c.name}</b><br>Capacity: ${capText}`);
+                    canalGroup.addLayer(polyline);
+                }
+
+                // Render station circle marker
                 if (c.station_lat && c.station_lon) {
                     const marker = L.circleMarker([c.station_lat, c.station_lon], {
-                        radius: 8,
+                        radius: 7,
                         fillColor: lineColor,
                         color: '#ffffff',
                         weight: 2,
@@ -341,19 +355,26 @@
                     stationGroup.addLayer(marker);
                 }
 
+                // Render sidebar row
                 const row = document.createElement('div');
                 row.className = 'glass-card p-2.5 rounded-xl flex items-center justify-between text-xs border border-slate-800 hover:border-slate-700 transition-colors';
                 const wlDisplay = (c.water_level_msl !== null && c.water_level_msl !== undefined) ? `+${c.water_level_msl}m MSL` : 'Data Unavailable';
                 const capDisplay = (c.capacity_pct !== null && c.capacity_pct !== undefined) ? `${c.capacity_pct}%` : 'Data Unavailable';
                 
-                let badgeClass = 'bg-emerald-950/80 text-emerald-400 border-emerald-800/60';
-                let alertLabel = 'Normal';
-                if (c.situation_level === 5) {
-                    badgeClass = 'bg-red-950/80 text-red-400 border-red-800/60 animate-pulse';
-                    alertLabel = 'Overtopping';
-                } else if (c.situation_level === 4) {
-                    badgeClass = 'bg-amber-950/80 text-amber-400 border-amber-800/60';
-                    alertLabel = 'Warning';
+                let badgeClass = 'bg-slate-800 text-slate-400 border-slate-700';
+                let alertLabel = 'No Data';
+
+                if (c.live_data_found) {
+                    if (c.situation_level === 5 || c.risk_level === 'HIGH') {
+                        badgeClass = 'bg-red-950/80 text-red-400 border-red-800/60 animate-pulse';
+                        alertLabel = 'Overtopping';
+                    } else if (c.situation_level === 4 || c.risk_level === 'ELEVATED') {
+                        badgeClass = 'bg-amber-950/80 text-amber-400 border-amber-800/60';
+                        alertLabel = 'Warning';
+                    } else {
+                        badgeClass = 'bg-emerald-950/80 text-emerald-400 border-emerald-800/60';
+                        alertLabel = 'Normal';
+                    }
                 }
 
                 row.innerHTML = `
