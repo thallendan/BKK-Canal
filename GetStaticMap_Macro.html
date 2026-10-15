@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chao Phraya Basin Macro Overview Map Generator</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #0f172a; color: #f8fafc; }
+    #map { width: 1200px; height: 800px; border: 2px solid #334155; margin-bottom: 15px; border-radius: 8px; }
+    button { padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; background: #0284c7; color: white; border: none; border-radius: 6px; }
+    button:hover { background: #0369a1; }
+    #boundsBox { margin-top: 15px; padding: 16px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; font-family: monospace; max-width: 1200px; }
+  </style>
+</head>
+<body>
+  <h2>Chao Phraya Macro Basin Overview Map Snapshot Generator</h2>
+  <div id="map"></div>
+  <button id="downloadBtn">Download PNG Map (chaophraya_macro_map.png)</button>
+
+  <div id="boundsBox">Calculating true viewport bounds...</div>
+
+  <script>
+    // Targeted regional macro bounds covering Northern Reservoirs down to the Gulf of Thailand
+    const bounds = [
+      [13.4000, 98.8000],    // SW: Upper Gulf of Thailand Estuary & Lower Delta
+      [18.0000, 101.3000]    // NE: Sirikit Reservoir & Upper Ping/Nan Headwaters
+    ];
+
+    // Initialize Leaflet map instance
+    const map = L.map('map', { 
+      zoomControl: false,
+      attributionControl: false
+    });
+
+    // Clean OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      crossOrigin: true
+    }).addTo(map);
+
+    // Frame map to bounding box
+    map.fitBounds(bounds);
+
+    // Extract precise bounding box coordinates once rendered
+    map.whenReady(() => {
+      setTimeout(() => {
+        const actualBounds = map.getBounds();
+        const sw = actualBounds.getSouthWest();
+        const ne = actualBounds.getNorthEast();
+
+        const boundsArrayString = `[[${sw.lat.toFixed(4)}, ${sw.lng.toFixed(4)}], [${ne.lat.toFixed(4)}, ${ne.lng.toFixed(4)}]]`;
+
+        console.log("=== EXACT MACRO BOUNDS FOR L.imageOverlay() ===");
+        console.log(boundsArrayString);
+
+        document.getElementById('boundsBox').innerHTML = 
+          `<strong>Copy this exact macro coordinate array into L.imageOverlay() in your macro dashboard:</strong><br><br>` +
+          `<input type="text" value="${boundsArrayString}" readonly style="width: 100%; padding: 10px; font-size: 14px; font-family: monospace; background: #0f172a; color: #38bdf8; border: 1px solid #334155; border-radius: 4px;" onclick="this.select();">`;
+      }, 300);
+    });
+
+    // Download PNG map image handler
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+      html2canvas(document.getElementById('map'), { useCORS: true }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'chaophraya_macro_map.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    });
+  </script>
+</body>
+</html>
