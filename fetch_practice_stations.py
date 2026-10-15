@@ -2,12 +2,18 @@
 """
 fetch_practice_stations.py
 
-Fetches live data from Chao Phraya basin telemetry endpoints:
+Fetches live weather and hydrological telemetry from two Chao Phraya basin web portals:
 1. Chao Phraya basin compact (https://waterchart.thaiwater.net/basin/chaophraya)
 2. Chao Phraya basin full (https://tiwrm.hii.or.th/DATA/REPORT/php/chart/chaopraya/2013/chaopraya.php)
 
-Saves diagnostic and parsed telemetry output strictly to 'data_practice_stations.json'.
-Never simulates or generates mock data if endpoints fail.
+Scrapes, extracts, and structures:
+- Dam storage volume (MCM), percentage (%), daily inflow, and discharge
+- Sluice gate headwater vs. tailwater levels (m MSL) & flow discharge (m3/s)
+- Regional river/canal monitoring stations (BKK, CPY, GLF, ATG series)
+- Hydrological transit lag times between basin nodes
+
+Writes strictly to 'data_practice_stations.json' with full diagnostic logging.
+Never generates mock or simulated data if endpoints fail.
 """
 
 import json
@@ -34,6 +40,150 @@ ENDPOINTS = [
 ]
 
 
+def clean_html_text(html_content: str) -> str:
+    """Strips HTML tags, styles, scripts, and normalizes whitespace."""
+    text = re.sub(r'<style[^>]*>.*?</style>', ' ', html_content, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r'<script[^>]*>.*?</script>', ' ', text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r'<[^>]+>', ' ', text)
+    text = re.sub(r'&nbsp;', ' ', text)
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
+
+
+def parse_chaophraya_compact(body_text: str) -> dict:
+    """Extracts reservoirs, water gates, regional stations, and transit lag times."""
+    clean_text = clean_html_text(body_text)
+
+    # 1. Dam and Reservoir Storage Metrics
+    dams = []
+    dam_pattern = re.compile(
+        r'(เขื่อน[\u0E00-\u0E7F\s]+?)\s*([\d\.,]+)\s*ล้าน\.\s*ลบ\.ม\.\s*\(\s*([\d\.]+)%\s*\)'
+        r'(?:\s*ไหลลง\s*([\d\.,]+))?(?:\s*ระบาย\s*([\d\.,]+))?'
+    )
+    for m in dam_pattern.finditer(clean_text):
+        dams.append({
+            "dam_name": m.group(1).strip(),
+            "storage_mcm": float(m.group(2).replace(',', '')),
+            "storage_pct": float(m.group(3)),
+            "inflow_mcm": float(m.group(4).replace(',', '')) if m.group(4) else None,
+            "discharge_mcm": float(m.group(5).replace(',', '')) if m.group(5) else None
+        })
+
+    # 2. Water Control Gates & Sluice Gates (ปตร.)
+    gates = []
+    gate_pattern = re.compile(
+        r'(ปตร\.[^\s<]+(?:\s+[^\s<]+)?)\s*(?:(ATG\d+))?\s*(?:(msl|cms))?\s*'
+        r'([-+]?\d*\.?\d+|-)?\s*/\s*([-+]?\d*\.?\d+|-)?'
+    )
+    for m in gate_pattern.finditer(clean_text):
+        name = m.group(1).strip()
+        code = m.group(2)
+        unit = m.group(3)
+        val1 = m.group(4) if m.group(4) and m.group(4) != '-' else None
+        val2 = m.group(5) if m.group(5) and m.group(5) != '-' else None
+
+        gates.append({
+            "gate_name": name,
+            "code": code,
+            "unit": unit,
+            "headwater_level": float(val1) if val1 else None,
+            "tailwater_level": float(val2) if val2 else None
+        })
+
+    # 3. Regional Canal & River Stations (BKK, CPY, GLF, THA, YOM, NAN, PIN, WAN)
+    stations = []
+    st_pattern = re.compile(
+        r'\b(BKK\d+|CPY\d+|GLF\d+|THA\d+|YOM\d+|NAN\d+|PIN\d+|WAN\d+|LBI\d+|DIV\d+)\b'
+        r'\s*([\u0E00-\u0E7F\sA-Za-z0-9_.-]*?)\s*(msl|cms)?\s*([-+]?\d*\.?\d+|-)?\s*/\s*([-+]?\d*\.?\d+|-)?'
+    )
+    for m in st_pattern.finditer(clean_text):
+        st_id = m.group(1).strip()
+        st_name = m.group(2).strip()
+        unit = m.group(3)
+        val1 = m.group(4) if m.group(4) and m.group(4) != '-' else None
+        val2 = m.group(5) if m.group(5) and m.group(5) != '-' else None
+
+        stations.append({
+            "station_id": st_id,
+            "station_name": st_name,
+            "unit": unit,
+            "water_level": float(val1) if val1 else None,
+            "discharge": float(val2) if val2 else None
+        })
+
+    # 4. Hydrological Travel / Lag Times
+    lag_times = re.findall(r'(\d+(?:\.\d+)?\s*(?:วัน|ชม\.))', clean_text)
+    unique_lag_times = sorted(list(set(lag_times)))
+
+    return {
+        "dams": dams,
+        "gates_and_regulators": gates,
+        "monitoring_stations": stations,
+        "transit_lag_times": unique_lag_times
+    }
+
+
+def parse_chaophraya_full(body_text: str) -> dict:
+    """Extracts hardware ATG regulators, mainstem stations, and diversion flows."""
+    clean_text = clean_html_text(body_text)
+
+    # 1. Regulator ATG Sensor Hardware Network
+    atg_regulators = []
+    atg_pattern = re.compile(
+        r'(ATG\d+)\s*(?:[\u0E00-\u0E7F\sA-Za-z0-9_.-]*?)\s*(?:(ปตร\.[^\s]+))?\s*'
+        r'(?:([\d\.-]+)\s*msl)?\s*(?:([\d\.-]+)\s*msl)?\s*(?:([\d\.-]+)\s*cms)?',
+        re.IGNORECASE
+    )
+    for m in atg_pattern.finditer(clean_text):
+        code = m.group(1).upper()
+        name = m.group(2) if m.group(2) else ""
+        hw = m.group(3) if m.group(3) and m.group(3) != '-' else None
+        tw = m.group(4) if m.group(4) and m.group(4) != '-' else None
+        q = m.group(5) if m.group(5) and m.group(5) != '-' else None
+
+        atg_regulators.append({
+            "code": code,
+            "gate_name": name,
+            "headwater_msl": float(hw) if hw else None,
+            "tailwater_msl": float(tw) if tw else None,
+            "discharge_cms": float(q) if q else None
+        })
+
+    # 2. Mainstem Gauge Stations & Side Diversions
+    gauges_and_diversions = []
+    div_pattern = re.compile(
+        r'\b(CPY\d+|BKK\d+|DIV\d+|Bang\s*Sai|บางไทร|ปากคลอง\d*|คลองผันน้ำ[^\s]+)\b'
+        r'\s*([\u0E00-\u0E7F\sA-Za-z0-9_.-]*?)\s*(msl|cms)?\s*([-+]?\d*\.?\d+|-)?',
+        re.IGNORECASE
+    )
+    for m in div_pattern.finditer(clean_text):
+        id_tag = m.group(1).strip()
+        name = m.group(2).strip()
+        unit = m.group(3)
+        val = m.group(4) if m.group(4) and m.group(4) != '-' else None
+
+        gauges_and_diversions.append({
+            "identifier": id_tag,
+            "name": name,
+            "unit": unit,
+            "value": float(val) if val else None
+        })
+
+    return {
+        "atg_regulators": atg_regulators,
+        "gauges_and_diversions": gauges_and_diversions
+    }
+
+
+def parse_endpoint_content(key: str, body_text: str) -> dict:
+    """Routes response content to the appropriate site parser."""
+    if key == "chaophraya_compact":
+        return parse_chaophraya_compact(body_text)
+    elif key == "chaophraya_full":
+        return parse_chaophraya_full(body_text)
+    return {}
+
+
 def classify_format(content_type: str, body_text: str) -> str:
     text_head = body_text.strip()[:300].lower()
     if "text/html" in content_type.lower() or "<html" in text_head or "<!doctype html" in text_head:
@@ -41,28 +191,6 @@ def classify_format(content_type: str, body_text: str) -> str:
     if "application/json" in content_type.lower() or (text_head.startswith("{") or text_head.startswith("[")):
         return "JSON Structured Data"
     return "Plain Text / Unformatted"
-
-
-def parse_html_content(key: str, body_text: str) -> dict:
-    """Extracts summary telemetry readings from HTML pages where available."""
-    parsed = {}
-
-    if key == "chaophraya_compact":
-        # Extract station water level / flow matches (e.g., msl or cms readings)
-        matches = re.findall(r'([\u0E00-\u0E7FA-Za-z0-9_.\-\s]+)\s+(msl|cms)\s+([-+]?\d*\.?\d+)', body_text)
-        if matches:
-            parsed["sample_readings_count"] = len(matches)
-            parsed["sample_readings"] = [
-                {"location": m[0].strip(), "unit": m[1], "value": m[2]}
-                for m in matches[:10]
-            ]
-    elif key == "chaophraya_full":
-        # Extract regulator ATG identifiers or dam tags
-        atg_matches = re.findall(r'(ATG\d+|ปตร\.[^\s<]+)', body_text)
-        if atg_matches:
-            parsed["regulators_found"] = sorted(list(set(atg_matches)))[:15]
-
-    return parsed
 
 
 def fetch_endpoint(endpoint: dict) -> tuple[dict, dict]:
@@ -125,7 +253,7 @@ def fetch_endpoint(endpoint: dict) -> tuple[dict, dict]:
             diagnostic["data_format"] = classify_format(content_type, body_text)
             diagnostic["sample_preview"] = non_empty_lines[:8]
 
-            parsed_data = parse_html_content(key, body_text)
+            parsed_data = parse_endpoint_content(key, body_text)
 
     except urllib.error.HTTPError as e:
         diagnostic["status_code"] = e.code
