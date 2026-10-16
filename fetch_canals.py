@@ -3,8 +3,7 @@
 fetch_canals.py
 
 Fetches live BMA canal telemetry directly from the Bangkok Drainage and 
-Sewerage Department using `curl_cffi` to impersonate a real Chrome TLS fingerprint,
-bypassing Cloudflare WAF/Bot Protection on datacenter IPs.
+Sewerage Department API endpoint without pre-visiting the main HTML map page.
 
 Output file: canals.json
 """
@@ -14,46 +13,39 @@ import time
 from datetime import datetime, timezone
 from curl_cffi import requests
 
-URL_HOME = "https://weather.bangkok.go.th/KlongMap"
 URL_API = "https://weather.bangkok.go.th/Klongmap/GetDataForUpdate"
 OUTPUT_FILE = "canals.json"
 
-HEADERS_HOME = {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) "
+        "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1"
+    ),
+    "Accept": "application/json, text/plain, */*",
     "Accept-Language": "th-TH,th;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Upgrade-Insecure-Requests": "1",
-}
-
-HEADERS_API = {
+    "Origin": "https://weather.bangkok.go.th",
     "Referer": "https://weather.bangkok.go.th/KlongMap",
-    "X-Requested-With": "XMLHttpRequest",
-    "Accept": "application/json, text/javascript, */*; q=0.01",
-    "Accept-Language": "th-TH,th;q=0.9,en-US;q=0.8,en;q=0.7",
 }
 
 def fetch_bma_canal_data():
-    """Establishes an impersonated session to pass Cloudflare checks before querying the API."""
-    # Impersonate Chrome 120 TLS fingerprint and HTTP/2 settings
-    session = requests.Session(impersonate="chrome120")
+    """Queries the BMA telemetry endpoint directly using browser impersonation."""
     start_time = time.time()
 
     try:
-        # Step 1: Visit homepage to solve Cloudflare challenge & acquire session cookies
-        resp_home = session.get(URL_HOME, headers=HEADERS_HOME, timeout=20, verify=False)
-        if resp_home.status_code != 200:
-            return False, resp_home.status_code, 0, None, f"Homepage returned HTTP {resp_home.status_code}"
-
-        time.sleep(1)
-
-        # Step 2: Request telemetry JSON endpoint using established session
-        resp_api = session.get(URL_API, headers=HEADERS_API, timeout=20, verify=False)
+        response = requests.get(
+            URL_API, 
+            headers=HEADERS, 
+            impersonate="chrome120", 
+            timeout=25, 
+            verify=False
+        )
         elapsed = round(time.time() - start_time, 3)
 
-        if resp_api.status_code == 200:
-            data = resp_api.json()
-            return True, resp_api.status_code, elapsed, data, None
+        if response.status_code == 200:
+            data = response.json()
+            return True, response.status_code, elapsed, data, None
         else:
-            return False, resp_api.status_code, elapsed, None, f"API returned HTTP {resp_api.status_code}"
+            return False, response.status_code, elapsed, None, f"API returned HTTP {response.status_code}"
 
     except Exception as e:
         return False, None, 0, None, f"Request failed: {str(e)}"
@@ -82,7 +74,7 @@ def process_canal_payload(data):
         info = st.get("water_station_info") or {}
         last = st.get("water_level_last") or {}
 
-        station_name = info.get("station_name", "Unknown Station")
+        station_name = info.get("station_name") or info.get("station_name_en") or "Unknown Station"
         ts = last.get("site_timestamp")
         if ts and not latest_ts:
             latest_ts = ts
@@ -140,7 +132,7 @@ def process_canal_payload(data):
 
 def main():
     timestamp_utc = datetime.now(timezone.utc).isoformat()
-    print("Fetching live BMA canal telemetry with TLS impersonation...")
+    print("Fetching live BMA canal telemetry directly...")
     
     success, status_code, elapsed, raw_data, error_msg = fetch_bma_canal_data()
 
