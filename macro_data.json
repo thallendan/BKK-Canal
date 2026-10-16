@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-10-16T01:23:04.467380+00:00",
+  "timestamp_utc": "2026-10-16T07:12:43.366239+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
@@ -56,9 +56,9 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4588,
-    "max_nationwide_1h_mm": 0.4,
-    "max_nationwide_24h_mm": 156.4,
+    "total_nationwide_stations": 4609,
+    "max_nationwide_1h_mm": 41.6,
+    "max_nationwide_24h_mm": 156.2,
     "bkk_samut_prakan_count": 27,
     "top_bkk_samut_stations": [
       {
@@ -138,7 +138,7 @@
         "province": "Bangkok",
         "district": "Bang Khen District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 4.4,
+        "rain_24h_mm": 4.8,
         "lat": 13.85402,
         "lon": 100.58746
       },
@@ -154,7 +154,7 @@
     ]
   },
   "estuary_tide": {
-    "realtime_msl": 1.376,
+    "realtime_msl": 0.683,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
