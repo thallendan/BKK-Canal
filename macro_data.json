@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-10-16T12:27:44.906300+00:00",
+  "timestamp_utc": "2026-10-16T17:26:23.513376+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
@@ -56,10 +56,10 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4622,
-    "max_nationwide_1h_mm": 38.2,
-    "max_nationwide_24h_mm": 156.2,
-    "bkk_samut_prakan_count": 27,
+    "total_nationwide_stations": 4612,
+    "max_nationwide_1h_mm": 36.4,
+    "max_nationwide_24h_mm": 302,
+    "bkk_samut_prakan_count": 26,
     "top_bkk_samut_stations": [
       {
         "station_name": "คลองภาษีเจริญ เพชรเกษม69",
@@ -71,49 +71,49 @@
         "lon": 100.38127
       },
       {
-        "station_name": "กรุงเทพมหานคร",
-        "province": "Bangkok",
-        "district": "Khlong Toei District",
+        "station_name": "สมุทรปราการ สกษ.",
+        "province": "Samut Prakan",
+        "district": "Mueang Samut Prakan District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 5,
-        "lat": 13.72639,
-        "lon": 100.56
+        "rain_24h_mm": 11.6,
+        "lat": 13.51667,
+        "lon": 100.76167
       },
       {
-        "station_name": "กรุงเทพฯ ท่าเรือคลองเตย",
-        "province": "Bangkok",
-        "district": "Khlong Toei District",
+        "station_name": "อบต.ศีรษะจรเข้น้อย",
+        "province": "Samut Prakan",
+        "district": "Bang Sao Thong District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 3.8,
-        "lat": 13.70694,
-        "lon": 100.56805
+        "rain_24h_mm": 5,
+        "lat": 13.67777,
+        "lon": 100.7945
+      },
+      {
+        "station_name": "สนามบินสุวรรณภูมิ",
+        "province": "Samut Prakan",
+        "district": "Bang Phli District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 3.2,
+        "lat": 13.68639,
+        "lon": 100.7675
       },
       {
         "station_name": "คลองลาดพร้าว วัดบางบัว",
         "province": "Bangkok",
         "district": "Bang Khen District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 2.8,
+        "rain_24h_mm": 2.2,
         "lat": 13.85402,
         "lon": 100.58746
       },
       {
-        "station_name": "สนามบินดอนเมือง",
-        "province": "Bangkok",
-        "district": "Don Mueang District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 1.2,
-        "lat": 13.91917,
-        "lon": 100.605
-      },
-      {
-        "station_name": "ปตร. คลองลัดบางยอ 2",
+        "station_name": "คลองจระเข้ใหญ่ บางเสาธง (วัดศรีวารีน้อย)",
         "province": "Samut Prakan",
-        "district": "Phra Pradaeng District",
+        "district": "Bang Sao Thong District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 0.6,
-        "lat": 13.661021,
-        "lon": 100.56727
+        "rain_24h_mm": 2,
+        "lat": 13.66949,
+        "lon": 100.80058
       },
       {
         "station_name": "สะพานพระพุทธยอดฟ้า",
@@ -123,15 +123,6 @@
         "rain_24h_mm": 0.5,
         "lat": 13.738694,
         "lon": 100.49633
-      },
-      {
-        "station_name": "อบต.ศีรษะจรเข้น้อย",
-        "province": "Samut Prakan",
-        "district": "Bang Sao Thong District",
-        "rain_1h_mm": 0.4,
-        "rain_24h_mm": 0.4,
-        "lat": 13.67777,
-        "lon": 100.7945
       },
       {
         "station_name": "คลองมหาสวัสดิ บางกรวย-สวนผัก",
@@ -150,11 +141,20 @@
         "rain_24h_mm": 0.0,
         "lat": 13.689612,
         "lon": 100.554886
+      },
+      {
+        "station_name": "ปตร. คลองลัดบางยอ 1",
+        "province": "Samut Prakan",
+        "district": "Phra Pradaeng District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 0.0,
+        "lat": 13.676162,
+        "lon": 100.553085
       }
     ]
   },
   "estuary_tide": {
-    "realtime_msl": 1.097,
+    "realtime_msl": -0.671,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
