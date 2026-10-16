@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-10-16T17:26:23.513376+00:00",
+  "timestamp_utc": "2026-10-16T21:11:40.982366+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
@@ -56,9 +56,9 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4612,
-    "max_nationwide_1h_mm": 36.4,
-    "max_nationwide_24h_mm": 302,
+    "total_nationwide_stations": 4602,
+    "max_nationwide_1h_mm": 91,
+    "max_nationwide_24h_mm": 377,
     "bkk_samut_prakan_count": 26,
     "top_bkk_samut_stations": [
       {
@@ -98,15 +98,6 @@
         "lon": 100.7675
       },
       {
-        "station_name": "คลองลาดพร้าว วัดบางบัว",
-        "province": "Bangkok",
-        "district": "Bang Khen District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 2.2,
-        "lat": 13.85402,
-        "lon": 100.58746
-      },
-      {
         "station_name": "คลองจระเข้ใหญ่ บางเสาธง (วัดศรีวารีน้อย)",
         "province": "Samut Prakan",
         "district": "Bang Sao Thong District",
@@ -114,6 +105,15 @@
         "rain_24h_mm": 2,
         "lat": 13.66949,
         "lon": 100.80058
+      },
+      {
+        "station_name": "คลองลาดพร้าว วัดบางบัว",
+        "province": "Bangkok",
+        "district": "Bang Khen District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 1.8,
+        "lat": 13.85402,
+        "lon": 100.58746
       },
       {
         "station_name": "สะพานพระพุทธยอดฟ้า",
@@ -154,7 +154,7 @@
     ]
   },
   "estuary_tide": {
-    "realtime_msl": -0.671,
+    "realtime_msl": -0.896,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
