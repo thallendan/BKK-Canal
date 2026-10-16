@@ -1,4 +1,4 @@
-name: Fetch ThaiWater Data
+name: Fetch ThaiWater Water Levels Data
 
 on:
   workflow_dispatch:
