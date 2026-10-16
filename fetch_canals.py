@@ -3,37 +3,28 @@
 fetch_canals.py
 
 Fetches live BMA canal telemetry directly from the Bangkok Drainage and 
-Sewerage Department using a 2-step session to acquire cookies before querying 
-the AJAX endpoint.
+Sewerage Department using `curl_cffi` to impersonate a real Chrome TLS fingerprint,
+bypassing Cloudflare WAF/Bot Protection on datacenter IPs.
 
 Output file: canals.json
 """
 
 import json
 import time
-import requests
 from datetime import datetime, timezone
+from curl_cffi import requests
 
 URL_HOME = "https://weather.bangkok.go.th/KlongMap"
 URL_API = "https://weather.bangkok.go.th/Klongmap/GetDataForUpdate"
 OUTPUT_FILE = "canals.json"
 
 HEADERS_HOME = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/120.0.0.0 Safari/537.36"
-    ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
     "Accept-Language": "th-TH,th;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Upgrade-Insecure-Requests": "1",
 }
 
 HEADERS_API = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/120.0.0.0 Safari/537.36"
-    ),
     "Referer": "https://weather.bangkok.go.th/KlongMap",
     "X-Requested-With": "XMLHttpRequest",
     "Accept": "application/json, text/javascript, */*; q=0.01",
@@ -41,21 +32,21 @@ HEADERS_API = {
 }
 
 def fetch_bma_canal_data():
-    """Establishes an ASP.NET session on the homepage before requesting JSON telemetry."""
-    session = requests.Session()
+    """Establishes an impersonated session to pass Cloudflare checks before querying the API."""
+    # Impersonate Chrome 120 TLS fingerprint and HTTP/2 settings
+    session = requests.Session(impersonate="chrome120")
     start_time = time.time()
 
     try:
-        # Step 1: Visit homepage to acquire session cookies and initialize session state
-        resp_home = session.get(URL_HOME, headers=HEADERS_HOME, timeout=15, verify=False)
+        # Step 1: Visit homepage to solve Cloudflare challenge & acquire session cookies
+        resp_home = session.get(URL_HOME, headers=HEADERS_HOME, timeout=20, verify=False)
         if resp_home.status_code != 200:
             return False, resp_home.status_code, 0, None, f"Homepage returned HTTP {resp_home.status_code}"
 
-        # Small delay to mimic standard client execution
         time.sleep(1)
 
-        # Step 2: Query telemetry endpoint with established session context
-        resp_api = session.get(URL_API, headers=HEADERS_API, timeout=15, verify=False)
+        # Step 2: Request telemetry JSON endpoint using established session
+        resp_api = session.get(URL_API, headers=HEADERS_API, timeout=20, verify=False)
         elapsed = round(time.time() - start_time, 3)
 
         if resp_api.status_code == 200:
@@ -64,10 +55,8 @@ def fetch_bma_canal_data():
         else:
             return False, resp_api.status_code, elapsed, None, f"API returned HTTP {resp_api.status_code}"
 
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         return False, None, 0, None, f"Request failed: {str(e)}"
-    except json.JSONDecodeError:
-        return False, 200, 0, None, "Response was not valid JSON"
 
 def process_canal_payload(data):
     """Parses raw BMA telemetry into structured canal and station models."""
@@ -150,11 +139,8 @@ def process_canal_payload(data):
     }
 
 def main():
-    # Disable SSL warnings for government self-signed chain handling
-    requests.packages.urllib3.disable_warnings()
-
     timestamp_utc = datetime.now(timezone.utc).isoformat()
-    print("Fetching live BMA canal telemetry...")
+    print("Fetching live BMA canal telemetry with TLS impersonation...")
     
     success, status_code, elapsed, raw_data, error_msg = fetch_bma_canal_data()
 
