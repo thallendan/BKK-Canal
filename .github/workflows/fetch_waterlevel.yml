@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -26,8 +28,15 @@ jobs:
       - name: Run fetch script
         run: python fetch_waterlevel.py
 
+      - name: Pull latest remote changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main || true
+
       - name: Commit and push updated waterlevel.json
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Automated update: waterlevel.json"
           file_pattern: "waterlevel.json"
+          push_options: '--force-with-lease'
