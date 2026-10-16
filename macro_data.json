@@ -1,10 +1,10 @@
 {
-  "timestamp_utc": "2026-10-16T21:11:40.982366+00:00",
+  "timestamp_utc": "2026-10-16T23:37:45.957870+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
     "mjo_phase": 1,
-    "mjo_amp": 1.2020627,
+    "mjo_amp": 1.1448408,
     "iod": 0.146,
     "heat_content": 2.93,
     "status": "SUCCESS"
@@ -56,7 +56,7 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4602,
+    "total_nationwide_stations": 4582,
     "max_nationwide_1h_mm": 91,
     "max_nationwide_24h_mm": 377,
     "bkk_samut_prakan_count": 26,
@@ -125,6 +125,15 @@
         "lon": 100.49633
       },
       {
+        "station_name": "ปตร. คลองบางน้ำผึ้ง",
+        "province": "Samut Prakan",
+        "district": "Phra Pradaeng District",
+        "rain_1h_mm": 0.2,
+        "rain_24h_mm": 0.2,
+        "lat": 13.676648,
+        "lon": 100.58207
+      },
+      {
         "station_name": "คลองมหาสวัสดิ บางกรวย-สวนผัก",
         "province": "Bangkok",
         "district": "Taling Chan District",
@@ -141,20 +150,11 @@
         "rain_24h_mm": 0.0,
         "lat": 13.689612,
         "lon": 100.554886
-      },
-      {
-        "station_name": "ปตร. คลองลัดบางยอ 1",
-        "province": "Samut Prakan",
-        "district": "Phra Pradaeng District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 0.0,
-        "lat": 13.676162,
-        "lon": 100.553085
       }
     ]
   },
   "estuary_tide": {
-    "realtime_msl": -0.896,
+    "realtime_msl": 0.333,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
