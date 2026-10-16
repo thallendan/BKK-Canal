@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-10-16T07:12:43.366239+00:00",
+  "timestamp_utc": "2026-10-16T12:27:44.906300+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
@@ -56,71 +56,26 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4609,
-    "max_nationwide_1h_mm": 41.6,
+    "total_nationwide_stations": 4622,
+    "max_nationwide_1h_mm": 38.2,
     "max_nationwide_24h_mm": 156.2,
     "bkk_samut_prakan_count": 27,
     "top_bkk_samut_stations": [
-      {
-        "station_name": "อาคารเลขที่ ๙๐๑",
-        "province": "Bangkok",
-        "district": "Chatuchak District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 28,
-        "lat": 13.85604,
-        "lon": 100.57558
-      },
       {
         "station_name": "คลองภาษีเจริญ เพชรเกษม69",
         "province": "Bangkok",
         "district": "Bang Khae District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 22.2,
+        "rain_24h_mm": 24,
         "lat": 13.69158,
         "lon": 100.38127
-      },
-      {
-        "station_name": "คลองแสนแสบ บางกะปิ",
-        "province": "Bangkok",
-        "district": "Bang Kapi District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 17.2,
-        "lat": 13.76131,
-        "lon": 100.61601
-      },
-      {
-        "station_name": "กรุงเทพฯ บางนา สกษ.",
-        "province": "Bangkok",
-        "district": "Bang Na District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 7.8,
-        "lat": 13.66639,
-        "lon": 100.60611
-      },
-      {
-        "station_name": "ปตร. คลองแพ",
-        "province": "Samut Prakan",
-        "district": "Phra Pradaeng District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 7.6,
-        "lat": 13.694974,
-        "lon": 100.58231
-      },
-      {
-        "station_name": "อโศก",
-        "province": "Bangkok",
-        "district": "Vadhana District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 5.8,
-        "lat": 13.74325,
-        "lon": 100.562164
       },
       {
         "station_name": "กรุงเทพมหานคร",
         "province": "Bangkok",
         "district": "Khlong Toei District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 5.7,
+        "rain_24h_mm": 5,
         "lat": 13.72639,
         "lon": 100.56
       },
@@ -129,7 +84,7 @@
         "province": "Bangkok",
         "district": "Khlong Toei District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 4.8,
+        "rain_24h_mm": 3.8,
         "lat": 13.70694,
         "lon": 100.56805
       },
@@ -138,7 +93,7 @@
         "province": "Bangkok",
         "district": "Bang Khen District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 4.8,
+        "rain_24h_mm": 2.8,
         "lat": 13.85402,
         "lon": 100.58746
       },
@@ -150,11 +105,56 @@
         "rain_24h_mm": 1.2,
         "lat": 13.91917,
         "lon": 100.605
+      },
+      {
+        "station_name": "ปตร. คลองลัดบางยอ 2",
+        "province": "Samut Prakan",
+        "district": "Phra Pradaeng District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 0.6,
+        "lat": 13.661021,
+        "lon": 100.56727
+      },
+      {
+        "station_name": "สะพานพระพุทธยอดฟ้า",
+        "province": "Bangkok",
+        "district": "Thon Buri District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 0.5,
+        "lat": 13.738694,
+        "lon": 100.49633
+      },
+      {
+        "station_name": "อบต.ศีรษะจรเข้น้อย",
+        "province": "Samut Prakan",
+        "district": "Bang Sao Thong District",
+        "rain_1h_mm": 0.4,
+        "rain_24h_mm": 0.4,
+        "lat": 13.67777,
+        "lon": 100.7945
+      },
+      {
+        "station_name": "คลองมหาสวัสดิ บางกรวย-สวนผัก",
+        "province": "Bangkok",
+        "district": "Taling Chan District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 0.2,
+        "lat": 13.79965,
+        "lon": 100.43863
+      },
+      {
+        "station_name": "ปตร.วัดบางกระเจ้านอก",
+        "province": "Samut Prakan",
+        "district": "Phra Pradaeng District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 0.0,
+        "lat": 13.689612,
+        "lon": 100.554886
       }
     ]
   },
   "estuary_tide": {
-    "realtime_msl": 0.683,
+    "realtime_msl": 1.097,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
