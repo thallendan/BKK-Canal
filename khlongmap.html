@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Khlong Water Level Map Viewer</title>
+  <title>Bangna Khlong Water Level Map Viewer</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -285,25 +285,23 @@
   <!-- Sidebar Container -->
   <div id="sidebar">
     <div class="header">
-      <h1><i class="fa-solid fa-water"></i> Khlong Water Map</h1>
-      <p>Bangkok & Surrounding Canal Monitoring System</p>
+      <h1><i class="fa-solid fa-water"></i> Bangna Water Map</h1>
+      <p>Bangna Local Canal Monitoring System</p>
     </div>
 
     <!-- Map & Layer Controls -->
     <div class="controls">
       <div class="control-group">
-        <label for="map-select"><i class="fa-solid fa-layer-group"></i> Select Base Overlay Map</label>
-        <select id="map-select">
-          <option value="bangkok">Bangkok Main Map (Static Overlay)</option>
-          <option value="bangna">Bangna Local Map (Static Overlay)</option>
-          <option value="chaophraya">Chao Phraya Macro Map (Static Overlay)</option>
-          <option value="osm">OpenStreetMap Base Layer</option>
+        <label for="layer-select"><i class="fa-solid fa-layer-group"></i> Layer Display</label>
+        <select id="layer-select">
+          <option value="overlay">Bangna Static Overlay + Base Map</option>
+          <option value="osm">OpenStreetMap Base Layer Only</option>
         </select>
       </div>
 
       <div class="control-group">
         <label for="search-input"><i class="fa-solid fa-magnifying-glass"></i> Search Station</label>
-        <input type="text" id="search-input" placeholder="Type Thai or English name..." />
+        <input type="text" id="search-input" placeholder="Search Bangna station or canal..." />
       </div>
     </div>
 
@@ -311,7 +309,7 @@
     <div class="stats-bar">
       <div class="stat-card">
         <div class="val" id="stat-total">0</div>
-        <div class="lbl">Total Stations</div>
+        <div class="lbl">Bangna Stations</div>
       </div>
       <div class="stat-card">
         <div class="val" id="stat-normal" style="color: var(--status-normal);">0</div>
@@ -334,60 +332,38 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    // 1. Static Map Bounding Boxes Configuration
-    const mapBounds = {
-      bangkok: {
-        url: 'bangkok_map.png',
-        bounds: [[13.5860, 100.2305], [13.9054, 100.9703]]
-      },
-      bangna: {
-        url: 'bangna_local_map.png',
-        bounds: [[13.5883, 100.5170], [13.7217, 100.7230]]
-      },
-      chaophraya: {
-        url: 'chaophraya_macro_map.png',
-        bounds: [[11.4477, 93.4607], [19.9011, 106.6443]]
-      }
-    };
+    // 1. Bangna Geographic Bounds Definition[cite: 1]
+    const bangnaBounds = [[13.5883, 100.5170], [13.7217, 100.7230]];
 
-    // Initialize Map centered on Bangkok
+    // 2. Initialize Map restricted to Bangna[cite: 1]
     const map = L.map('map', {
-      center: [13.7563, 100.5018],
-      zoom: 11,
-      zoomControl: true
+      center: [13.6550, 100.6200],
+      zoom: 12,
+      minZoom: 11,
+      maxZoom: 18,
+      maxBounds: bangnaBounds,
+      maxBoundsViscosity: 0.8
     });
 
-    // Base Tile Layer (OpenStreetMap option)
+    // Base Tile Layer (OpenStreetMap)
     const osmTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap contributors'
-    });
+    }).addTo(map);
 
-    // Static Image Overlays
-    const overlays = {
-      bangkok: L.imageOverlay(mapBounds.bangkok.url, mapBounds.bangkok.bounds, { opacity: 0.9 }),
-      bangna: L.imageOverlay(mapBounds.bangna.url, mapBounds.bangna.bounds, { opacity: 0.9 }),
-      chaophraya: L.imageOverlay(mapBounds.chaophraya.url, mapBounds.chaophraya.bounds, { opacity: 0.9 })
-    };
+    // Static Image Overlay for Bangna[cite: 1]
+    const bangnaOverlay = L.imageOverlay('bangna_local_map.png', bangnaBounds, { opacity: 0.9 }).addTo(map);
 
-    let currentOverlay = overlays.bangkok;
-    currentOverlay.addTo(map);
-    map.fitBounds(mapBounds.bangkok.bounds);
+    map.fitBounds(bangnaBounds);
 
-    // Layer Switcher Logic
-    document.getElementById('map-select').addEventListener('change', (e) => {
-      const selected = e.target.value;
-
-      // Remove active overlays and tiles
-      Object.values(overlays).forEach(layer => map.removeLayer(layer));
-      map.removeLayer(osmTileLayer);
-
-      if (selected === 'osm') {
-        osmTileLayer.addTo(map);
-      } else if (mapBounds[selected]) {
-        currentOverlay = overlays[selected];
-        currentOverlay.addTo(map);
-        map.fitBounds(mapBounds[selected].bounds);
+    // Layer Toggle Listener
+    document.getElementById('layer-select').addEventListener('change', (e) => {
+      if (e.target.value === 'osm') {
+        map.removeLayer(bangnaOverlay);
+      } else {
+        if (!map.hasLayer(bangnaOverlay)) {
+          bangnaOverlay.addTo(map);
+        }
       }
     });
 
@@ -406,9 +382,9 @@
     };
     legend.addTo(map);
 
-    // Marker Layer Group
+    // Marker Group and State
     const markersGroup = L.layerGroup().addTo(map);
-    let allStationsData = [];
+    let bangnaStationsData = [];
     const markerMap = new Map();
 
     // Helper: Determine Color based on station thresholds
@@ -425,6 +401,12 @@
       return 'var(--status-normal)';
     }
 
+    // Helper: Filter stations inside Bangna bounding box[cite: 1]
+    function isWithinBangna(lat, lng) {
+      return lat >= bangnaBounds[0][0] && lat <= bangnaBounds[1][0] &&
+             lng >= bangnaBounds[0][1] && lng <= bangnaBounds[1][1];
+    }
+
     // Load Data from KhlongMap.json
     async function loadKhlongData() {
       try {
@@ -432,8 +414,17 @@
         if (!response.ok) throw new Error('Failed to load KhlongMap.json');
         const data = await response.json();
         
-        allStationsData = data.waterStation || data;
-        renderMapAndList(allStationsData);
+        const rawStations = data.waterStation || data;
+
+        // Filter data so only Bangna stations are loaded[cite: 1]
+        bangnaStationsData = rawStations.filter((st) => {
+          const info = st.water_station_info || {};
+          const lat = st.latitude || info.latitude;
+          const lng = st.longitude || info.longitude;
+          return lat && lng && isWithinBangna(lat, lng);
+        });
+
+        renderMapAndList(bangnaStationsData);
       } catch (err) {
         console.error('Error fetching KhlongMap.json:', err);
         document.getElementById('station-list').innerHTML = `
@@ -454,16 +445,22 @@
       let normalCount = 0;
       let alertCount = 0;
 
+      if (stations.length === 0) {
+        listContainer.innerHTML = `
+          <div style="color: var(--text-muted); padding: 20px; text-align: center;">
+            No stations found within the Bangna area.
+          </div>`;
+      }
+
       stations.forEach((st) => {
         const info = st.water_station_info || {};
         const last = st.water_level_last || {};
 
-        // Lat/Lng resolution
         const lat = st.latitude || info.latitude;
         const lng = st.longitude || info.longitude;
 
         const nameTh = info.water_shortname || st.station_name || info.water_name || `Station ${st.water_id}`;
-        const nameEn = info.water_shortname_en || st.station_name_en || 'Khlong Station';
+        const nameEn = info.water_shortname_en || st.station_name_en || 'Bangna Station';
         const riverName = info.river_name || 'N/A';
         const wlIn = (last.wl_in !== null && last.wl_in !== undefined && last.wl_in !== -99) ? `${last.wl_in} m.MSL` : 'N/A';
         const wlOut = (last.wl_out01 !== null && last.wl_out01 !== undefined && last.wl_out01 !== -99) ? `${last.wl_out01} m.MSL` : 'N/A';
@@ -473,54 +470,52 @@
         if (statusColor === 'var(--status-normal)') normalCount++;
         if (statusColor === 'var(--status-warning)' || statusColor === 'var(--status-critical)') alertCount++;
 
-        // 1. Create Map Marker if geographic coordinates exist
-        if (lat && lng) {
-          const customIcon = L.divIcon({
-            className: 'custom-pin',
-            html: `<div style="
-              background-color: ${statusColor};
-              width: 14px;
-              height: 14px;
-              border-radius: 50%;
-              border: 2px solid white;
-              box-shadow: 0 0 6px rgba(0,0,0,0.5);
-            "></div>`,
-            iconSize: [14, 14],
-            iconAnchor: [7, 7]
-          });
+        // 1. Create Map Marker
+        const customIcon = L.divIcon({
+          className: 'custom-pin',
+          html: `<div style="
+            background-color: ${statusColor};
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 6px rgba(0,0,0,0.5);
+          "></div>`,
+          iconSize: [14, 14],
+          iconAnchor: [7, 7]
+        });
 
-          const marker = L.marker([lat, lng], { icon: customIcon });
+        const marker = L.marker([lat, lng], { icon: customIcon });
 
-          const popupContent = `
-            <div class="popup-content">
-              <h3>${nameTh}</h3>
-              <div class="en-name">${nameEn}</div>
-              <div style="font-size: 0.78rem;"><strong>River:</strong> ${riverName}</div>
-              <div class="popup-grid">
-                <div>
-                  <span class="lbl">Inflow (WL In)</span>
-                  <span class="val">${wlIn}</span>
-                </div>
-                <div>
-                  <span class="lbl">Outflow (WL Out)</span>
-                  <span class="val">${wlOut}</span>
-                </div>
-                <div>
-                  <span class="lbl">Warning Threshold</span>
-                  <span class="val">${info.warning !== null ? info.warning + ' m' : 'N/A'}</span>
-                </div>
-                <div>
-                  <span class="lbl">Critical Threshold</span>
-                  <span class="val">${info.critical !== null ? info.critical + ' m' : 'N/A'}</span>
-                </div>
+        const popupContent = `
+          <div class="popup-content">
+            <h3>${nameTh}</h3>
+            <div class="en-name">${nameEn}</div>
+            <div style="font-size: 0.78rem;"><strong>Canal/River:</strong> ${riverName}</div>
+            <div class="popup-grid">
+              <div>
+                <span class="lbl">Inflow (WL In)</span>
+                <span class="val">${wlIn}</span>
+              </div>
+              <div>
+                <span class="lbl">Outflow (WL Out)</span>
+                <span class="val">${wlOut}</span>
+              </div>
+              <div>
+                <span class="lbl">Warning Threshold</span>
+                <span class="val">${info.warning !== null ? info.warning + ' m' : 'N/A'}</span>
+              </div>
+              <div>
+                <span class="lbl">Critical Threshold</span>
+                <span class="val">${info.critical !== null ? info.critical + ' m' : 'N/A'}</span>
               </div>
             </div>
-          `;
+          </div>
+        `;
 
-          marker.bindPopup(popupContent);
-          markersGroup.addLayer(marker);
-          markerMap.set(st.water_id, { marker, lat, lng });
-        }
+        marker.bindPopup(popupContent);
+        markersGroup.addLayer(marker);
+        markerMap.set(st.water_id, { marker, lat, lng });
 
         // 2. Create Sidebar Item
         const item = document.createElement('div');
@@ -533,17 +528,15 @@
           <div class="station-sub">${nameEn}</div>
           <div class="station-data">
             <span>Water Level: <strong>${wlIn}</strong></span>
-            <span>River: <strong>${riverName}</strong></span>
+            <span>Canal: <strong>${riverName}</strong></span>
           </div>
         `;
 
         item.addEventListener('click', () => {
-          if (lat && lng) {
-            map.flyTo([lat, lng], 14, { duration: 1.2 });
-            const obj = markerMap.get(st.water_id);
-            if (obj && obj.marker) {
-              obj.marker.openPopup();
-            }
+          map.flyTo([lat, lng], 15, { duration: 1.2 });
+          const obj = markerMap.get(st.water_id);
+          if (obj && obj.marker) {
+            obj.marker.openPopup();
           }
         });
 
@@ -559,7 +552,7 @@
     // Search Filter Logic
     document.getElementById('search-input').addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase().trim();
-      const filtered = allStationsData.filter((st) => {
+      const filtered = bangnaStationsData.filter((st) => {
         const info = st.water_station_info || {};
         const nameTh = (info.water_shortname || st.station_name || info.water_name || '').toLowerCase();
         const nameEn = (info.water_shortname_en || st.station_name_en || '').toLowerCase();
