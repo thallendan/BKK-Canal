@@ -2,7 +2,7 @@ import json
 import requests
 
 URL = "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load"
-OUTPUT_FILE = "waterlevel.json"
+OUTPUT_FILE = "waterlevel_load.json"
 
 def fetch_and_save():
     headers = {
