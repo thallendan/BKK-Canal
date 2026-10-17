@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบติดตามระดับน้ำและประตูระบายน้ำ / Water Level & Watergate Monitoring System</title>
+    <title>Water Level & Watergate Monitoring System (ระบบติดตามระดับน้ำและประตูระบายน้ำ)</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,14 +19,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
-        .map-container { height: 360px; border-radius: 0.75rem; z-index: 1; background-color: #0f172a; }
+        .map-container { height: 380px; border-radius: 0.75rem; z-index: 1; background-color: #0f172a; }
         .badge-danger { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
         .badge-warning { background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
         .badge-info { background-color: #e0f2fe; color: #075985; border: 1px solid #7dd3fc; }
-        .badge-purple { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        
+        /* Custom Leaflet Square Marker Style */
+        .custom-square-marker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
@@ -39,24 +45,24 @@
                     <i class="fa-solid fa-water-waves text-2xl text-white"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">ระบบติดตามระดับน้ำและประตูระบายน้ำ</h1>
-                    <p class="text-xs text-blue-200 mt-0.5">Water Level & Watergate Monitoring System (Hydro-Telemetry Dashboard)</p>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Water Level & Watergate Monitoring System</h1>
+                    <p class="text-xs text-blue-200 mt-0.5">ระบบติดตามระดับน้ำและประตูระบายน้ำ (Hydro-Telemetry Dashboard)</p>
                 </div>
             </div>
             
             <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-between md:justify-end">
                 <div id="lastUpdated" class="text-xs bg-indigo-900/90 px-3 py-2 rounded-lg border border-indigo-700/80">
-                    <i class="fa-regular fa-clock mr-1 text-blue-300"></i> อัปเดตล่าสุด / Last Updated: <span class="font-medium">-</span>
+                    <i class="fa-regular fa-clock mr-1 text-blue-300"></i> Last Updated (อัปเดตล่าสุด): <span class="font-medium">-</span>
                 </div>
                 
                 <div class="flex items-center space-x-2">
                     <label for="fileUploadWL" class="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white text-xs px-3 py-2 rounded-lg transition-all shadow font-medium flex items-center gap-1.5" title="Upload waterlevel_load.json">
-                        <i class="fa-solid fa-file-arrow-up"></i> JSON ระดับน้ำ / WL
+                        <i class="fa-solid fa-file-arrow-up"></i> Water Level JSON (JSON ระดับน้ำ)
                     </label>
                     <input type="file" id="fileUploadWL" accept=".json" class="hidden">
 
                     <label for="fileUploadWG" class="cursor-pointer bg-purple-600 hover:bg-purple-500 text-white text-xs px-3 py-2 rounded-lg transition-all shadow font-medium flex items-center gap-1.5" title="Upload watergate_load.json">
-                        <i class="fa-solid fa-file-arrow-up"></i> JSON ประตูน้ำ / WG
+                        <i class="fa-solid fa-file-arrow-up"></i> Watergate JSON (JSON ประตูน้ำ)
                     </label>
                     <input type="file" id="fileUploadWG" accept=".json" class="hidden">
                 </div>
@@ -72,9 +78,9 @@
             <!-- Total WL Stations -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">สถานีระดับน้ำทั้งหมด / Total WL Stations</p>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total WL Stations (สถานีระดับน้ำทั้งหมด)</p>
                     <h3 id="statTotalWL" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
-                    <p id="statOverflowWL" class="text-xs text-red-500 mt-1 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i>0 ล้นตลิ่ง / Overflowing</p>
+                    <p id="statOverflowWL" class="text-xs text-red-500 mt-1 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i>0 Overflowing (ล้นตลิ่ง)</p>
                 </div>
                 <div class="p-3.5 bg-blue-50 text-blue-600 rounded-xl">
                     <i class="fa-solid fa-tower-observation text-2xl"></i>
@@ -84,9 +90,9 @@
             <!-- Total Water Gates -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold text-purple-600 uppercase tracking-wider">ประตูระบายน้ำทั้งหมด / Total Water Gates</p>
+                    <p class="text-xs font-semibold text-purple-600 uppercase tracking-wider">Total Water Gates (ประตูระบายน้ำทั้งหมด)</p>
                     <h3 id="statTotalWG" class="text-2xl font-bold text-purple-700 mt-1">0</h3>
-                    <p id="statActiveWG" class="text-xs text-purple-500 mt-1 font-medium"><i class="fa-solid fa-door-open mr-1"></i>0 แห่ง เปิดระบาย / Discharging</p>
+                    <p id="statActiveWG" class="text-xs text-purple-500 mt-1 font-medium"><i class="fa-solid fa-door-open mr-1"></i>0 Discharging (เปิดระบายน้ำ)</p>
                 </div>
                 <div class="p-3.5 bg-purple-50 text-purple-600 rounded-xl">
                     <i class="fa-solid fa-torii-gate text-2xl"></i>
@@ -96,9 +102,9 @@
             <!-- Total Discharge Rate -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold text-teal-600 uppercase tracking-wider">อัตราการระบายน้ำรวม / Total Discharge Rate</p>
+                    <p class="text-xs font-semibold text-teal-600 uppercase tracking-wider">Total Discharge Rate (อัตราการระบายน้ำรวม)</p>
                     <h3 id="statDischarge" class="text-2xl font-bold text-teal-700 mt-1">0</h3>
-                    <p class="text-xs text-teal-500 mt-1 font-medium">ลบ.ม./วินาที (m³/s)</p>
+                    <p class="text-xs text-teal-500 mt-1 font-medium">m³/s (ลบ.ม./วินาที)</p>
                 </div>
                 <div class="p-3.5 bg-teal-50 text-teal-600 rounded-xl">
                     <i class="fa-solid fa-water text-2xl"></i>
@@ -108,9 +114,9 @@
             <!-- Average Storage -->
             <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">ความจุเก็บกักเฉลี่ย / Avg Capacity</p>
+                    <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Avg Capacity (ความจุเก็บกักเฉลี่ย)</p>
                     <h3 id="statAvgStorage" class="text-2xl font-bold text-indigo-600 mt-1">0%</h3>
-                    <p class="text-xs text-indigo-400 mt-1">เทียบระดับตลิ่ง / Bank Capacity</p>
+                    <p class="text-xs text-indigo-400 mt-1">Bank Capacity (เทียบระดับตลิ่ง)</p>
                 </div>
                 <div class="p-3.5 bg-indigo-50 text-indigo-600 rounded-xl">
                     <i class="fa-solid fa-chart-pie text-2xl"></i>
@@ -120,14 +126,27 @@
 
         <!-- Static Image Overlay Maps Section -->
         <section class="space-y-4">
-            <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <div class="flex flex-col lg:flex-row justify-between lg:items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200 gap-3">
                 <h2 class="font-bold text-slate-800 flex items-center gap-2 text-base">
-                    <i class="fa-solid fa-map-location-dot text-blue-600"></i> แผนภาพพื้นที่เฝ้าระวัง / Monitoring Area Maps
+                    <i class="fa-solid fa-map-location-dot text-blue-600"></i> Monitoring Area Maps (แผนภาพพื้นที่เฝ้าระวัง)
                 </h2>
-                <div class="flex items-center space-x-3 text-xs text-slate-600">
-                    <span class="flex items-center gap-1"><i class="fa-solid fa-circle text-red-500 text-[10px]"></i> ล้นตลิ่ง / Overflow</span>
-                    <span class="flex items-center gap-1"><i class="fa-solid fa-circle text-amber-500 text-[10px]"></i> เฝ้าระวัง / Warning</span>
-                    <span class="flex items-center gap-1"><i class="fa-solid fa-square text-purple-600 text-[10px]"></i> ประตูน้ำ / Watergate</span>
+                <!-- Shape & Color Legend -->
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-600">
+                    <!-- WL Circles Legend -->
+                    <span class="font-semibold text-blue-900 mr-1"><i class="fa-solid fa-circle text-blue-600 mr-1"></i>Water Level (ระดับน้ำ - วงกลม):</span>
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-circle text-red-500 text-[10px]"></i> Overflow (ล้นตลิ่ง)</span>
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-circle text-orange-500 text-[10px]"></i> Danger (วิกฤต)</span>
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-circle text-yellow-500 text-[10px]"></i> Warning (เฝ้าระวัง)</span>
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-circle text-blue-500 text-[10px]"></i> Normal (ปกติ)</span>
+                    
+                    <span class="border-l border-slate-300 h-4 mx-1 hidden sm:inline-block"></span>
+
+                    <!-- WG Squares Legend -->
+                    <span class="font-semibold text-purple-900 mr-1"><i class="fa-solid fa-square text-purple-600 mr-1"></i>Water Gate (ประตูน้ำ - สี่เหลี่ยม):</span>
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-square text-red-500 text-[10px]"></i> High (ระบายน้ำสูง)</span>
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-square text-orange-500 text-[10px]"></i> Med (ระบายน้ำกลาง)</span>
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-square text-teal-600 text-[10px]"></i> Low (ระบายน้ำต่ำ)</span>
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-square text-slate-400 text-[10px]"></i> Closed (ปิด)</span>
                 </div>
             </div>
 
@@ -138,7 +157,7 @@
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col space-y-2">
                     <div class="flex justify-between items-center">
                         <h3 class="font-semibold text-sm text-slate-800 flex items-center gap-1.5">
-                            <i class="fa-solid fa-globe text-teal-600"></i> ลุ่มน้ำเจ้าพระยา / Chao Phraya Macro Map
+                            <i class="fa-solid fa-globe text-teal-600"></i> Chao Phraya Macro Map (ลุ่มน้ำเจ้าพระยา)
                         </h3>
                         <span class="text-[10px] bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded">Macro View</span>
                     </div>
@@ -150,7 +169,7 @@
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col space-y-2">
                     <div class="flex justify-between items-center">
                         <h3 class="font-semibold text-sm text-slate-800 flex items-center gap-1.5">
-                            <i class="fa-solid fa-city text-blue-600"></i> กรุงเทพและปริมณฑล / Bangkok Regional Map
+                            <i class="fa-solid fa-city text-blue-600"></i> Bangkok Regional Map (กรุงเทพและปริมณฑล)
                         </h3>
                         <span class="text-[10px] bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded">Regional View</span>
                     </div>
@@ -162,7 +181,7 @@
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col space-y-2">
                     <div class="flex justify-between items-center">
                         <h3 class="font-semibold text-sm text-slate-800 flex items-center gap-1.5">
-                            <i class="fa-solid fa-location-crosshairs text-purple-600"></i> พื้นที่บางนา / Bangna Local Map
+                            <i class="fa-solid fa-location-crosshairs text-purple-600"></i> Bangna Local Map (พื้นที่บางนา)
                         </h3>
                         <span class="text-[10px] bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded">Local View</span>
                     </div>
@@ -176,7 +195,7 @@
         <!-- Analytics Chart Section -->
         <section class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
             <h2 class="font-bold text-slate-800 flex items-center gap-2 text-base mb-3">
-                <i class="fa-solid fa-chart-column text-indigo-600"></i> สรุปจำนวนตามลุ่มน้ำ / Summary by River Basin
+                <i class="fa-solid fa-chart-column text-indigo-600"></i> Summary by River Basin (สรุปจำนวนตามลุ่มน้ำ)
             </h2>
             <div class="relative w-full min-h-[280px] max-h-[320px]">
                 <canvas id="basinChart"></canvas>
@@ -187,19 +206,19 @@
         <section class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 space-y-4">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100">
                 <h2 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                    <i class="fa-solid fa-filter text-blue-600"></i> ตัวกรองข้อมูล / Data Filters
+                    <i class="fa-solid fa-filter text-blue-600"></i> Data Filters (ตัวกรองข้อมูล)
                 </h2>
 
                 <!-- Type Tabs -->
                 <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200 self-stretch sm:self-auto text-xs font-medium">
                     <button id="tabAll" class="type-tab flex-1 sm:flex-none px-3 py-1.5 rounded-md text-slate-700 bg-white shadow-sm font-semibold transition-all" onclick="setTypeFilter('all')">
-                        ทั้งหมด / All
+                        All (ทั้งหมด)
                     </button>
                     <button id="tabWL" class="type-tab flex-1 sm:flex-none px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition-all" onclick="setTypeFilter('waterlevel')">
-                        <i class="fa-solid fa-water text-blue-500 mr-1"></i>ระดับน้ำ / Water Level
+                        <i class="fa-solid fa-circle text-blue-500 mr-1 text-[10px]"></i>Water Level (ระดับน้ำ)
                     </button>
                     <button id="tabWG" class="type-tab flex-1 sm:flex-none px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition-all" onclick="setTypeFilter('watergate')">
-                        <i class="fa-solid fa-torii-gate text-purple-600 mr-1"></i>ประตูน้ำ / Water Gate
+                        <i class="fa-solid fa-square text-purple-600 mr-1 text-[10px]"></i>Water Gate (ประตูน้ำ)
                     </button>
                 </div>
             </div>
@@ -207,37 +226,38 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                 <!-- Search Input -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">ค้นหา / Search (Name/River/Prov.)</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Search (ค้นหาสถานี / แม่น้ำ / จังหวัด)</label>
                     <div class="relative">
-                        <input type="text" id="searchInput" placeholder="พิมพ์คำค้นหา..." class="w-full pl-8 pr-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <input type="text" id="searchInput" placeholder="Type name, river, province..." class="w-full pl-8 pr-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                         <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
                     </div>
                 </div>
 
                 <!-- Basin Filter -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">ลุ่มน้ำ / River Basin</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">River Basin (ลุ่มน้ำ)</label>
                     <select id="basinFilter" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
-                        <option value="">ทั้งหมด / All</option>
+                        <option value="">All Basins (ลุ่มน้ำทั้งหมด)</option>
                     </select>
                 </div>
 
                 <!-- Status Filter -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">สถานะ / Status Condition</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Status Condition (สถานะ)</label>
                     <select id="statusFilter" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
-                        <option value="">ทั้งหมด / All</option>
-                        <option value="overflow">ระดับน้ำ: ล้นตลิ่ง / Overflow (L5)</option>
-                        <option value="warning">ระดับน้ำ: เฝ้าระวัง / Warning (L4)</option>
-                        <option value="discharging">ประตูน้ำ: ระบายน้ำ / Discharging (>0 m³/s)</option>
+                        <option value="">All Statuses (สถานะทั้งหมด)</option>
+                        <option value="overflow">WL: Overflow / Level 5 (ระดับน้ำ: ล้นตลิ่ง)</option>
+                        <option value="danger">WL: Danger / Level 4 (ระดับน้ำ: สภาวะวิกฤต)</option>
+                        <option value="warning">WL: Warning / Level 3 (ระดับน้ำ: เฝ้าระวัง)</option>
+                        <option value="discharging">WG: Active Discharge (ประตูน้ำ: มีการระบายน้ำ)</option>
                     </select>
                 </div>
 
                 <!-- Agency Filter -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">หน่วยงาน / Agency</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Agency (หน่วยงาน)</label>
                     <select id="agencyFilter" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
-                        <option value="">ทั้งหมด / All</option>
+                        <option value="">All Agencies (หน่วยงานทั้งหมด)</option>
                     </select>
                 </div>
             </div>
@@ -247,24 +267,24 @@
         <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-slate-50/60">
                 <h2 class="font-bold text-slate-800 flex items-center gap-2 text-base">
-                    <i class="fa-solid fa-list-check text-blue-600"></i> รายการสถานีและอาคารชลประทาน / Station & Structure Records
+                    <i class="fa-solid fa-list-check text-blue-600"></i> Station & Structure Records (รายการสถานีและอาคารชลประทาน)
                 </h2>
-                <span id="tableCount" class="text-xs font-medium text-slate-600 bg-slate-200/80 px-3 py-1 rounded-full">แสดง 0 รายการ / Displaying 0 records</span>
+                <span id="tableCount" class="text-xs font-medium text-slate-600 bg-slate-200/80 px-3 py-1 rounded-full">Displaying 0 records (แสดง 0 รายการ)</span>
             </div>
 
             <div class="overflow-x-auto custom-scrollbar">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-100/90 text-slate-600 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-200">
-                            <th class="py-3.5 px-4">ชนิด / Type</th>
-                            <th class="py-3.5 px-4">ชื่อสถานี / Station Name</th>
-                            <th class="py-3.5 px-4">ลุ่มน้ำ-ลำน้ำ / Basin & River</th>
-                            <th class="py-3.5 px-4">ที่ตั้ง / Location</th>
-                            <th class="py-3.5 px-4 text-right">ระดับน้ำ (ม.) / Level (m MSL)</th>
-                            <th class="py-3.5 px-4 text-right">ระบายน้ำ / %ความจุ (Discharge / %Cap)</th>
-                            <th class="py-3.5 px-4">สถานะ / Status</th>
-                            <th class="py-3.5 px-4">หน่วยงาน / Agency</th>
-                            <th class="py-3.5 px-4">วันที่-เวลา / Date-Time</th>
+                            <th class="py-3.5 px-4">Type (ชนิด)</th>
+                            <th class="py-3.5 px-4">Station / Gate Name (ชื่อสถานี / อาคาร)</th>
+                            <th class="py-3.5 px-4">Basin & River (ลุ่มน้ำ - แม่น้ำ)</th>
+                            <th class="py-3.5 px-4">Location (ที่ตั้ง)</th>
+                            <th class="py-3.5 px-4 text-right">Water Level (ระดับน้ำ MSL)</th>
+                            <th class="py-3.5 px-4 text-right">Discharge / Storage (การระบาย / %ความจุ)</th>
+                            <th class="py-3.5 px-4">Status (สถานะ)</th>
+                            <th class="py-3.5 px-4">Agency (หน่วยงาน)</th>
+                            <th class="py-3.5 px-4">Date-Time (วันที่-เวลา)</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody" class="divide-y divide-slate-100">
@@ -330,7 +350,6 @@
         }
 
         async function loadAllData() {
-            // Attempt auto-loading
             try {
                 const resWL = await fetch('waterlevel_load.json');
                 if (resWL.ok) {
@@ -350,51 +369,180 @@
             processAndRender();
         }
 
+        // Helper function to format strings as English (Thai) if English is available
+        function formatBilingual(en, th, fallback = 'N/A') {
+            const cleanEn = (en || '').trim();
+            const cleanTh = (th || '').trim();
+            if (cleanEn && cleanTh && cleanEn !== cleanTh) {
+                return `${cleanEn} (${cleanTh})`;
+            }
+            return cleanEn || cleanTh || fallback;
+        }
+
+        function getWLStatusInfo(item) {
+            const isOverflow = (item.diff_wl_bank_text || '').includes('ล้นตลิ่ง') || item.situation_level === 5;
+            const isDanger = item.situation_level === 4 || (item.storage_percent !== null && item.storage_percent >= 90);
+            const isWarning = item.situation_level === 3 || (item.storage_percent !== null && item.storage_percent >= 70);
+
+            if (isOverflow) {
+                return {
+                    color: '#ef4444', // Red
+                    badgeClass: 'badge-danger',
+                    label: 'Overflowing (ล้นตลิ่ง)',
+                    levelCode: 'L5',
+                    category: 'overflow'
+                };
+            } else if (isDanger) {
+                return {
+                    color: '#f97316', // Orange
+                    badgeClass: 'bg-orange-100 text-orange-800 border border-orange-300',
+                    label: 'Danger / Critical (สภาวะวิกฤต/ใกล้ล้น)',
+                    levelCode: 'L4',
+                    category: 'danger'
+                };
+            } else if (isWarning) {
+                return {
+                    color: '#eab308', // Yellow/Amber
+                    badgeClass: 'badge-warning',
+                    label: 'Warning (เฝ้าระวัง)',
+                    levelCode: 'L3',
+                    category: 'warning'
+                };
+            } else {
+                return {
+                    color: '#3b82f6', // Blue
+                    badgeClass: 'badge-info',
+                    label: 'Normal (ปกติ)',
+                    levelCode: 'L1-L2',
+                    category: 'normal'
+                };
+            }
+        }
+
+        function getWGStatusInfo(discharge) {
+            const disc = discharge || 0;
+            if (disc >= 100) {
+                return {
+                    color: '#ef4444', // Red - Heavy discharge
+                    badgeClass: 'badge-danger',
+                    label: `High Discharge (ระบายน้ำสูง: ${disc.toFixed(1)} m³/s)`,
+                    category: 'discharging'
+                };
+            } else if (disc >= 20) {
+                return {
+                    color: '#f97316', // Orange - Moderate discharge
+                    badgeClass: 'bg-orange-100 text-orange-800 border border-orange-300',
+                    label: `Moderate Discharge (ระบายน้ำกลาง: ${disc.toFixed(1)} m³/s)`,
+                    category: 'discharging'
+                };
+            } else if (disc > 0) {
+                return {
+                    color: '#0d9488', // Teal - Low discharge
+                    badgeClass: 'badge-info',
+                    label: `Low Discharge (ระบายน้ำต่ำ: ${disc.toFixed(1)} m³/s)`,
+                    category: 'discharging'
+                };
+            } else {
+                return {
+                    color: '#64748b', // Slate Gray - Closed
+                    badgeClass: 'bg-slate-100 text-slate-600 border border-slate-200',
+                    label: 'Closed (ปิดการระบาย)',
+                    category: 'closed'
+                };
+            }
+        }
+
         function normalizeWLData(data) {
-            return data.map(item => ({
-                dataType: 'waterlevel',
-                id: `WL_${item.station?.tele_station_id || Math.random()}`,
-                nameTh: item.station?.tele_station_name?.th || 'N/A',
-                nameEn: item.station?.tele_station_name?.en || '',
-                basin: item.basin?.basin_name?.th || 'ไม่ระบุ / Unspecified',
-                river: item.river_name || '-',
-                province: item.geocode?.province_name?.th || '',
-                amphoe: item.geocode?.amphoe_name?.th || '',
-                lat: item.station?.tele_station_lat,
-                lng: item.station?.tele_station_long,
-                msl: item.waterlevel_msl !== null && item.waterlevel_msl !== undefined ? parseFloat(item.waterlevel_msl) : null,
-                storagePercent: item.storage_percent !== null && item.storage_percent !== undefined ? parseFloat(item.storage_percent) : null,
-                diffText: item.diff_wl_bank_text || '',
-                diffVal: item.diff_wl_bank || '',
-                situationLevel: item.situation_level || 0,
-                agency: item.agency?.agency_shortname?.th || item.agency?.agency_name?.th || 'N/A',
-                datetime: item.waterlevel_datetime || '-'
-            }));
+            return data.map(item => {
+                const nameEn = item.station?.tele_station_name?.en || '';
+                const nameTh = item.station?.tele_station_name?.th || '';
+                const displayName = formatBilingual(nameEn, nameTh);
+
+                const basinEn = item.basin?.basin_name?.en || '';
+                const basinTh = item.basin?.basin_name?.th || '';
+                const displayBasin = formatBilingual(basinEn, basinTh, 'Unspecified (ไม่ระบุ)');
+
+                const provEn = item.geocode?.province_name?.en || '';
+                const provTh = item.geocode?.province_name?.th || '';
+                const amphEn = item.geocode?.amphoe_name?.en || '';
+                const amphTh = item.geocode?.amphoe_name?.th || '';
+
+                const displayProv = formatBilingual(provEn, provTh, '');
+                const displayAmph = formatBilingual(amphEn, amphTh, '');
+
+                const agencyEn = item.agency?.agency_shortname?.en || item.agency?.agency_name?.en || '';
+                const agencyTh = item.agency?.agency_shortname?.th || item.agency?.agency_name?.th || '';
+                const displayAgency = formatBilingual(agencyEn, agencyTh);
+
+                const statusInfo = getWLStatusInfo(item);
+
+                return {
+                    dataType: 'waterlevel',
+                    id: `WL_${item.station?.tele_station_id || Math.random()}`,
+                    nameEn, nameTh, displayName,
+                    basinEn, basinTh, displayBasin,
+                    river: item.river_name || '-',
+                    provEn, provTh, displayProv,
+                    amphEn, amphTh, displayAmph,
+                    lat: item.station?.tele_station_lat,
+                    lng: item.station?.tele_station_long,
+                    msl: item.waterlevel_msl !== null && item.waterlevel_msl !== undefined ? parseFloat(item.waterlevel_msl) : null,
+                    storagePercent: item.storage_percent !== null && item.storage_percent !== undefined ? parseFloat(item.storage_percent) : null,
+                    diffText: item.diff_wl_bank_text || '',
+                    diffVal: item.diff_wl_bank || '',
+                    situationLevel: item.situation_level || 0,
+                    agencyEn, agencyTh, displayAgency,
+                    statusInfo,
+                    datetime: item.waterlevel_datetime || '-'
+                };
+            });
         }
 
         function normalizeWGData(data) {
             return data.map(item => {
+                const nameEn = item.station?.tele_station_name?.en || '';
+                const nameTh = item.station?.tele_station_name?.th || item.watergate_name || '';
+                const displayName = formatBilingual(nameEn, nameTh);
+
+                const basinEn = item.basin?.basin_name?.en || '';
+                const basinTh = item.basin?.basin_name?.th || '';
+                const displayBasin = formatBilingual(basinEn, basinTh, 'Unspecified (ไม่ระบุ)');
+
+                const provEn = item.geocode?.province_name?.en || '';
+                const provTh = item.geocode?.province_name?.th || '';
+                const amphEn = item.geocode?.amphoe_name?.en || '';
+                const amphTh = item.geocode?.amphoe_name?.th || '';
+
+                const displayProv = formatBilingual(provEn, provTh, '');
+                const displayAmph = formatBilingual(amphEn, amphTh, '');
+
+                const agencyEn = item.agency?.agency_shortname?.en || item.agency?.agency_name?.en || '';
+                const agencyTh = item.agency?.agency_shortname?.th || item.agency?.agency_name?.th || '';
+                const displayAgency = formatBilingual(agencyEn, agencyTh);
+
                 const gateIn = item.watergate_in || item.water_level_in || item.watergate_msl_in || null;
                 const gateOut = item.watergate_out || item.water_level_out || item.watergate_msl_out || null;
                 const discharge = item.discharge || item.discharge_rate || item.watergate_discharge || 0;
                 const gateCount = item.gate_open_count || item.gate_open || item.gate_count || null;
 
+                const statusInfo = getWGStatusInfo(parseFloat(discharge));
+
                 return {
                     dataType: 'watergate',
                     id: `WG_${item.station?.tele_station_id || Math.random()}`,
-                    nameTh: item.station?.tele_station_name?.th || item.watergate_name || 'N/A',
-                    nameEn: item.station?.tele_station_name?.en || '',
-                    basin: item.basin?.basin_name?.th || 'ไม่ระบุ / Unspecified',
+                    nameEn, nameTh, displayName,
+                    basinEn, basinTh, displayBasin,
                     river: item.river_name || item.river || '-',
-                    province: item.geocode?.province_name?.th || '',
-                    amphoe: item.geocode?.amphoe_name?.th || '',
+                    provEn, provTh, displayProv,
+                    amphEn, amphTh, displayAmph,
                     lat: item.station?.tele_station_lat || item.lat,
                     lng: item.station?.tele_station_long || item.long || item.lng,
                     gateIn: gateIn !== null ? parseFloat(gateIn) : null,
                     gateOut: gateOut !== null ? parseFloat(gateOut) : null,
                     discharge: discharge !== null ? parseFloat(discharge) : 0,
                     gateCount: gateCount,
-                    agency: item.agency?.agency_shortname?.th || item.agency?.agency_name?.th || 'N/A',
+                    agencyEn, agencyTh, displayAgency,
+                    statusInfo,
                     datetime: item.watergate_datetime || item.datetime || '-'
                 };
             });
@@ -428,7 +576,7 @@
 
         function updateSummaryCards() {
             const totalWL = waterLevelData.length;
-            const overflowWL = waterLevelData.filter(d => d.diffText.includes('ล้นตลิ่ง') || d.situationLevel === 5).length;
+            const overflowWL = waterLevelData.filter(d => d.statusInfo.category === 'overflow').length;
             
             const storageSum = waterLevelData.reduce((acc, curr) => acc + (curr.storagePercent || 0), 0);
             const avgStorage = totalWL > 0 ? (storageSum / totalWL).toFixed(1) : 0;
@@ -438,10 +586,10 @@
             const totalDischarge = waterGateData.reduce((acc, curr) => acc + (curr.discharge || 0), 0);
 
             document.getElementById('statTotalWL').textContent = totalWL.toLocaleString();
-            document.getElementById('statOverflowWL').innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i>${overflowWL.toLocaleString()} ล้นตลิ่ง / Overflow`;
+            document.getElementById('statOverflowWL').innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i>${overflowWL.toLocaleString()} Overflowing (ล้นตลิ่ง)`;
             
             document.getElementById('statTotalWG').textContent = totalWG.toLocaleString();
-            document.getElementById('statActiveWG').innerHTML = `<i class="fa-solid fa-door-open mr-1"></i>${activeWG.toLocaleString()} เปิดระบาย / Discharging`;
+            document.getElementById('statActiveWG').innerHTML = `<i class="fa-solid fa-door-open mr-1"></i>${activeWG.toLocaleString()} Discharging (เปิดระบาย)`;
             
             document.getElementById('statDischarge').textContent = totalDischarge.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1});
             document.getElementById('statAvgStorage').textContent = `${avgStorage}%`;
@@ -458,16 +606,16 @@
             const agencies = new Set();
 
             combinedData.forEach(item => {
-                if (item.basin) basins.add(item.basin);
-                if (item.agency) agencies.add(item.agency);
+                if (item.displayBasin) basins.add(item.displayBasin);
+                if (item.displayAgency) agencies.add(item.displayAgency);
             });
 
-            basinSelect.innerHTML = '<option value="">ทั้งหมด / All</option>';
+            basinSelect.innerHTML = '<option value="">All Basins (ลุ่มน้ำทั้งหมด)</option>';
             Array.from(basins).sort().forEach(b => {
                 basinSelect.innerHTML += `<option value="${b}">${b}</option>`;
             });
 
-            agencySelect.innerHTML = '<option value="">ทั้งหมด / All</option>';
+            agencySelect.innerHTML = '<option value="">All Agencies (หน่วยงานทั้งหมด)</option>';
             Array.from(agencies).sort().forEach(a => {
                 agencySelect.innerHTML += `<option value="${a}">${a}</option>`;
             });
@@ -488,7 +636,7 @@
                         const parsed = JSON.parse(evt.target.result);
                         waterLevelData = normalizeWLData(parsed.waterlevel_data?.data || parsed.data || []);
                         processAndRender();
-                    } catch (err) { alert('ไฟล์ JSON ระดับน้ำไม่ถูกต้อง / Invalid WL JSON'); }
+                    } catch (err) { alert('Invalid Water Level JSON file.'); }
                 };
                 reader.readAsText(file);
             });
@@ -502,7 +650,7 @@
                         const parsed = JSON.parse(evt.target.result);
                         waterGateData = normalizeWGData(parsed.watergate_data?.data || parsed.data || []);
                         processAndRender();
-                    } catch (err) { alert('ไฟล์ JSON ประตูน้ำไม่ถูกต้อง / Invalid WG JSON'); }
+                    } catch (err) { alert('Invalid Watergate JSON file.'); }
                 };
                 reader.readAsText(file);
             });
@@ -519,20 +667,21 @@
                 if (currentTypeFilter === 'watergate' && item.dataType !== 'watergate') return false;
 
                 const matchesSearch = !searchVal || 
-                    item.nameTh.toLowerCase().includes(searchVal) ||
-                    item.nameEn.toLowerCase().includes(searchVal) ||
+                    item.displayName.toLowerCase().includes(searchVal) ||
                     item.river.toLowerCase().includes(searchVal) ||
-                    item.province.toLowerCase().includes(searchVal) ||
-                    item.amphoe.toLowerCase().includes(searchVal);
+                    item.displayProv.toLowerCase().includes(searchVal) ||
+                    item.displayAmph.toLowerCase().includes(searchVal);
 
-                const matchesBasin = !basinVal || item.basin === basinVal;
-                const matchesAgency = !agencyVal || item.agency === agencyVal;
+                const matchesBasin = !basinVal || item.displayBasin === basinVal;
+                const matchesAgency = !agencyVal || item.displayAgency === agencyVal;
 
                 let matchesStatus = true;
                 if (statusVal === 'overflow') {
-                    matchesStatus = item.dataType === 'waterlevel' && (item.diffText.includes('ล้นตลิ่ง') || item.situationLevel === 5);
+                    matchesStatus = item.dataType === 'waterlevel' && item.statusInfo.category === 'overflow';
+                } else if (statusVal === 'danger') {
+                    matchesStatus = item.dataType === 'waterlevel' && item.statusInfo.category === 'danger';
                 } else if (statusVal === 'warning') {
-                    matchesStatus = item.dataType === 'waterlevel' && item.situationLevel === 4;
+                    matchesStatus = item.dataType === 'waterlevel' && item.statusInfo.category === 'warning';
                 } else if (statusVal === 'discharging') {
                     matchesStatus = item.dataType === 'watergate' && item.discharge > 0;
                 }
@@ -559,37 +708,60 @@
                 if (!item.lat || !item.lng) return;
 
                 const isWL = item.dataType === 'waterlevel';
-                const isOverflow = isWL && (item.diffText.includes('ล้นตลิ่ง') || item.situationLevel === 5);
-                const isDischarging = !isWL && item.discharge > 0;
-
-                const color = isWL ? (isOverflow ? '#ef4444' : '#f59e0b') : (isDischarging ? '#0d9488' : '#7c3aed');
+                const color = item.statusInfo.color;
 
                 const createMarker = () => {
-                    const m = L.circleMarker([item.lat, item.lng], {
-                        radius: 6,
-                        fillColor: color,
-                        color: '#ffffff',
-                        weight: 1.5,
-                        fillOpacity: 0.9
-                    });
+                    let m;
 
-                    const typeTag = isWL ? 'ระดับน้ำ / Water Level' : 'ประตูน้ำ / Water Gate';
-                    const detail = isWL ? 
-                        `<div>ระดับ / MSL: <b>${item.msl ? item.msl.toFixed(2) + ' m' : 'N/A'}</b></div>
-                         <div class="${isOverflow ? 'text-red-600 font-bold' : 'text-amber-600'}">${item.diffText} ${item.diffVal || ''}</div>` :
-                        `<div>การระบาย / Discharge: <b class="text-teal-600">${item.discharge} m³/s</b></div>`;
+                    if (isWL) {
+                        // Water Level = CIRCLE MARKER
+                        m = L.circleMarker([item.lat, item.lng], {
+                            radius: 7,
+                            fillColor: color,
+                            color: '#ffffff',
+                            weight: 1.5,
+                            fillOpacity: 0.9
+                        });
 
-                    m.bindPopup(`
-                        <div class="p-1 font-sans text-xs space-y-1">
-                            <div class="font-bold text-slate-800">[${typeTag}] ${item.nameTh}</div>
-                            <div class="text-slate-600">${item.basin} (${item.province})</div>
-                            ${detail}
-                        </div>
-                    `);
+                        m.bindPopup(`
+                            <div class="p-1 font-sans text-xs space-y-1">
+                                <div class="font-bold text-slate-800 flex items-center gap-1">
+                                    <i class="fa-solid fa-circle text-[10px]" style="color: ${color}"></i>
+                                    [WL / ระดับน้ำ] ${item.displayName}
+                                </div>
+                                <div class="text-slate-600"><i class="fa-solid fa-water text-blue-500 mr-1"></i>${item.displayBasin} (${item.displayProv})</div>
+                                <div>Level (ระดับ MSL): <b>${item.msl !== null ? item.msl.toFixed(2) + ' m' : 'N/A'}</b></div>
+                                <div>Storage (ความจุ): <b>${item.storagePercent !== null ? item.storagePercent.toFixed(1) + '%' : 'N/A'}</b></div>
+                                <div style="color: ${color}; font-weight: 700;">${item.statusInfo.label}</div>
+                            </div>
+                        `);
+                    } else {
+                        // Water Gate = SQUARE MARKER
+                        const squareIcon = L.divIcon({
+                            className: 'custom-square-marker',
+                            html: `<div style="background-color: ${color}; width: 12px; height: 12px; border: 2px solid #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.4); border-radius: 2px;"></div>`,
+                            iconSize: [12, 12],
+                            iconAnchor: [6, 6]
+                        });
+
+                        m = L.marker([item.lat, item.lng], { icon: squareIcon });
+
+                        m.bindPopup(`
+                            <div class="p-1 font-sans text-xs space-y-1">
+                                <div class="font-bold text-slate-800 flex items-center gap-1">
+                                    <i class="fa-solid fa-square text-[10px]" style="color: ${color}"></i>
+                                    [WG / ประตูน้ำ] ${item.displayName}
+                                </div>
+                                <div class="text-slate-600"><i class="fa-solid fa-torii-gate text-purple-600 mr-1"></i>${item.displayBasin} (${item.displayProv})</div>
+                                <div>Up/Down (หน้า/ท้าย): <b>${item.gateIn !== null ? item.gateIn.toFixed(2) : '-'} / ${item.gateOut !== null ? item.gateOut.toFixed(2) : '-'} m MSL</b></div>
+                                <div style="color: ${color}; font-weight: 700;">Discharge (การระบาย): ${item.discharge.toFixed(1)} m³/s</div>
+                            </div>
+                        `);
+                    }
+
                     return m;
                 };
 
-                // Add marker to each map if coordinates fall inside map bounds
                 if (isPointInBounds(item.lat, item.lng, MAP_BOUNDS.macro)) {
                     groupMacro.addLayer(createMarker());
                 }
@@ -606,10 +778,10 @@
             const tbody = document.getElementById('tableBody');
             const countEl = document.getElementById('tableCount');
             tbody.innerHTML = '';
-            countEl.textContent = `แสดง ${data.length.toLocaleString()} รายการ / Displaying ${data.length.toLocaleString()} records`;
+            countEl.textContent = `Displaying ${data.length.toLocaleString()} records (แสดง ${data.length.toLocaleString()} รายการ)`;
 
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400">ไม่พบข้อมูลตรงตามเงื่อนไข / No matching records found</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400">No matching records found (ไม่พบข้อมูลตรงตามเงื่อนไข)</td></tr>`;
                 return;
             }
 
@@ -617,73 +789,68 @@
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-50 transition-colors text-xs text-slate-700';
 
-                const location = `${item.amphoe || ''}${item.amphoe && item.province ? ', ' : ''}${item.province || ''}`;
+                const location = `${item.displayAmph || ''}${item.displayAmph && item.displayProv ? ', ' : ''}${item.displayProv || ''}`;
 
                 if (item.dataType === 'waterlevel') {
-                    const mslStr = item.msl !== null ? `${item.msl.toFixed(2)}` : '-';
+                    const mslStr = item.msl !== null ? `${item.msl.toFixed(2)} m` : '-';
                     const storageStr = item.storagePercent !== null ? `${item.storagePercent.toFixed(1)}%` : '-';
-                    const isOverflow = item.diffText.includes('ล้นตลิ่ง') || item.situationLevel === 5;
-                    const badgeClass = isOverflow ? 'badge-danger' : 'badge-warning';
 
                     tr.innerHTML = `
-                        <td class="py-3 px-4 font-semibold">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700">
-                                <i class="fa-solid fa-water mr-1"></i>ระดับน้ำ / WL
+                        <td class="py-3.5 px-4 font-semibold">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] bg-blue-100 text-blue-800">
+                                <i class="fa-solid fa-circle mr-1 text-[8px]"></i>Water Level (ระดับน้ำ)
                             </span>
                         </td>
-                        <td class="py-3 px-4 font-medium text-slate-900">
-                            <div>${item.nameTh}</div>
-                            ${item.nameEn ? `<div class="text-[10px] text-slate-400">${item.nameEn}</div>` : ''}
+                        <td class="py-3.5 px-4 font-medium text-slate-900">
+                            <div>${item.displayName}</div>
                         </td>
-                        <td class="py-3 px-4">
-                            <div class="font-medium text-slate-800">${item.basin}</div>
+                        <td class="py-3.5 px-4">
+                            <div class="font-medium text-slate-800">${item.displayBasin}</div>
                             <div class="text-[10px] text-blue-600">${item.river}</div>
                         </td>
-                        <td class="py-3 px-4 text-slate-600">${location || '-'}</td>
-                        <td class="py-3 px-4 text-right font-bold text-slate-800">${mslStr}</td>
-                        <td class="py-3 px-4 text-right font-semibold text-indigo-600">${storageStr}</td>
-                        <td class="py-3 px-4">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${badgeClass}">
-                                ${item.diffText} ${item.diffVal ? item.diffVal + ' ม.' : ''}
+                        <td class="py-3.5 px-4 text-slate-600">${location || '-'}</td>
+                        <td class="py-3.5 px-4 text-right font-bold text-slate-800">${mslStr}</td>
+                        <td class="py-3.5 px-4 text-right font-semibold text-indigo-600">${storageStr}</td>
+                        <td class="py-3.5 px-4">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${item.statusInfo.badgeClass}">
+                                ${item.statusInfo.label}
                             </span>
                         </td>
-                        <td class="py-3 px-4 text-slate-500 font-medium">${item.agency}</td>
-                        <td class="py-3 px-4 text-slate-400 whitespace-nowrap">${item.datetime}</td>
+                        <td class="py-3.5 px-4 text-slate-500 font-medium">${item.displayAgency}</td>
+                        <td class="py-3.5 px-4 text-slate-400 whitespace-nowrap">${item.datetime}</td>
                     `;
                 } else {
                     const gateInStr = item.gateIn !== null ? item.gateIn.toFixed(2) : '-';
                     const gateOutStr = item.gateOut !== null ? item.gateOut.toFixed(2) : '-';
-                    const dischargeStr = item.discharge > 0 ? `${item.discharge.toFixed(1)} m³/s` : '0 m³/s';
-                    const isDischarging = item.discharge > 0;
+                    const dischargeStr = `${item.discharge.toFixed(1)} m³/s`;
 
                     tr.innerHTML = `
-                        <td class="py-3 px-4 font-semibold">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700">
-                                <i class="fa-solid fa-torii-gate mr-1"></i>ประตูน้ำ / WG
+                        <td class="py-3.5 px-4 font-semibold">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] bg-purple-100 text-purple-800">
+                                <i class="fa-solid fa-square mr-1 text-[8px]"></i>Water Gate (ประตูน้ำ)
                             </span>
                         </td>
-                        <td class="py-3 px-4 font-medium text-slate-900">
-                            <div>${item.nameTh}</div>
-                            ${item.gateCount ? `<div class="text-[10px] text-purple-600 font-medium">เปิด ${item.gateCount} บาน / Open</div>` : ''}
+                        <td class="py-3.5 px-4 font-medium text-slate-900">
+                            <div>${item.displayName}</div>
+                            ${item.gateCount ? `<div class="text-[10px] text-purple-600 font-medium">Open ${item.gateCount} Gates (เปิด ${item.gateCount} บาน)</div>` : ''}
                         </td>
-                        <td class="py-3 px-4">
-                            <div class="font-medium text-slate-800">${item.basin}</div>
+                        <td class="py-3.5 px-4">
+                            <div class="font-medium text-slate-800">${item.displayBasin}</div>
                             <div class="text-[10px] text-slate-500">${item.river}</div>
                         </td>
-                        <td class="py-3 px-4 text-slate-600">${location || '-'}</td>
-                        <td class="py-3 px-4 text-right font-medium text-slate-800">
-                            <div>หน้า/Up: <span class="font-bold text-slate-900">${gateInStr}</span></div>
-                            <div class="text-[10px] text-slate-500">ท้าย/Down: ${gateOutStr}</div>
+                        <td class="py-3.5 px-4 text-slate-600">${location || '-'}</td>
+                        <td class="py-3.5 px-4 text-right font-medium text-slate-800">
+                            <div>Up/หน้า: <span class="font-bold text-slate-900">${gateInStr}</span></div>
+                            <div class="text-[10px] text-slate-500">Down/ท้าย: ${gateOutStr}</div>
                         </td>
-                        <td class="py-3 px-4 text-right font-bold text-teal-600">${dischargeStr}</td>
-                        <td class="py-3 px-4">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${isDischarging ? 'badge-info' : 'bg-slate-100 text-slate-500'}">
-                                <i class="fa-solid ${isDischarging ? 'fa-arrow-right-from-bracket mr-1' : 'fa-lock mr-1'}"></i>
-                                ${isDischarging ? 'เปิดระบาย / Open' : 'ปิดระบาย / Closed'}
+                        <td class="py-3.5 px-4 text-right font-bold text-teal-600">${dischargeStr}</td>
+                        <td class="py-3.5 px-4">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${item.statusInfo.badgeClass}">
+                                ${item.statusInfo.label}
                             </span>
                         </td>
-                        <td class="py-3 px-4 text-slate-500 font-medium">${item.agency}</td>
-                        <td class="py-3 px-4 text-slate-400 whitespace-nowrap">${item.datetime}</td>
+                        <td class="py-3.5 px-4 text-slate-500 font-medium">${item.displayAgency}</td>
+                        <td class="py-3.5 px-4 text-slate-400 whitespace-nowrap">${item.datetime}</td>
                     `;
                 }
 
@@ -695,7 +862,7 @@
             const basinData = {};
 
             data.forEach(item => {
-                const bName = item.basin || 'อื่นๆ / Other';
+                const bName = item.displayBasin || 'Other (อื่นๆ)';
                 if (!basinData[bName]) {
                     basinData[bName] = { wlCount: 0, wgCount: 0 };
                 }
@@ -718,13 +885,13 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'ระดับน้ำ / Water Level',
+                            label: 'Water Level (ระดับน้ำ)',
                             data: wlCounts,
                             backgroundColor: '#3b82f6',
                             borderRadius: 4
                         },
                         {
-                            label: 'ประตูระบายน้ำ / Water Gate',
+                            label: 'Water Gate (ประตูระบายน้ำ)',
                             data: wgCounts,
                             backgroundColor: '#9333ea',
                             borderRadius: 4
