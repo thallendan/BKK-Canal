@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Khlong Water Level Map Viewer</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Inter:wght@400;500;600;700&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --status-normal: #10b981;
+      --status-warning: #f59e0b;
+      --status-critical: #ef4444;
+      --status-inactive: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', 'Kanit', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar Layout */
+    #sidebar {
+      width: 380px;
+      background-color: var(--card-bg);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      z-index: 1000;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.3);
+    }
+
+    .header {
+      padding: 20px;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #38bdf8;
+    }
+
+    .header p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Controls Panel */
+    .controls {
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .control-group {
+      margin-bottom: 12px;
+    }
+
+    .control-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px 12px;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-main);
+      font-size: 0.875rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    select:focus, input:focus {
+      border-color: var(--primary);
+    }
+
+    /* Stats Summary */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 12px 20px;
+      background-color: rgba(15, 23, 42, 0.5);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .stat-card {
+      background-color: var(--card-bg);
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    .stat-card .val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+
+    .stat-card .lbl {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    /* Station List */
+    #station-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 20px;
+    }
+
+    .station-item {
+      background-color: rgba(15, 23, 42, 0.4);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .station-item:hover {
+      border-color: var(--primary);
+      background-color: rgba(2, 132, 199, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .station-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .station-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .station-data {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border-color);
+      font-size: 0.8rem;
+    }
+
+    .badge {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* Map View */
+    #map {
+      flex: 1;
+      height: 100%;
+      background-color: #0b1120;
+    }
+
+    /* Custom Map Legend Control */
+    .map-legend {
+      background: rgba(30, 41, 59, 0.9);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.8rem;
+      backdrop-filter: blur(8px);
+      line-height: 1.6;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Leaflet Popup Styling */
+    .leaflet-popup-content-wrapper {
+      background-color: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+
+    .leaflet-popup-tip {
+      background-color: var(--card-bg);
+    }
+
+    .popup-content h3 {
+      font-size: 0.95rem;
+      color: #38bdf8;
+      margin-bottom: 4px;
+    }
+
+    .popup-content .en-name {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .popup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      font-size: 0.8rem;
+      background: rgba(15, 23, 42, 0.5);
+      padding: 8px;
+      border-radius: 6px;
+      margin-top: 6px;
+    }
+
+    .popup-grid div {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .popup-grid span.lbl {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .popup-grid span.val {
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      #sidebar {
+        width: 100%;
+        height: 40vh;
+      }
+      #map {
+        height: 60vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Container -->
+  <div id="sidebar">
+    <div class="header">
+      <h1><i class="fa-solid fa-water"></i> Khlong Water Map</h1>
+      <p>Bangkok & Surrounding Canal Monitoring System</p>
+    </div>
+
+    <!-- Map & Layer Controls -->
+    <div class="controls">
+      <div class="control-group">
+        <label for="map-select"><i class="fa-solid fa-layer-group"></i> Select Base Overlay Map</label>
+        <select id="map-select">
+          <option value="bangkok">Bangkok Main Map (Static Overlay)</option>
+          <option value="bangna">Bangna Local Map (Static Overlay)</option>
+          <option value="chaophraya">Chao Phraya Macro Map (Static Overlay)</option>
+          <option value="osm">OpenStreetMap Base Layer</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="search-input"><i class="fa-solid fa-magnifying-glass"></i> Search Station</label>
+        <input type="text" id="search-input" placeholder="Type Thai or English name..." />
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="val" id="stat-total">0</div>
+        <div class="lbl">Total Stations</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="stat-normal" style="color: var(--status-normal);">0</div>
+        <div class="lbl">Normal</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="stat-alert" style="color: var(--status-critical);">0</div>
+        <div class="lbl">Alert / Critical</div>
+      </div>
+    </div>
+
+    <!-- Station List -->
+    <div id="station-list"></div>
+  </div>
+
+  <!-- Leaflet Map Canvas -->
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // 1. Static Map Bounding Boxes Configuration
+    const mapBounds = {
+      bangkok: {
+        url: 'bangkok_map.png',
+        bounds: [[13.5860, 100.2305], [13.9054, 100.9703]]
+      },
+      bangna: {
+        url: 'bangna_local_map.png',
+        bounds: [[13.5883, 100.5170], [13.7217, 100.7230]]
+      },
+      chaophraya: {
+        url: 'chaophraya_macro_map.png',
+        bounds: [[11.4477, 93.4607], [19.9011, 106.6443]]
+      }
+    };
+
+    // Initialize Map centered on Bangkok
+    const map = L.map('map', {
+      center: [13.7563, 100.5018],
+      zoom: 11,
+      zoomControl: true
+    });
+
+    // Base Tile Layer (OpenStreetMap option)
+    const osmTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    });
+
+    // Static Image Overlays
+    const overlays = {
+      bangkok: L.imageOverlay(mapBounds.bangkok.url, mapBounds.bangkok.bounds, { opacity: 0.9 }),
+      bangna: L.imageOverlay(mapBounds.bangna.url, mapBounds.bangna.bounds, { opacity: 0.9 }),
+      chaophraya: L.imageOverlay(mapBounds.chaophraya.url, mapBounds.chaophraya.bounds, { opacity: 0.9 })
+    };
+
+    let currentOverlay = overlays.bangkok;
+    currentOverlay.addTo(map);
+    map.fitBounds(mapBounds.bangkok.bounds);
+
+    // Layer Switcher Logic
+    document.getElementById('map-select').addEventListener('change', (e) => {
+      const selected = e.target.value;
+
+      // Remove active overlays and tiles
+      Object.values(overlays).forEach(layer => map.removeLayer(layer));
+      map.removeLayer(osmTileLayer);
+
+      if (selected === 'osm') {
+        osmTileLayer.addTo(map);
+      } else if (mapBounds[selected]) {
+        currentOverlay = overlays[selected];
+        currentOverlay.addTo(map);
+        map.fitBounds(mapBounds[selected].bounds);
+      }
+    });
+
+    // Add Custom Map Legend
+    const legend = L.control({ position: 'bottomright' });
+    legend.onAdd = function () {
+      const div = L.DomUtil.create('div', 'map-legend');
+      div.innerHTML = `
+        <div style="font-weight:600; margin-bottom: 6px;">Water Status</div>
+        <div class="legend-item"><span class="badge" style="background: var(--status-normal);"></span> Normal Water Level</div>
+        <div class="legend-item"><span class="badge" style="background: var(--status-warning);"></span> Warning Level</div>
+        <div class="legend-item"><span class="badge" style="background: var(--status-critical);"></span> Critical Level</div>
+        <div class="legend-item"><span class="badge" style="background: var(--status-inactive);"></span> Offline / No Data</div>
+      `;
+      return div;
+    };
+    legend.addTo(map);
+
+    // Marker Layer Group
+    const markersGroup = L.layerGroup().addTo(map);
+    let allStationsData = [];
+    const markerMap = new Map();
+
+    // Helper: Determine Color based on station thresholds
+    function getStatusColor(station) {
+      const info = station.water_station_info || {};
+      const last = station.water_level_last || {};
+      const wl = last.wl_in;
+      const warning = info.warning;
+      const critical = info.critical;
+
+      if (wl === null || wl === undefined || wl === -99) return 'var(--status-inactive)';
+      if (critical !== null && wl >= critical) return 'var(--status-critical)';
+      if (warning !== null && wl >= warning) return 'var(--status-warning)';
+      return 'var(--status-normal)';
+    }
+
+    // Load Data from KhlongMap.json
+    async function loadKhlongData() {
+      try {
+        const response = await fetch('KhlongMap.json');
+        if (!response.ok) throw new Error('Failed to load KhlongMap.json');
+        const data = await response.json();
+        
+        allStationsData = data.waterStation || data;
+        renderMapAndList(allStationsData);
+      } catch (err) {
+        console.error('Error fetching KhlongMap.json:', err);
+        document.getElementById('station-list').innerHTML = `
+          <div style="color: var(--status-critical); padding: 15px; text-align: center;">
+            <i class="fa-solid fa-triangle-exclamation"></i> Could not load KhlongMap.json.
+          </div>`;
+      }
+    }
+
+    // Render Markers and Sidebar List
+    function renderMapAndList(stations) {
+      markersGroup.clearLayers();
+      markerMap.clear();
+
+      const listContainer = document.getElementById('station-list');
+      listContainer.innerHTML = '';
+
+      let normalCount = 0;
+      let alertCount = 0;
+
+      stations.forEach((st) => {
+        const info = st.water_station_info || {};
+        const last = st.water_level_last || {};
+
+        // Lat/Lng resolution
+        const lat = st.latitude || info.latitude;
+        const lng = st.longitude || info.longitude;
+
+        const nameTh = info.water_shortname || st.station_name || info.water_name || `Station ${st.water_id}`;
+        const nameEn = info.water_shortname_en || st.station_name_en || 'Khlong Station';
+        const riverName = info.river_name || 'N/A';
+        const wlIn = (last.wl_in !== null && last.wl_in !== undefined && last.wl_in !== -99) ? `${last.wl_in} m.MSL` : 'N/A';
+        const wlOut = (last.wl_out01 !== null && last.wl_out01 !== undefined && last.wl_out01 !== -99) ? `${last.wl_out01} m.MSL` : 'N/A';
+        
+        const statusColor = getStatusColor(st);
+
+        if (statusColor === 'var(--status-normal)') normalCount++;
+        if (statusColor === 'var(--status-warning)' || statusColor === 'var(--status-critical)') alertCount++;
+
+        // 1. Create Map Marker if geographic coordinates exist
+        if (lat && lng) {
+          const customIcon = L.divIcon({
+            className: 'custom-pin',
+            html: `<div style="
+              background-color: ${statusColor};
+              width: 14px;
+              height: 14px;
+              border-radius: 50%;
+              border: 2px solid white;
+              box-shadow: 0 0 6px rgba(0,0,0,0.5);
+            "></div>`,
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
+          });
+
+          const marker = L.marker([lat, lng], { icon: customIcon });
+
+          const popupContent = `
+            <div class="popup-content">
+              <h3>${nameTh}</h3>
+              <div class="en-name">${nameEn}</div>
+              <div style="font-size: 0.78rem;"><strong>River:</strong> ${riverName}</div>
+              <div class="popup-grid">
+                <div>
+                  <span class="lbl">Inflow (WL In)</span>
+                  <span class="val">${wlIn}</span>
+                </div>
+                <div>
+                  <span class="lbl">Outflow (WL Out)</span>
+                  <span class="val">${wlOut}</span>
+                </div>
+                <div>
+                  <span class="lbl">Warning Threshold</span>
+                  <span class="val">${info.warning !== null ? info.warning + ' m' : 'N/A'}</span>
+                </div>
+                <div>
+                  <span class="lbl">Critical Threshold</span>
+                  <span class="val">${info.critical !== null ? info.critical + ' m' : 'N/A'}</span>
+                </div>
+              </div>
+            </div>
+          `;
+
+          marker.bindPopup(popupContent);
+          markersGroup.addLayer(marker);
+          markerMap.set(st.water_id, { marker, lat, lng });
+        }
+
+        // 2. Create Sidebar Item
+        const item = document.createElement('div');
+        item.className = 'station-item';
+        item.innerHTML = `
+          <div class="station-title">
+            <span>${nameTh}</span>
+            <span class="badge" style="background-color: ${statusColor};"></span>
+          </div>
+          <div class="station-sub">${nameEn}</div>
+          <div class="station-data">
+            <span>Water Level: <strong>${wlIn}</strong></span>
+            <span>River: <strong>${riverName}</strong></span>
+          </div>
+        `;
+
+        item.addEventListener('click', () => {
+          if (lat && lng) {
+            map.flyTo([lat, lng], 14, { duration: 1.2 });
+            const obj = markerMap.get(st.water_id);
+            if (obj && obj.marker) {
+              obj.marker.openPopup();
+            }
+          }
+        });
+
+        listContainer.appendChild(item);
+      });
+
+      // Update Summary Counter Numbers
+      document.getElementById('stat-total').innerText = stations.length;
+      document.getElementById('stat-normal').innerText = normalCount;
+      document.getElementById('stat-alert').innerText = alertCount;
+    }
+
+    // Search Filter Logic
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      const filtered = allStationsData.filter((st) => {
+        const info = st.water_station_info || {};
+        const nameTh = (info.water_shortname || st.station_name || info.water_name || '').toLowerCase();
+        const nameEn = (info.water_shortname_en || st.station_name_en || '').toLowerCase();
+        const river = (info.river_name || '').toLowerCase();
+        return nameTh.includes(query) || nameEn.includes(query) || river.includes(query);
+      });
+      renderMapAndList(filtered);
+    });
+
+    // Start loading map data
+    loadKhlongData();
+  </script>
+</body>
+</html>
