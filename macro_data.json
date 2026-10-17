@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-10-17T13:44:50.243527+00:00",
+  "timestamp_utc": "2026-10-17T17:13:04.226096+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
@@ -56,10 +56,10 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4749,
-    "max_nationwide_1h_mm": 56.6,
+    "total_nationwide_stations": 4613,
+    "max_nationwide_1h_mm": 37,
     "max_nationwide_24h_mm": 111.4,
-    "bkk_samut_prakan_count": 148,
+    "bkk_samut_prakan_count": 27,
     "top_bkk_samut_stations": [
       {
         "station_name": "คลองภาษีเจริญ เพชรเกษม69",
@@ -71,90 +71,90 @@
         "lon": 100.38127
       },
       {
-        "station_name": "สนข.บางบอน",
+        "station_name": "คลองลำปลาทิว ลาดกระบัง",
         "province": "Bangkok",
-        "district": "Bang Bon District",
+        "district": "Lat Krabang District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 26,
-        "lat": 13.63392,
-        "lon": 100.36884
+        "rain_24h_mm": 28,
+        "lat": 13.7407,
+        "lon": 100.79468
       },
       {
-        "station_name": "สนข.บางแค",
-        "province": "Bangkok",
-        "district": "Bang Khae District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 25.5,
-        "lat": 13.69622,
-        "lon": 100.40919
-      },
-      {
-        "station_name": "จุดวัด ค.บางบอน-ค.สะแกงาม",
-        "province": "Bangkok",
-        "district": "Bang Bon District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 24.5,
-        "lat": 13.64255,
-        "lon": 100.37952
-      },
-      {
-        "station_name": "จุดวัด ค.ทวีฯ-ค.ภาษีฯ",
-        "province": "Bangkok",
-        "district": "Nong Khaem District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 20.5,
-        "lat": 13.69168,
-        "lon": 100.38097
-      },
-      {
-        "station_name": "ค.ราชมนตรี-ภาษีเจริญ",
-        "province": "Bangkok",
-        "district": "Bang Khae District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 19.5,
-        "lat": 13.70754,
-        "lon": 100.42622
+        "station_name": "ปตร.วัดบางกระเจ้านอก",
+        "province": "Samut Prakan",
+        "district": "Phra Pradaeng District",
+        "rain_1h_mm": 14.8,
+        "rain_24h_mm": 23.4,
+        "lat": 13.689612,
+        "lon": 100.554886
       },
       {
         "station_name": "คลองมหาสวัสดิ บางกรวย-สวนผัก",
         "province": "Bangkok",
         "district": "Taling Chan District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 17.6,
+        "rain_1h_mm": 4.4,
+        "rain_24h_mm": 22,
         "lat": 13.79965,
         "lon": 100.43863
       },
       {
-        "station_name": "ส.ดาวคะนอง",
-        "province": "Bangkok",
-        "district": "Rat Burana District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 15.5,
-        "lat": 13.6949,
-        "lon": 100.48758
+        "station_name": "ปตร. คลองลัดบางยอ 1",
+        "province": "Samut Prakan",
+        "district": "Phra Pradaeng District",
+        "rain_1h_mm": 15.2,
+        "rain_24h_mm": 20.4,
+        "lat": 13.676162,
+        "lon": 100.553085
       },
       {
-        "station_name": "จุดวัด ค.ประเวศฯ-ถ.ร่วมพัฒนา",
+        "station_name": "สะพานพระพุทธยอดฟ้า",
         "province": "Bangkok",
-        "district": "Lat Krabang District",
+        "district": "Thon Buri District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 13,
-        "lat": 13.70097,
-        "lon": 100.85106
+        "rain_24h_mm": 11,
+        "lat": 13.738694,
+        "lon": 100.49633
       },
       {
-        "station_name": "สนข.ภาษีเจริญ",
+        "station_name": "ตลาดน้ำบางน้ำผึ้ง",
+        "province": "Samut Prakan",
+        "district": "Phra Pradaeng District",
+        "rain_1h_mm": 4.6,
+        "rain_24h_mm": 7.4,
+        "lat": 13.678656,
+        "lon": 100.57356
+      },
+      {
+        "station_name": "ศาลากลางสมุทรปราการ",
+        "province": "Samut Prakan",
+        "district": "Mueang Samut Prakan District",
+        "rain_1h_mm": 7,
+        "rain_24h_mm": 7,
+        "lat": 13.59801,
+        "lon": 100.59622
+      },
+      {
+        "station_name": "ปตร. คลองแพ",
+        "province": "Samut Prakan",
+        "district": "Phra Pradaeng District",
+        "rain_1h_mm": 2.6,
+        "rain_24h_mm": 6,
+        "lat": 13.694974,
+        "lon": 100.58231
+      },
+      {
+        "station_name": "คลองลาดพร้าว ปากคลอง2สายใต้",
         "province": "Bangkok",
-        "district": "Phasi Charoen District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 13,
-        "lat": 13.71441,
-        "lon": 100.43696
+        "district": "Lat Phrao District",
+        "rain_1h_mm": 5,
+        "rain_24h_mm": 5.4,
+        "lat": 13.93183,
+        "lon": 100.63952
       }
     ]
   },
   "estuary_tide": {
-    "realtime_msl": 0.857,
+    "realtime_msl": -0.504,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
