@@ -321,8 +321,8 @@
                 const nameEn = info.name?.en || item.water_station_name?.en || `Station #${item.water_station_id || index}`;
                 const nameTh = info.name?.th || item.water_station_name?.th || '';
                 
-                const lat = parseFloat(info.latitude ?? item.latitude);
-                const lng = parseFloat(info.longitude ?? item.longitude);
+                const lat = parseFloat(info.latitude ?? item.latitude ?? item.water_level_last?.latitude);
+                const lng = parseFloat(info.longitude ?? item.longitude ?? item.water_level_last?.longitude);
                 
                 const canalName = info.canal?.name?.en || info.canal?.name?.th || 'Bangna Canal';
 
@@ -510,6 +510,7 @@
                         <div><span class="text-slate-500">Canal:</span> ${item.canalName}</div>
                         <div><span class="text-slate-500">Water Level:</span> <b>${!isNaN(item.wlIn) ? item.wlIn.toFixed(2) + ' m' : 'N/A'}</b></div>
                         <div><span class="text-slate-500">Status:</span> <span style="color:${item.color}">${item.label}</span></div>
+                        <div><span class="text-slate-500">Coordinates:</span> <b>${!isNaN(item.lat) && !isNaN(item.lng) ? `${item.lat.toFixed(5)},${item.lng.toFixed(5)}` : 'N/A'}</b></div>
                     </div>
                 `);
 
@@ -566,6 +567,10 @@
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <span class="text-slate-400 text-xs font-semibold uppercase block mb-1">Alert Status</span>
                         <span class="text-sm font-semibold block" style="color:${st.color}">${st.label}</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 col-span-2">
+                        <span class="text-slate-400 text-xs font-semibold uppercase block mb-1">Coordinates (Latitude, Longitude)</span>
+                        <span class="text-base font-bold text-slate-800">${!isNaN(st.lat) && !isNaN(st.lng) ? `${st.lat.toFixed(5)},${st.lng.toFixed(5)}` : 'N/A'}</span>
                     </div>
                 </div>
             `;
