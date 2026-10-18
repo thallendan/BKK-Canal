@@ -151,14 +151,14 @@
 
                 <div class="relative flex-1 max-w-md">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                    <input type="text" id="searchInput" placeholder="Search station name, canal/river..." 
+                    <input type="text" id="searchInput" placeholder="Search station name, shortname, river..." 
                            class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all" />
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-1">Filter by Canal / River</label>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Filter by River / Canal</label>
                     <select id="selectRiver" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs p-2 focus:bg-white outline-none">
                         <option value="">All Waterways</option>
                     </select>
@@ -178,24 +178,28 @@
         <!-- Data Table Section -->
         <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-list-check text-indigo-600"></i>
-                    Bangna Telemetry Station Records
-                </h3>
-                <span class="text-xs text-slate-500 font-medium" id="tableRecordCount">Showing 0 records</span>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-indigo-600"></i>
+                        Bangna Telemetry Station Records
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Click any station row to view full station parameters, levels, thresholds, and pump metrics.</p>
+                </div>
+                <span class="text-xs text-slate-500 font-medium shrink-0" id="tableRecordCount">Showing 0 records</span>
             </div>
 
             <div class="overflow-x-auto custom-scrollbar">
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
                         <tr class="bg-slate-100 text-slate-600 uppercase font-semibold border-b border-slate-200">
-                            <th class="p-3.5">Type</th>
+                            <th class="p-3.5">Type ID</th>
                             <th class="p-3.5">Station Name</th>
-                            <th class="p-3.5">Canal / River</th>
-                            <th class="p-3.5">Water Level (m)</th>
-                            <th class="p-3.5">Pump Status</th>
+                            <th class="p-3.5">River / Canal</th>
+                            <th class="p-3.5">WL In (m)</th>
+                            <th class="p-3.5">Max In Day</th>
+                            <th class="p-3.5">Pumps Status</th>
                             <th class="p-3.5">Alert Level</th>
-                            <th class="p-3.5">Last Updated</th>
+                            <th class="p-3.5">Site Timestamp</th>
                         </tr>
                     </thead>
                     <tbody id="dataTableBody" class="divide-y divide-slate-100 text-slate-700">
@@ -209,7 +213,7 @@
         <section class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
             <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
                 <i class="fa-solid fa-chart-column text-indigo-600"></i>
-                Station Distribution by Canal
+                Station Distribution by Waterway
             </h3>
             <div class="h-80 w-full relative">
                 <canvas id="localChart"></canvas>
@@ -218,17 +222,17 @@
 
     </main>
 
-    <!-- Detailed Information Modal -->
+    <!-- Comprehensive Detailed Information Modal -->
     <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
             <div class="bg-indigo-950 text-white p-5 flex justify-between items-center shrink-0">
                 <div class="flex items-center gap-3">
-                    <span id="modalTypeIcon" class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-base">
+                    <span id="modalTypeIcon" class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg">
                         <i class="fa-solid fa-tower-observation"></i>
                     </span>
                     <div>
                         <h3 class="font-bold text-base text-white" id="modalTitle">Station Details</h3>
-                        <p class="text-xs text-indigo-200" id="modalSubtitle">Telemetry Station Details</p>
+                        <p class="text-xs text-indigo-200" id="modalSubtitle">Telemetry Station Full Parameters</p>
                     </div>
                 </div>
                 <button onclick="closeDetailModal()" class="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
@@ -238,7 +242,8 @@
             
             <div class="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1" id="modalContent"></div>
 
-            <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-end shrink-0">
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-between items-center shrink-0">
+                <span class="text-xs text-slate-400" id="modalFooterMeta"></span>
                 <button onclick="closeDetailModal()" class="px-5 py-2 bg-indigo-900 hover:bg-indigo-950 text-white text-xs font-semibold rounded-xl transition-colors">
                     Close Details
                 </button>
@@ -266,12 +271,22 @@
             setupEventListeners();
         });
 
+        function formatVal(val, unit = '') {
+            if (val === null || val === undefined || val === '' || val === 'N/A' || Number.isNaN(val)) {
+                return '<span class="text-slate-400 italic">N/A</span>';
+            }
+            if (typeof val === 'number') {
+                return `<span class="font-semibold">${val.toFixed(2)}</span>${unit ? ' ' + unit : ''}`;
+            }
+            return `<span class="font-semibold">${val}</span>${unit ? ' ' + unit : ''}`;
+        }
+
         function parseJsonDate(dateStr) {
-            if (!dateStr) return 'N/A';
+            if (!dateStr || dateStr === 'N/A') return 'N/A';
             if (typeof dateStr === 'string' && dateStr.includes('/Date(')) {
                 const timestamp = parseInt(dateStr.replace(/\/Date\((.*?)\)\//, '$1'), 10);
                 if (!isNaN(timestamp)) {
-                    return new Date(timestamp).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' });
+                    return new Date(timestamp).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'medium' });
                 }
             }
             return dateStr;
@@ -318,45 +333,84 @@
         function normalizeS3Data(data) {
             return data.map((item, index) => {
                 const info = item.water_station_info || {};
-                const nameEn = info.name?.en || item.water_station_name?.en || `Station #${item.water_station_id || index}`;
-                const nameTh = info.name?.th || item.water_station_name?.th || '';
-                
-                const lat = parseFloat(info.latitude ?? item.latitude ?? item.water_level_last?.latitude);
-                const lng = parseFloat(info.longitude ?? item.longitude ?? item.water_level_last?.longitude);
-                
-                const canalName = info.canal?.name?.en || info.canal?.name?.th || 'Bangna Canal';
-
                 const wl = item.water_level_last || {};
-                const wlIn = parseFloat(wl.wl_in);
-                const wlOut = parseFloat(wl.wl_out01);
-                const warning = parseFloat(wl.warning);
-                const critical = parseFloat(wl.critical);
-
-                const pumpCount = info.pump_count || 0;
-                const gateCount = info.water_gate_count || 0;
-
-                let activePumps = 0;
                 const pumpLast = item.water_pump_last || {};
-                Object.keys(pumpLast).forEach(k => {
-                    if (k.startsWith('pump') && pumpLast[k] === true) activePumps++;
-                });
+
+                // Primary Identification & Names
+                const stationTypeId = item.station_type_id ?? info.station_type_id ?? 'N/A';
+                const stationName = item.station_name ?? item.water_station_name?.th ?? info.name?.th ?? `Station #${index}`;
+                const stationNameEn = item.station_name_en ?? item.water_station_name?.en ?? info.name?.en ?? `Station #${index}`;
+
+                const lat = parseFloat(info.latitude ?? item.latitude ?? wl.latitude);
+                const lng = parseFloat(info.longitude ?? item.longitude ?? wl.longitude);
+
+                // Water Station Info Fields
+                const waterMin = info.water_min ?? null;
+                const waterMax = info.water_max ?? null;
+                const bedBank = info.bed_bank ?? null;
+                const leftBank = info.left_bank ?? null;
+                const rightBank = info.right_bank ?? null;
+                const warning = info.warning ?? null;
+                const critical = info.critical ?? null;
+                const warningOut01 = info.warning_out01 ?? null;
+                const criticalOut01 = info.critical_out01 ?? null;
+                const warningOut02 = info.warning_out02 ?? null;
+                const criticalOut02 = info.critical_out02 ?? null;
+                const waterShortname = info.water_shortname ?? 'N/A';
+                const waterShortnameEn = info.water_shortname_en ?? info['.water_shortname_en'] ?? 'N/A';
+                const riverName = info.river_name ?? info.canal?.name?.en ?? info.canal?.name?.th ?? 'N/A';
+                
+                const pumpCount = parseInt(info.pump_count ?? 0, 10);
+                const waterCount = info.water_count ?? 'N/A';
+                const waterGateCount = info.water_gate_count ?? 'N/A';
+
+                // Water Level Last Fields
+                const siteTimestamp = parseJsonDate(wl.site_timestamp ?? wl.dt ?? item.dt);
+                const wlIn = wl.wl_in !== undefined && wl.wl_in !== null ? parseFloat(wl.wl_in) : null;
+                const maxInDay = wl.max_in_day !== undefined && wl.max_in_day !== null ? parseFloat(wl.max_in_day) : null;
+                const maxInYesterday = wl.max_in_yesterday !== undefined && wl.max_in_yesterday !== null ? parseFloat(wl.max_in_yesterday) : null;
+                
+                const wlOut01 = wl.wl_out01 !== undefined && wl.wl_out01 !== null ? parseFloat(wl.wl_out01) : null;
+                const maxOut01Day = wl.max_out01_day !== undefined && wl.max_out01_day !== null ? parseFloat(wl.max_out01_day) : null;
+                const maxOut01Yesterday = wl.max_out01_yesterday !== undefined && wl.max_out01_yesterday !== null ? parseFloat(wl.max_out01_yesterday) : null;
+                
+                const wlOut02 = wl.wl_out02 !== undefined && wl.wl_out02 !== null ? parseFloat(wl.wl_out02) : null;
+                const maxOut02Day = wl.max_out02_day !== undefined && wl.max_out02_day !== null ? parseFloat(wl.max_out02_day) : null;
+                const maxOut02Yesterday = wl.max_out02_yesterday ?? wl['.max_out02_yesterday'] ?? null;
+
+                // Dynamic Pump Parsing (pump01 through pumpNN based on pump_count)
+                const pumps = [];
+                let activePumps = 0;
+
+                for (let p = 1; p <= Math.max(pumpCount, 0); p++) {
+                    const pumpKey = `pump${String(p).padStart(2, '0')}`;
+                    const val = pumpLast[pumpKey];
+                    const isRunning = val === true || val === 1 || val === '1' || val === 'ON';
+                    if (isRunning) activePumps++;
+                    pumps.push({
+                        id: pumpKey,
+                        name: `Pump ${String(p).padStart(2, '0')}`,
+                        status: isRunning ? 'Active / Running' : (val === false || val === 0 || val === '0' || val === 'OFF' ? 'Stopped' : 'Unknown / Offline'),
+                        isRunning: isRunning
+                    });
+                }
 
                 let primaryType = 'waterlevel';
                 if (pumpCount > 0) primaryType = 'pump';
-                else if (gateCount > 0) primaryType = 'watergate';
+                else if (parseInt(waterGateCount, 10) > 0) primaryType = 'watergate';
 
                 let category = 'normal';
                 let color = '#2563eb';
                 let badgeClass = 'badge-info';
                 let label = 'Normal Level';
 
-                if (!isNaN(wlIn)) {
-                    if (!isNaN(critical) && wlIn >= critical) {
+                if (wlIn !== null && !isNaN(wlIn)) {
+                    if (critical !== null && !isNaN(critical) && wlIn >= parseFloat(critical)) {
                         category = 'overflow';
                         color = '#ef4444';
                         badgeClass = 'badge-danger';
                         label = 'Critical / Overflow';
-                    } else if (!isNaN(warning) && wlIn >= warning) {
+                    } else if (warning !== null && !isNaN(warning) && wlIn >= parseFloat(warning)) {
                         category = 'warning';
                         color = '#f59e0b';
                         badgeClass = 'badge-warning';
@@ -366,25 +420,55 @@
 
                 return {
                     id: item.water_station_id || `ST_${index}`,
-                    nameEn,
-                    nameTh,
-                    displayName: nameTh ? `${nameEn} (${nameTh})` : nameEn,
-                    canalName,
+                    stationTypeId,
+                    stationName,
+                    stationNameEn,
+                    displayName: `${stationNameEn} (${stationName})`,
+                    canalName: riverName,
+                    riverName,
                     lat,
                     lng,
                     type: primaryType,
-                    wlIn,
-                    wlOut,
+                    
+                    // Info parameters
+                    waterMin,
+                    waterMax,
+                    bedBank,
+                    leftBank,
+                    rightBank,
                     warning,
                     critical,
+                    warningOut01,
+                    criticalOut01,
+                    warningOut02,
+                    criticalOut02,
+                    waterShortname,
+                    waterShortnameEn,
                     pumpCount,
+                    waterCount,
+                    waterGateCount,
+
+                    // Water Level parameters
+                    siteTimestamp,
+                    wlIn,
+                    maxInDay,
+                    maxInYesterday,
+                    wlOut01,
+                    maxOut01Day,
+                    maxOut01Yesterday,
+                    wlOut02,
+                    maxOut02Day,
+                    maxOut02Yesterday,
+
+                    // Dynamic Pumps
+                    pumps,
                     activePumps,
-                    gateCount,
+
+                    // Category metadata
                     category,
                     color,
                     badgeClass,
-                    label,
-                    datetime: parseJsonDate(wl.dt || item.dt)
+                    label
                 };
             });
         }
@@ -400,7 +484,7 @@
             const rivers = new Set();
 
             filteredData.forEach(item => {
-                if (item.canalName) rivers.add(item.canalName);
+                if (item.riverName && item.riverName !== 'N/A') rivers.add(item.riverName);
             });
 
             riverSelect.innerHTML = '<option value="">All Waterways</option>';
@@ -446,9 +530,9 @@
 
             const displayList = filteredData.filter(item => {
                 if (currentTypeFilter !== 'all' && item.type !== currentTypeFilter) return false;
-                if (riverVal && item.canalName !== riverVal) return false;
+                if (riverVal && item.riverName !== riverVal) return false;
                 if (statusVal && item.category !== statusVal) return false;
-                if (searchVal && !`${item.displayName} ${item.canalName}`.toLowerCase().includes(searchVal)) return false;
+                if (searchVal && !`${item.stationName} ${item.stationNameEn} ${item.waterShortname} ${item.riverName}`.toLowerCase().includes(searchVal)) return false;
                 return true;
             });
 
@@ -507,10 +591,10 @@
                 marker.bindPopup(`
                     <div class="p-1 font-sans text-xs space-y-1">
                         <div class="font-bold text-slate-800 border-b pb-1">${item.displayName}</div>
-                        <div><span class="text-slate-500">Canal:</span> ${item.canalName}</div>
-                        <div><span class="text-slate-500">Water Level:</span> <b>${!isNaN(item.wlIn) ? item.wlIn.toFixed(2) + ' m' : 'N/A'}</b></div>
+                        <div><span class="text-slate-500">Type ID:</span> <b>${item.stationTypeId}</b></div>
+                        <div><span class="text-slate-500">River:</span> ${item.riverName}</div>
+                        <div><span class="text-slate-500">WL In:</span> <b>${item.wlIn !== null ? item.wlIn.toFixed(2) + ' m' : 'N/A'}</b></div>
                         <div><span class="text-slate-500">Status:</span> <span style="color:${item.color}">${item.label}</span></div>
-                        <div><span class="text-slate-500">Coordinates:</span> <b>${!isNaN(item.lat) && !isNaN(item.lng) ? `${item.lat.toFixed(5)},${item.lng.toFixed(5)}` : 'N/A'}</b></div>
                     </div>
                 `);
 
@@ -524,19 +608,23 @@
             document.getElementById('tableRecordCount').textContent = `Showing ${list.length.toLocaleString()} records`;
 
             if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">No telemetry stations match the selected filters.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400">No telemetry stations match the selected filters.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = list.map(item => `
                 <tr onclick="showStationDetailModalByObj('${item.id}')" class="hover:bg-indigo-50/50 cursor-pointer transition-colors">
-                    <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 uppercase">${item.type}</span></td>
-                    <td class="p-3.5 font-medium text-slate-900">${item.displayName}</td>
-                    <td class="p-3.5 text-slate-500">${item.canalName}</td>
-                    <td class="p-3.5 font-semibold text-slate-800">${!isNaN(item.wlIn) ? item.wlIn.toFixed(2) + ' m' : 'N/A'}</td>
-                    <td class="p-3.5">${item.pumpCount > 0 ? `${item.activePumps}/${item.pumpCount} Running` : '-'}</td>
+                    <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 uppercase">${item.stationTypeId}</span></td>
+                    <td class="p-3.5 font-medium text-slate-900">
+                        <div>${item.stationNameEn}</div>
+                        <div class="text-[10px] text-slate-400">${item.stationName}</div>
+                    </td>
+                    <td class="p-3.5 text-slate-500">${item.riverName}</td>
+                    <td class="p-3.5 font-semibold text-slate-800">${item.wlIn !== null ? item.wlIn.toFixed(2) + ' m' : 'N/A'}</td>
+                    <td class="p-3.5 text-slate-600">${item.maxInDay !== null ? item.maxInDay.toFixed(2) + ' m' : 'N/A'}</td>
+                    <td class="p-3.5">${item.pumpCount > 0 ? `<span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-semibold text-[11px] border border-emerald-200">${item.activePumps}/${item.pumpCount} Running</span>` : '<span class="text-slate-400">-</span>'}</td>
                     <td class="p-3.5"><span class="px-2.5 py-1 rounded-full text-[11px] font-medium ${item.badgeClass}">${item.label}</span></td>
-                    <td class="p-3.5 text-slate-400">${item.datetime}</td>
+                    <td class="p-3.5 text-slate-400">${item.siteTimestamp}</td>
                 </tr>
             `).join('');
         }
@@ -547,31 +635,200 @@
         }
 
         function showStationDetailModal(st) {
-            document.getElementById('modalTitle').textContent = st.displayName;
-            document.getElementById('modalSubtitle').textContent = `Canal: ${st.canalName} • ID: ${st.id}`;
-            
+            document.getElementById('modalTitle').textContent = `${st.stationNameEn} (${st.stationName})`;
+            document.getElementById('modalSubtitle').textContent = `Station Type ID: ${st.stationTypeId} • River: ${st.riverName} • Short Name: ${st.waterShortnameEn}`;
+            document.getElementById('modalFooterMeta').textContent = `Coordinates: ${!isNaN(st.lat) && !isNaN(st.lng) ? `${st.lat.toFixed(5)},${st.lng.toFixed(5)}` : 'N/A'}`;
+
+            // Generate pumps status cards dynamically
+            let pumpSectionHtml = '';
+            if (st.pumpCount > 0) {
+                const pumpBadges = st.pumps.map(p => `
+                    <div class="flex items-center justify-between p-2.5 rounded-lg border ${p.isRunning ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-600'}">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-gears ${p.isRunning ? 'text-emerald-600' : 'text-slate-400'}"></i>
+                            <span class="font-medium text-xs">${p.id} (${p.name})</span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.isRunning ? 'bg-emerald-200 text-emerald-900' : 'bg-slate-200 text-slate-700'}">
+                            ${p.status}
+                        </span>
+                    </div>
+                `).join('');
+
+                pumpSectionHtml = `
+                    <div class="col-span-1 md:col-span-3 bg-white p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-xs font-bold text-slate-800 uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-gears text-teal-600"></i> dynamic Individual Pump Statuses (water_pump_last)
+                            </span>
+                            <span class="text-xs font-semibold text-slate-500">${st.activePumps} / ${st.pumpCount} Running</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                            ${pumpBadges}
+                        </div>
+                    </div>
+                `;
+            } else {
+                pumpSectionHtml = `
+                    <div class="col-span-1 md:col-span-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-center text-slate-400 text-xs">
+                        No active pumps configured for this station (water_station_info.pump_count = 0).
+                    </div>
+                `;
+            }
+
             document.getElementById('modalContent').innerHTML = `
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <span class="text-slate-400 text-xs font-semibold uppercase block mb-1">Water Level (In)</span>
-                        <span class="text-2xl font-extrabold text-slate-800">${!isNaN(st.wlIn) ? st.wlIn.toFixed(2) + ' m' : 'N/A'}</span>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    
+                    <!-- Section 1: Water Level Real-time Data -->
+                    <div class="col-span-1 md:col-span-3 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 space-y-3">
+                        <div class="flex justify-between items-center border-b border-indigo-100 pb-2">
+                            <span class="text-xs font-bold text-indigo-900 uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-water text-indigo-600"></i> Real-time Water Levels (water_level_last)
+                            </span>
+                            <span class="text-xs text-indigo-600 font-medium">site_timestamp: ${st.siteTimestamp}</span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-3 text-xs">
+                            <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
+                                <span class="text-slate-400 block text-[11px]">wl_in</span>
+                                <span class="text-lg font-extrabold text-indigo-900">${formatVal(st.wlIn, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
+                                <span class="text-slate-400 block text-[11px]">max_in_day</span>
+                                <span class="text-base font-bold text-slate-800">${formatVal(st.maxInDay, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
+                                <span class="text-slate-400 block text-[11px]">max_in_yesterday</span>
+                                <span class="text-base font-bold text-slate-800">${formatVal(st.maxInYesterday, 'm')}</span>
+                            </div>
+
+                            <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
+                                <span class="text-slate-400 block text-[11px]">wl_out01</span>
+                                <span class="text-base font-bold text-slate-800">${formatVal(st.wlOut01, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
+                                <span class="text-slate-400 block text-[11px]">max_out01_day</span>
+                                <span class="text-base font-bold text-slate-800">${formatVal(st.maxOut01Day, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
+                                <span class="text-slate-400 block text-[11px]">max_out01_yesterday</span>
+                                <span class="text-base font-bold text-slate-800">${formatVal(st.maxOut01Yesterday, 'm')}</span>
+                            </div>
+
+                            <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
+                                <span class="text-slate-400 block text-[11px]">wl_out02</span>
+                                <span class="text-base font-bold text-slate-800">${formatVal(st.wlOut02, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
+                                <span class="text-slate-400 block text-[11px]">max_out02_day</span>
+                                <span class="text-base font-bold text-slate-800">${formatVal(st.maxOut02Day, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-indigo-100 shadow-sm">
+                                <span class="text-slate-400 block text-[11px]">max_out02_yesterday</span>
+                                <span class="text-base font-bold text-slate-800">${formatVal(st.maxOut02Yesterday, 'm')}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <span class="text-slate-400 text-xs font-semibold uppercase block mb-1">Water Level (Out)</span>
-                        <span class="text-2xl font-extrabold text-slate-800">${!isNaN(st.wlOut) ? st.wlOut.toFixed(2) + ' m' : 'N/A'}</span>
+
+                    <!-- Section 2: Pumps Status -->
+                    ${pumpSectionHtml}
+
+                    <!-- Section 3: Thresholds & Heights -->
+                    <div class="col-span-1 md:col-span-3 bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <span class="text-xs font-bold text-slate-800 uppercase flex items-center gap-2 border-b pb-2">
+                            <i class="fa-solid fa-ruler-vertical text-amber-600"></i> Station Info Thresholds & Heights (water_station_info)
+                        </span>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-xs">
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">water_min</span>
+                                <span class="font-bold text-slate-800">${formatVal(st.waterMin, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">water_max</span>
+                                <span class="font-bold text-slate-800">${formatVal(st.waterMax, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">bed_bank</span>
+                                <span class="font-bold text-slate-800">${formatVal(st.bedBank, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">left_bank</span>
+                                <span class="font-bold text-slate-800">${formatVal(st.leftBank, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">right_bank</span>
+                                <span class="font-bold text-slate-800">${formatVal(st.rightBank, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-amber-200 bg-amber-50/30">
+                                <span class="text-amber-700 block text-[11px]">warning (In)</span>
+                                <span class="font-bold text-amber-900">${formatVal(st.warning, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-red-200 bg-red-50/30">
+                                <span class="text-red-700 block text-[11px]">critical (In)</span>
+                                <span class="font-bold text-red-900">${formatVal(st.critical, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">warning_out01</span>
+                                <span class="font-bold text-slate-800">${formatVal(st.warningOut01, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">critical_out01</span>
+                                <span class="font-bold text-slate-800">${formatVal(st.criticalOut01, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">warning_out02</span>
+                                <span class="font-bold text-slate-800">${formatVal(st.warningOut02, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">critical_out02</span>
+                                <span class="font-bold text-slate-800">${formatVal(st.criticalOut02, 'm')}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <span class="text-slate-400 text-xs font-semibold uppercase block mb-1">Pumps Status</span>
-                        <span class="text-xl font-bold text-slate-800">${st.activePumps} / ${st.pumpCount} Active</span>
+
+                    <!-- Section 4: General Metadata -->
+                    <div class="col-span-1 md:col-span-3 bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <span class="text-xs font-bold text-slate-800 uppercase flex items-center gap-2 border-b pb-2">
+                            <i class="fa-solid fa-circle-info text-blue-600"></i> General Station Metadata
+                        </span>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 text-xs">
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">station_type_id</span>
+                                <span class="font-bold text-slate-800">${st.stationTypeId}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">station_name</span>
+                                <span class="font-bold text-slate-800">${st.stationName}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">station_name_en</span>
+                                <span class="font-bold text-slate-800">${st.stationNameEn}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">river_name</span>
+                                <span class="font-bold text-slate-800">${st.riverName}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">water_shortname</span>
+                                <span class="font-bold text-slate-800">${st.waterShortname}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">water_shortname_en</span>
+                                <span class="font-bold text-slate-800">${st.waterShortnameEn}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">pump_count</span>
+                                <span class="font-bold text-slate-800">${st.pumpCount}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">water_count</span>
+                                <span class="font-bold text-slate-800">${st.waterCount}</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[11px]">water_gate_count</span>
+                                <span class="font-bold text-slate-800">${st.waterGateCount}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <span class="text-slate-400 text-xs font-semibold uppercase block mb-1">Alert Status</span>
-                        <span class="text-sm font-semibold block" style="color:${st.color}">${st.label}</span>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 col-span-2">
-                        <span class="text-slate-400 text-xs font-semibold uppercase block mb-1">Coordinates (Latitude, Longitude)</span>
-                        <span class="text-base font-bold text-slate-800">${!isNaN(st.lat) && !isNaN(st.lng) ? `${st.lat.toFixed(5)},${st.lng.toFixed(5)}` : 'N/A'}</span>
-                    </div>
+
                 </div>
             `;
             document.getElementById('detailModal').classList.remove('hidden');
@@ -586,7 +843,8 @@
             const counts = {};
 
             list.forEach(st => {
-                counts[st.canalName] = (counts[st.canalName] || 0) + 1;
+                const name = st.riverName || 'Unknown';
+                counts[name] = (counts[name] || 0) + 1;
             });
 
             const labels = Object.keys(counts).slice(0, 8);
