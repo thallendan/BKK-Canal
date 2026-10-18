@@ -115,16 +115,16 @@
                         Bangna Local Overlay Map (แผนที่ตำแหน่งสถานีท้องถิ่นโซนบางนา)
                     </h2>
                     <p class="text-xs text-slate-500">
-                        สถานีวัดระดับน้ำ (วงกลม) | ประตูระบายน้ำ (สี่เหลี่ยม) — คลิกสถานีหรือประตูเพื่อดูรายละเอียดฉบับเต็ม
+                        สถานีวัดระดับน้ำ = วงกลม (Circle) | ประตูระบายน้ำ = สี่เหลี่ยม (Box)
                     </p>
                 </div>
-                <!-- Legend for Circle Fill & Square Border -->
+                <!-- Map Legend -->
                 <div class="flex flex-wrap items-center gap-3 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                    <span class="font-bold text-slate-600 text-[11px]">Gate MSL Borders:</span>
-                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 border-2 border-emerald-500 bg-slate-400 rounded-sm"></span> Negative (&lt;0m)</span>
-                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 border-2 border-blue-500 bg-slate-400 rounded-sm"></span> Normal (0-3m)</span>
-                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 border-2 border-orange-500 bg-slate-400 rounded-sm"></span> Near Overflow (3-5m)</span>
-                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 border-2 border-red-500 bg-slate-400 rounded-sm"></span> Overflow (&ge;5m)</span>
+                    <span class="font-bold text-slate-600 text-[11px]">Legend:</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span> Overflowing / Critical</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-orange-500 inline-block"></span> Danger / Near Overflow</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span> Warning</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span> Good / Normal Level</span>
                 </div>
             </div>
 
@@ -150,10 +150,10 @@
                         All Local Stations (ทั้งหมด)
                     </button>
                     <button onclick="setTypeFilter('waterlevel')" id="btnFilterWL" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-600 hover:text-indigo-900">
-                        Water Level Only (วัดระดับน้ำ)
+                        Water Level Only (วัดระดับน้ำ - Circle)
                     </button>
                     <button onclick="setTypeFilter('watergate')" id="btnFilterWG" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-600 hover:text-indigo-900">
-                        Watergates Only (ประตูระบายน้ำ)
+                        Watergates Only (ประตูระบายน้ำ - Box)
                     </button>
                 </div>
 
@@ -287,6 +287,11 @@
         let mapLocal, groupLocal;
         let chartInstance = null;
 
+        // Helper function for checking numbers safely
+        function isNum(val) {
+            return val !== null && val !== undefined && !isNaN(parseFloat(val));
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             initStaticMap();
             loadAllData();
@@ -315,9 +320,11 @@
         }
 
         function isPointInBounds(lat, lng, bounds) {
-            if (lat === null || lat === undefined || isNaN(lat) || isNaN(lng)) return false;
+            if (!isNum(lat) || !isNum(lng)) return false;
+            const nLat = parseFloat(lat);
+            const nLng = parseFloat(lng);
             const [[minLat, minLng], [maxLat, maxLng]] = bounds;
-            return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
+            return nLat >= minLat && nLat <= maxLat && nLng >= minLng && nLng <= maxLng;
         }
 
         async function loadAllData() {
@@ -351,7 +358,7 @@
 
         function getWLStatusInfo(item) {
             const isOverflow = (item.diff_wl_bank_text || '').includes('ล้นตลิ่ง') || item.situation_level === 5;
-            const storage = item.storage_percent !== null && item.storage_percent !== undefined ? parseFloat(item.storage_percent) : null;
+            const storage = isNum(item.storage_percent) ? parseFloat(item.storage_percent) : null;
             const isDanger = item.situation_level === 4 || (storage !== null && storage >= 90);
             const isWarning = item.situation_level === 3 || (storage !== null && storage >= 70);
 
@@ -386,10 +393,8 @@
             }
         }
 
-        // Robust Watergate Name Extractor
         function extractWGName(item) {
             const st = item.station || {};
-            
             const nameEn = st.tele_station_name?.en || st.watergate_name?.en || st.station_name?.en || item.watergate_name?.en || item.station_name?.en || '';
             const nameTh = st.tele_station_name?.th || st.watergate_name?.th || st.station_name?.th || item.watergate_name?.th || item.station_name?.th || '';
             if (nameEn || nameTh) return formatBilingual(nameEn, nameTh);
@@ -400,7 +405,6 @@
             return 'Watergate Station';
         }
 
-        // Robust Watergate River/Canal Extractor
         function extractWGRiver(item) {
             if (typeof item.river_name === 'string' && item.river_name.trim() && item.river_name !== '-') return item.river_name.trim();
             if (typeof item.canal_name === 'string' && item.canal_name.trim() && item.canal_name !== '-') return item.canal_name.trim();
@@ -413,9 +417,8 @@
             return 'Bangna Local Canal';
         }
 
-        // Improved Watergate Status Info
         function getWGStatusInfo(discharge, waterLevel) {
-            if (discharge !== null && discharge !== undefined) {
+            if (isNum(discharge)) {
                 const disc = parseFloat(discharge);
                 if (disc >= 100) return { color: '#dc2626', badgeClass: 'badge-danger', label: `High Discharge (${disc.toFixed(1)} m³/s)`, category: 'discharging' };
                 if (disc >= 20) return { color: '#ea580c', badgeClass: 'bg-orange-100 text-orange-800 border border-orange-300', label: `Moderate Discharge (${disc.toFixed(1)} m³/s)`, category: 'discharging' };
@@ -423,10 +426,11 @@
                 return { color: '#64748b', badgeClass: 'bg-slate-100 text-slate-600 border border-slate-200', label: 'Closed (ปิดการระบาย)', category: 'closed' };
             }
             
-            if (waterLevel !== null && waterLevel !== undefined && !isNaN(waterLevel)) {
-                if (waterLevel >= 5.0) return { color: '#ef4444', badgeClass: 'badge-danger', label: `Overflow MSL (${waterLevel.toFixed(2)} m)`, category: 'overflow' };
-                if (waterLevel >= 3.0) return { color: '#f97316', badgeClass: 'bg-orange-100 text-orange-800 border border-orange-300', label: `Warning MSL (${waterLevel.toFixed(2)} m)`, category: 'warning' };
-                return { color: '#2563eb', badgeClass: 'badge-info', label: `Active Level (${waterLevel.toFixed(2)} m MSL)`, category: 'normal' };
+            if (isNum(waterLevel)) {
+                const wl = parseFloat(waterLevel);
+                if (wl >= 5.0) return { color: '#ef4444', badgeClass: 'badge-danger', label: `Overflow MSL (${wl.toFixed(2)} m)`, category: 'overflow' };
+                if (wl >= 3.0) return { color: '#f97316', badgeClass: 'bg-orange-100 text-orange-800 border border-orange-300', label: `Warning MSL (${wl.toFixed(2)} m)`, category: 'warning' };
+                return { color: '#2563eb', badgeClass: 'badge-info', label: `Active Level (${wl.toFixed(2)} m MSL)`, category: 'normal' };
             }
 
             return { color: '#94a3b8', badgeClass: 'bg-slate-100 text-slate-600 border border-slate-200', label: 'Data Unavailable', category: 'no_data' };
@@ -435,7 +439,7 @@
         function getWGBorderStyle(item) {
             const wl = item.waterLevel;
 
-            if (wl === null || wl === undefined || isNaN(wl) || wl < -50 || wl > 800) {
+            if (!isNum(wl) || wl < -50 || wl > 800) {
                 return {
                     borderColor: '#94a3b8',
                     borderWidth: '1.5px',
@@ -481,7 +485,7 @@
 
                 const basinEn = item.basin?.basin_name?.en || '';
                 const basinTh = item.basin?.basin_name?.th || '';
-                const displayBasin = formatBilingual(basinEn, basinTh, 'Unspecified (ไม่ระบุ)');
+                const displayBasin = formatBilingual(basinEn, basinTh, 'Unspecified');
 
                 const provEn = item.geocode?.province_name?.en || '';
                 const provTh = item.geocode?.province_name?.th || '';
@@ -500,18 +504,17 @@
 
                 const statusInfo = getWLStatusInfo(item);
 
-                // Correctly extract waterlevel values from JSON feed properties (waterlevel_msl or waterlevel_m)
                 const rawWL = item.waterlevel_msl ?? item.waterlevel_m ?? item.water_level ?? null;
-                const waterLevel = rawWL !== null && rawWL !== undefined && !isNaN(parseFloat(rawWL)) ? parseFloat(rawWL) : null;
+                const waterLevel = isNum(rawWL) ? parseFloat(rawWL) : null;
 
                 const rawWLPrev = item.waterlevel_msl_previous ?? null;
-                const waterLevelPrev = rawWLPrev !== null && rawWLPrev !== undefined && !isNaN(parseFloat(rawWLPrev)) ? parseFloat(rawWLPrev) : null;
+                const waterLevelPrev = isNum(rawWLPrev) ? parseFloat(rawWLPrev) : null;
 
                 const rawDischarge = item.discharge ?? item.flow_rate ?? null;
-                const discharge = rawDischarge !== null && rawDischarge !== undefined && !isNaN(parseFloat(rawDischarge)) ? parseFloat(rawDischarge) : null;
+                const discharge = isNum(rawDischarge) ? parseFloat(rawDischarge) : null;
 
                 const rawStorage = item.storage_percent ?? null;
-                const storagePercent = rawStorage !== null && rawStorage !== undefined && !isNaN(parseFloat(rawStorage)) ? parseFloat(rawStorage) : null;
+                const storagePercent = isNum(rawStorage) ? parseFloat(rawStorage) : null;
 
                 return {
                     dataType: 'waterlevel',
@@ -571,19 +574,13 @@
                 const displayAgency = formatBilingual(agencyEn, agencyTh, 'BKK / RID');
 
                 const rawDischarge = item.discharge ?? item.discharge_rate ?? item.watergate_discharge ?? item.flow_rate ?? null;
-                const discharge = rawDischarge !== null && rawDischarge !== undefined && !isNaN(parseFloat(rawDischarge))
-                    ? parseFloat(rawDischarge) 
-                    : null;
+                const discharge = isNum(rawDischarge) ? parseFloat(rawDischarge) : null;
 
                 const rawWlIn = item.watergate_in ?? item.wl_in ?? item.water_level ?? item.waterlevel_msl ?? null;
-                const waterLevel = rawWlIn !== null && rawWlIn !== undefined && !isNaN(parseFloat(rawWlIn))
-                    ? parseFloat(rawWlIn)
-                    : null;
+                const waterLevel = isNum(rawWlIn) ? parseFloat(rawWlIn) : null;
 
                 const rawWlOut = item.watergate_out ?? item.wl_out ?? item.watergate_out2 ?? null;
-                const waterLevelOut = rawWlOut !== null && rawWlOut !== undefined && !isNaN(parseFloat(rawWlOut))
-                    ? parseFloat(rawWlOut)
-                    : null;
+                const waterLevelOut = isNum(rawWlOut) ? parseFloat(rawWlOut) : null;
 
                 const statusInfo = getWGStatusInfo(discharge, waterLevel);
 
@@ -618,10 +615,8 @@
         function processAndRender() {
             const allRawData = [...waterLevelData, ...waterGateData];
             combinedLocalData = allRawData.filter(item => {
-                if (!item.lat || !item.lng) return false;
-                const lat = parseFloat(item.lat);
-                const lng = parseFloat(item.lng);
-                return !isNaN(lat) && !isNaN(lng) && isPointInBounds(lat, lng, MAP_BOUNDS.local);
+                if (!isNum(item.lat) || !isNum(item.lng)) return false;
+                return isPointInBounds(item.lat, item.lng, MAP_BOUNDS.local);
             });
 
             populateFilterDropdowns();
@@ -719,7 +714,7 @@
             let noDataGates = 0;
 
             combinedLocalData.filter(d => d.dataType === 'watergate').forEach(wg => {
-                if (wg.discharge !== null && wg.discharge !== undefined) {
+                if (isNum(wg.discharge)) {
                     measuredGatesCount++;
                     totalDischarge += wg.discharge;
                     if (wg.discharge > 0) activeGates++;
@@ -770,27 +765,27 @@
                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                             <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Water Level (MSL)</span>
                             <span class="text-2xl font-extrabold text-slate-800">
-                                ${station.waterLevel !== null ? station.waterLevel.toFixed(2) + ' m' : 'N/A'}
+                                ${isNum(station.waterLevel) ? station.waterLevel.toFixed(2) + ' m' : 'N/A'}
                             </span>
-                            ${station.waterLevelPrev !== null ? `<span class="text-xs text-slate-500 block mt-1">Previous: ${station.waterLevelPrev.toFixed(2)} m</span>` : ''}
+                            ${isNum(station.waterLevelPrev) ? `<span class="text-xs text-slate-500 block mt-1">Previous: ${station.waterLevelPrev.toFixed(2)} m</span>` : ''}
                         </div>
                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                             <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Storage / Capacity</span>
                             <span class="text-2xl font-extrabold text-slate-800">
-                                ${station.storagePercent !== null ? station.storagePercent.toFixed(1) + ' %' : 'N/A'}
+                                ${isNum(station.storagePercent) ? station.storagePercent.toFixed(1) + ' %' : 'N/A'}
                             </span>
                             <span class="text-xs text-slate-500 block mt-1">Status: ${station.statusInfo.label}</span>
                         </div>
                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                             <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Discharge / Flow Rate</span>
                             <span class="text-xl font-bold text-slate-800">
-                                ${station.discharge !== null ? station.discharge.toFixed(2) + ' m³/s' : 'N/A'}
+                                ${isNum(station.discharge) ? station.discharge.toFixed(2) + ' m³/s' : 'N/A'}
                             </span>
                         </div>
                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                             <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Bank Levels (Left / Right / Min)</span>
                             <span class="text-sm font-semibold text-slate-800 block">
-                                Min Bank: ${station.bankMin !== null ? station.bankMin + ' m' : 'N/A'}
+                                Min Bank: ${isNum(station.bankMin) ? station.bankMin + ' m' : 'N/A'}
                             </span>
                             <span class="text-xs text-slate-500 block mt-0.5">Left: ${station.bankLeft ?? 'N/A'} m | Right: ${station.bankRight ?? 'N/A'} m</span>
                         </div>
@@ -806,7 +801,7 @@
                             <div><b class="text-slate-800">Agency:</b> ${station.agency}</div>
                             <div><b class="text-slate-800">Timestamp:</b> ${station.datetime}</div>
                             <div><b class="text-slate-800">Coordinates:</b> ${station.lat}, ${station.lng}</div>
-                            <div><b class="text-slate-800">Ground Level:</b> ${station.groundLevel !== null ? station.groundLevel + ' m' : 'N/A'}</div>
+                            <div><b class="text-slate-800">Ground Level:</b> ${isNum(station.groundLevel) ? station.groundLevel + ' m' : 'N/A'}</div>
                         </div>
                     </div>
                 `;
@@ -816,19 +811,19 @@
                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                             <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Upstream Water Level (In)</span>
                             <span class="text-2xl font-extrabold text-slate-800">
-                                ${station.waterLevel !== null ? station.waterLevel.toFixed(2) + ' m (MSL)' : 'N/A'}
+                                ${isNum(station.waterLevel) ? station.waterLevel.toFixed(2) + ' m (MSL)' : 'N/A'}
                             </span>
                         </div>
                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                             <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Downstream Water Level (Out)</span>
                             <span class="text-2xl font-extrabold text-slate-800">
-                                ${station.waterLevelOut !== null ? station.waterLevelOut.toFixed(2) + ' m (MSL)' : 'N/A'}
+                                ${isNum(station.waterLevelOut) ? station.waterLevelOut.toFixed(2) + ' m (MSL)' : 'N/A'}
                             </span>
                         </div>
                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                             <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Gate Flow / Discharge</span>
                             <span class="text-xl font-bold text-slate-800">
-                                ${station.discharge !== null ? station.discharge.toFixed(2) + ' m³/s' : 'N/A'}
+                                ${isNum(station.discharge) ? station.discharge.toFixed(2) + ' m³/s' : 'N/A'}
                             </span>
                         </div>
                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
@@ -879,14 +874,14 @@
                 const popupContent = `
                     <div class="p-1.5 font-sans text-xs space-y-1.5 min-w-[200px]">
                         <div class="font-bold text-slate-800 border-b pb-1 text-sm">${item.displayName}</div>
-                        <div><span class="text-slate-500">Type:</span> ${item.dataType === 'waterlevel' ? 'Water Level Station' : 'Watergate'}</div>
+                        <div><span class="text-slate-500">Type:</span> ${item.dataType === 'waterlevel' ? 'Water Level Station (Circle)' : 'Watergate (Box)'}</div>
                         <div><span class="text-slate-500">Canal/River:</span> ${item.river}</div>
                         <div><span class="text-slate-500">Location:</span> ${item.displayProv || '-'}</div>
                         <div><span class="text-slate-500">Status:</span> <span class="font-semibold" style="color:${color}">${item.statusInfo.label}</span></div>
-                        ${item.waterLevel !== null ? `<div><span class="text-slate-500">${item.dataType === 'watergate' ? 'Inflow MSL:' : 'MSL Level:'}</span> <b>${item.waterLevel.toFixed(2)} m (MSL)</b></div>` : ''}
-                        ${item.waterLevelOut !== null ? `<div><span class="text-slate-500">Outflow MSL:</span> <b>${item.waterLevelOut.toFixed(2)} m (MSL)</b></div>` : ''}
+                        ${isNum(item.waterLevel) ? `<div><span class="text-slate-500">${item.dataType === 'watergate' ? 'Inflow MSL:' : 'MSL Level:'}</span> <b>${item.waterLevel.toFixed(2)} m (MSL)</b></div>` : ''}
+                        ${isNum(item.waterLevelOut) ? `<div><span class="text-slate-500">Outflow MSL:</span> <b>${item.waterLevelOut.toFixed(2)} m (MSL)</b></div>` : ''}
                         ${mslBorderStyle ? `<div><span class="text-slate-500">MSL Category:</span> <span class="font-bold" style="color:${mslBorderStyle.borderColor}">${mslBorderStyle.label}</span></div>` : ''}
-                        ${item.discharge !== null ? `<div><span class="text-slate-500">Discharge:</span> <b>${item.discharge.toFixed(1)} m³/s</b></div>` : ''}
+                        ${isNum(item.discharge) ? `<div><span class="text-slate-500">Discharge:</span> <b>${item.discharge.toFixed(1)} m³/s</b></div>` : ''}
                         <button onclick="showStationDetailModal('${item.id}')" class="mt-2 w-full py-1 px-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-semibold text-[11px] transition-colors">
                             <i class="fa-solid fa-circle-info mr-1"></i> View All Feed Details
                         </button>
@@ -895,9 +890,10 @@
 
                 let marker;
                 if (item.dataType === 'waterlevel') {
+                    // Water Level = Circles
                     marker = L.circleMarker([lat, lng], {
                         pane: 'circlePane',
-                        radius: 6.5,
+                        radius: 7.0,
                         fillColor: color,
                         color: '#ffffff',
                         weight: 2.0,
@@ -905,11 +901,12 @@
                         fillOpacity: 0.95
                     });
                 } else {
+                    // Watergate = Boxes / Squares
                     const squareIcon = L.divIcon({
                         className: 'custom-square-marker',
-                        html: `<div style="width:10px; height:10px; background-color:${color}; border:${mslBorderStyle.borderWidth} solid ${mslBorderStyle.borderColor}; border-radius:2px; opacity:0.95; box-shadow:0 1px 3px rgba(0,0,0,0.35);"></div>`,
-                        iconSize: [10, 10],
-                        iconAnchor: [5, 5]
+                        html: `<div style="width:12px; height:12px; background-color:${color}; border:${mslBorderStyle ? mslBorderStyle.borderWidth : '1.5px'} solid ${mslBorderStyle ? mslBorderStyle.borderColor : '#ffffff'}; border-radius:2px; opacity:0.95; box-shadow:0 1px 3px rgba(0,0,0,0.35);"></div>`,
+                        iconSize: [12, 12],
+                        iconAnchor: [6, 6]
                     });
                     marker = L.marker([lat, lng], { icon: squareIcon });
                 }
@@ -941,11 +938,11 @@
 
             tbody.innerHTML = filteredData.map(item => {
                 const typeBadge = item.dataType === 'waterlevel' 
-                    ? `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">WL</span>`
-                    : `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">GATE</span>`;
+                    ? `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">WL ● Circle</span>`
+                    : `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">GATE ■ Box</span>`;
 
-                const wlText = item.waterLevel !== null ? `${item.waterLevel.toFixed(2)} m` : '-';
-                const dischargeText = item.discharge !== null ? `${item.discharge.toFixed(1)} m³/s` : 'N/A';
+                const wlText = isNum(item.waterLevel) ? `${item.waterLevel.toFixed(2)} m` : '-';
+                const dischargeText = isNum(item.discharge) ? `${item.discharge.toFixed(1)} m³/s` : 'N/A';
 
                 return `
                     <tr onclick="showStationDetailModal('${item.id}')" class="hover:bg-indigo-50/50 cursor-pointer transition-colors">
