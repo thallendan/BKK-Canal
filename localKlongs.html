@@ -3,345 +3,1023 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samut Prakan Water Level & Gate Telemetry Map Dashboard</title>
+    <title>Local Water Level & Watergate Monitoring System (ระบบติดตามระดับน้ำและประตูระบายน้ำท้องถิ่น)</title>
+
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Leaflet CSS & JS for Interactive Image Overlay Maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js for Data Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        #map { height: 480px; width: 100%; border-radius: 1rem; }
+        .map-container { height: 480px; border-radius: 0.75rem; z-index: 1; background-color: #f8fafc; }
+        .badge-danger { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .badge-warning { background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .badge-info { background-color: #e0f2fe; color: #075985; border: 1px solid #7dd3fc; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        
+        .custom-square-marker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased min-h-screen p-4 md:p-8">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
 
-    <div class="max-w-7xl mx-auto space-y-8">
-        
-        <!-- Dashboard Header -->
-        <header class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-200 pb-6">
+    <!-- Header Section -->
+    <header class="bg-indigo-950 text-white shadow-xl border-b border-indigo-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-slate-900">Samut Prakan Water Gate & Telemetry Dashboard</h1>
-                <p class="text-sm text-slate-500 mt-1">Interactive GIS Map & Full Detail Station Cards • Hydro-Informatics Institute (HII)</p>
-            </div>
-            <div class="mt-4 md:mt-0 flex items-center gap-3">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                    <span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Telemetry Online
-                </span>
-                <span class="text-xs text-slate-500 font-mono">Last Update: Oct 17, 2026</span>
-            </div>
-        </header>
-
-        <!-- Interactive Map Section -->
-        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-900">Local GIS Water Level Map</h2>
-                    <p class="text-xs text-slate-500">Click any marker on the map to zoom and inspect gate water level metrics.</p>
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid font-bold text-2xl text-blue-400 fa-water"></i>
+                    <h1 class="text-2xl font-bold tracking-tight">Local Water Level & Watergate Monitoring System</h1>
                 </div>
-                <div class="flex items-center gap-4 text-xs font-medium text-slate-600">
-                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-500 inline-block"></span> Water Gate (ปตร.)</span>
-                    <span class="inline-flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-indigo-600 inline-block"></span> Pumping Station</span>
-                </div>
+                <p class="text-slate-300 text-sm mt-1">ระบบติดตามสถานะระดับน้ำ ประตูระบายน้ำ และอัตราการไหลพื้นที่โซนบางนา (Bangna Local Area)</p>
             </div>
-
-            <!-- Leaflet Map Container -->
-            <div id="map" class="shadow-inner border border-slate-200"></div>
-        </section>
-
-        <!-- Detail Cards Section Header -->
-        <div class="flex items-center justify-between pt-4">
-            <h2 class="text-xl font-bold text-slate-900">Telemetry Detail Cards</h2>
-            <span class="text-xs font-semibold text-slate-500 bg-slate-200 px-2.5 py-1 rounded-full" id="card-count">8 Stations</span>
+            <div class="flex items-center gap-3 text-xs bg-indigo-900/80 px-4 py-2 rounded-lg border border-indigo-700/50">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Local Feed Active (ข้อมูลพื้นที่ท้องถิ่น)</span>
+            </div>
         </div>
+    </header>
 
-        <!-- Station Detail Cards Grid -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="cards-container">
-            <!-- JavaScript dynamically renders full detail cards here -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Metrics Overview Section -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <!-- Total Stations -->
+            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-tower-observation"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-semibold uppercase text-slate-400">Local Telemetry Stations</div>
+                    <div class="text-2xl font-extrabold text-slate-800 mt-0.5" id="statTotalStations">0</div>
+                    <div class="text-xs text-slate-500 mt-1" id="statSubStations">0 Water Level / 0 Watergates</div>
+                </div>
+            </div>
+
+            <!-- Water Level Alerts -->
+            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-semibold uppercase text-slate-400">Water Level Alerts</div>
+                    <div class="text-2xl font-extrabold text-slate-800 mt-0.5" id="statAlerts">0</div>
+                    <div class="text-xs text-slate-500 mt-1" id="statSubAlerts">0 Overflowing / 0 Critical</div>
+                </div>
+            </div>
+
+            <!-- Total Discharge Rate -->
+            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-semibold uppercase text-slate-400">Total Local Discharge</div>
+                    <div class="text-2xl font-extrabold text-slate-800 mt-0.5" id="statDischarge">N/A</div>
+                    <div class="text-xs text-slate-500 mt-1" id="statSubDischarge">Sum of measured local watergate flows</div>
+                </div>
+            </div>
+
+            <!-- Watergate Active Status -->
+            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl shrink-0">
+                    <i class="fa-solid fa-door-open"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-semibold uppercase text-slate-400">Watergate Status</div>
+                    <div class="text-2xl font-extrabold text-slate-800 mt-0.5" id="statActiveGates">0 Active</div>
+                    <div class="text-xs text-slate-500 mt-1" id="statSubGates">0 Closed / 0 Unmeasured</div>
+                </div>
+            </div>
         </section>
 
+        <!-- Single Local Map Section -->
+        <section class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-6">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-slate-100 pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot text-indigo-600"></i>
+                        Bangna Local Overlay Map (แผนที่ตำแหน่งสถานีท้องถิ่นโซนบางนา)
+                    </h2>
+                    <p class="text-xs text-slate-500">
+                        สถานีวัดระดับน้ำ (วงกลม) | ประตูระบายน้ำ (สี่เหลี่ยม) — คลิกสถานีหรือประตูเพื่อดูรายละเอียดฉบับเต็ม
+                    </p>
+                </div>
+                <!-- Legend for Circle Fill & Square Border -->
+                <div class="flex flex-wrap items-center gap-3 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                    <span class="font-bold text-slate-600 text-[11px]">Gate MSL Borders:</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 border-2 border-emerald-500 bg-slate-400 rounded-sm"></span> Negative (&lt;0m)</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 border-2 border-blue-500 bg-slate-400 rounded-sm"></span> Normal (0-3m)</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 border-2 border-orange-500 bg-slate-400 rounded-sm"></span> Near Overflow (3-5m)</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 border-2 border-red-500 bg-slate-400 rounded-sm"></span> Overflow (&ge;5m)</span>
+                </div>
+            </div>
+
+            <!-- Bangna Local Map View -->
+            <div class="space-y-2">
+                <div class="flex justify-between items-center text-xs font-semibold text-slate-800">
+                    <span class="flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-location-crosshairs text-purple-600"></i>
+                        Bangna Local Map Focus (พื้นที่บางนา-เจาะจง)
+                    </span>
+                    <span id="badgeLocalCount" class="px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 font-semibold border border-purple-200">0 Stations</span>
+                </div>
+                <div id="mapLocal" class="map-container border border-slate-300 shadow-inner"></div>
+            </div>
+        </section>
+
+        <!-- Data Filter & Search Section -->
+        <section class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
+                <!-- Type Filter Buttons -->
+                <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 shrink-0">
+                    <button onclick="setTypeFilter('all')" id="btnFilterAll" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-white text-indigo-900 shadow-sm">
+                        All Local Stations (ทั้งหมด)
+                    </button>
+                    <button onclick="setTypeFilter('waterlevel')" id="btnFilterWL" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-600 hover:text-indigo-900">
+                        Water Level Only (วัดระดับน้ำ)
+                    </button>
+                    <button onclick="setTypeFilter('watergate')" id="btnFilterWG" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-600 hover:text-indigo-900">
+                        Watergates Only (ประตูระบายน้ำ)
+                    </button>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative flex-1 max-w-md">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="searchInput" placeholder="Search local station name, canal/river, district..." 
+                           class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all" />
+                </div>
+            </div>
+
+            <!-- Secondary Dropdown Filters -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Filter by Canal / River (คลอง/แม่น้ำ)</label>
+                    <select id="selectRiver" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs p-2 focus:bg-white outline-none">
+                        <option value="">All Waterways (ทุกสายน้ำ)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Filter by Status (สถานะเตือนภัย)</label>
+                    <select id="selectStatus" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs p-2 focus:bg-white outline-none">
+                        <option value="">All Statuses (ทุกสถานะ)</option>
+                        <option value="overflow">Overflowing / Critical (ล้นตลิ่ง/วิกฤต)</option>
+                        <option value="warning">Warning Level (เฝ้าระวัง)</option>
+                        <option value="normal">Normal Level (ระดับปกติ)</option>
+                        <option value="discharging">Watergate Discharging (กำลังระบายน้ำ)</option>
+                        <option value="closed">Watergate Closed (ปิดการระบาย)</option>
+                        <option value="no_data">Data Unavailable (ไม่มีข้อมูลการระบาย)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Table Section -->
+        <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-indigo-600"></i>
+                    Local Telemetry Station Records (ตารางข้อมูลสถานีวัดระดับน้ำและประตูระบายน้ำบางนา)
+                </h3>
+                <span class="text-xs text-slate-500 font-medium" id="tableRecordCount">Showing 0 records</span>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-600 uppercase font-semibold border-b border-slate-200">
+                            <th class="p-3.5">Type</th>
+                            <th class="p-3.5">Station Name (ชื่อสถานี)</th>
+                            <th class="p-3.5">Canal / River (คลอง/แม่น้ำ)</th>
+                            <th class="p-3.5">Location (พื้นที่/อำเภอ)</th>
+                            <th class="p-3.5">Water Level / Capacity</th>
+                            <th class="p-3.5">Discharge / Gate Status</th>
+                            <th class="p-3.5">Status Alert</th>
+                            <th class="p-3.5 text-center">Agency</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody" class="divide-y divide-slate-100 text-slate-700">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Visual Analytics Chart Section -->
+        <section class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                <i class="fa-solid fa-chart-column text-indigo-600"></i>
+                Local Station Status Overview by Waterway (สถานะระดับน้ำจำแนกตามสายน้ำ)
+            </h3>
+            <div class="h-80 w-full relative">
+                <canvas id="localChart"></canvas>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Detailed Information Modal for Station / Gate Selection -->
+    <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-indigo-950 text-white p-5 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-3">
+                    <span id="modalTypeIcon" class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-base">
+                        <i class="fa-solid fa-tower-observation"></i>
+                    </span>
+                    <div>
+                        <h3 class="font-bold text-base text-white" id="modalTitle">Station Details</h3>
+                        <p class="text-xs text-indigo-200" id="modalSubtitle">Telemetry Station Details</p>
+                    </div>
+                </div>
+                <button onclick="closeDetailModal()" class="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1" id="modalContent">
+                <!-- Dynamic Station Details Loaded Here -->
+            </div>
+
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-end shrink-0">
+                <button onclick="closeDetailModal()" class="px-5 py-2 bg-indigo-900 hover:bg-indigo-950 text-white text-xs font-semibold rounded-xl transition-colors">
+                    Close Details (ปิดหน้าต่าง)
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- JavaScript Data & Map Controller -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p>Bangna Local Water Level & Watergate Monitoring System • Hydro-Data Platform</p>
+            <p class="text-slate-500">Data Source: Thai National Hydroinformatics Center (NHC) Telemetry Feed</p>
+        </div>
+    </footer>
+
     <script>
-        // Telemetry Data for Samut Prakan Stations
-        const stationsData = [
-            {
-                id: "SAMRONG-PUMP",
-                type: "Pumping Station",
-                nameEN: "Khlong Samrong Pumping Station",
-                nameTH: "สถานีสูบน้ำคลองสำโรง",
-                canal: "Khlong Samrong (คลองสำโรง)",
-                lat: 13.6012,
-                lng: 100.6055,
-                waterIn: -0.06,
-                waterOut: null,
-                unit: "m MSL",
-                datetime: "2026-10-17 12:10",
-                oldCode: "KSR-01",
-                tumbon: "Samrong Nua (สำโรงเหนือ)",
-                amphoe: "Mueang Samut Prakan",
-                province: "Samut Prakan",
-                agency: "RID / HII",
-                basin: "Chao Phraya Basin",
-                color: "#4f46e5"
-            },
-            {
-                id: 575568,
-                type: "Water Gate",
-                nameEN: "Khlong Lat Bang Yo 2 Gate",
-                nameTH: "ปตร. คลองลัดบางยอ 2",
-                canal: "Khlong Lat Bang Yo",
-                lat: 13.661021,
-                lng: 100.567270,
-                waterIn: 1.64,
-                waterOut: 1.37,
-                unit: "m",
-                datetime: "2026-10-17 12:10",
-                oldCode: "BKC004",
-                tumbon: "Bang Krasop (บางกระสอบ)",
-                amphoe: "Phra Pradaeng",
-                province: "Samut Prakan",
-                agency: "Hydro – Informatics Institute (HII / สสน.)",
-                basin: "Chao Phraya Basin",
-                color: "#3b82f6"
-            },
-            {
-                id: 575571,
-                type: "Water Gate",
-                nameEN: "Khlong Phae Gate",
-                nameTH: "ปตร. คลองแพ",
-                canal: "Khlong Phae",
-                lat: 13.694974,
-                lng: 100.582310,
-                waterIn: 1.58,
-                waterOut: 1.32,
-                unit: "m",
-                datetime: "2026-10-17 12:10",
-                oldCode: "BKC007",
-                tumbon: "Bang Ko Bua (บางกอบัว)",
-                amphoe: "Phra Pradaeng",
-                province: "Samut Prakan",
-                agency: "Hydro – Informatics Institute (HII / สสน.)",
-                basin: "Chao Phraya Basin",
-                color: "#3b82f6"
-            },
-            {
-                id: 575570,
-                type: "Water Gate",
-                nameEN: "Khlong Bang Namphueng Gate",
-                nameTH: "ปตร. คลองบางน้ำผึ้ง",
-                canal: "Khlong Bang Namphueng",
-                lat: 13.676648,
-                lng: 100.582070,
-                waterIn: 1.61,
-                waterOut: 1.35,
-                unit: "m",
-                datetime: "2026-10-17 12:10",
-                oldCode: "BKC006",
-                tumbon: "Bang Nam Phueng (บางน้ำผึ้ง)",
-                amphoe: "Phra Pradaeng",
-                province: "Samut Prakan",
-                agency: "Hydro – Informatics Institute (HII / สสน.)",
-                basin: "Chao Phraya Basin",
-                color: "#3b82f6"
-            },
-            {
-                id: 575566,
-                type: "Water Gate",
-                nameEN: "Wat Bangkachao Nok Gate",
-                nameTH: "ปตร.วัดบางกระเจ้านอก",
-                canal: "Khlong Bangkachao",
-                lat: 13.689612,
-                lng: 100.554886,
-                waterIn: 1.70,
-                waterOut: 1.41,
-                unit: "m",
-                datetime: "2026-10-17 12:10",
-                oldCode: "BKC002",
-                tumbon: "Bang Krachao (บางกระเจ้า)",
-                amphoe: "Phra Pradaeng",
-                province: "Samut Prakan",
-                agency: "Hydro – Informatics Institute (HII / สสน.)",
-                basin: "Chao Phraya Basin",
-                color: "#3b82f6"
-            },
-            {
-                id: 575567,
-                type: "Water Gate",
-                nameEN: "Khlong Lat Bang Yo 1 Gate",
-                nameTH: "ปตร. คลองลัดบางยอ 1",
-                canal: "Khlong Lat Bang Yo",
-                lat: 13.676162,
-                lng: 100.553085,
-                waterIn: 1.62,
-                waterOut: 1.36,
-                unit: "m",
-                datetime: "2026-10-17 12:10",
-                oldCode: "BKC003",
-                tumbon: "Bang Yo (บางยอ)",
-                amphoe: "Phra Pradaeng",
-                province: "Samut Prakan",
-                agency: "Hydro – Informatics Institute (HII / สสน.)",
-                basin: "Chao Phraya Basin",
-                color: "#3b82f6"
-            },
-            {
-                id: 575569,
-                type: "Water Gate",
-                nameEN: "Khlong Ta Sot Gate",
-                nameTH: "ปตร. คลองตาสด",
-                canal: "Khlong Ta Sot",
-                lat: 13.664821,
-                lng: 100.571236,
-                waterIn: 1.59,
-                waterOut: 1.34,
-                unit: "m",
-                datetime: "2026-10-17 12:10",
-                oldCode: "BKC005",
-                tumbon: "Bang Krasop (บางกระสอบ)",
-                amphoe: "Phra Pradaeng",
-                province: "Samut Prakan",
-                agency: "Hydro – Informatics Institute (HII / สสน.)",
-                basin: "Chao Phraya Basin",
-                color: "#3b82f6"
-            },
-            {
-                id: 575565,
-                type: "Water Gate",
-                nameEN: "Srinakorn Khuaenkhan Park Gate",
-                nameTH: "ปตร. สวนศรีนครเขื่อนขันธ์",
-                canal: "Khlong Bang Krachao",
-                lat: 13.695561,
-                lng: 100.563126,
-                waterIn: 1.65,
-                waterOut: 1.38,
-                unit: "m",
-                datetime: "2026-10-17 12:10",
-                oldCode: "BKC001",
-                tumbon: "Bang Krachao (บางกระเจ้า)",
-                amphoe: "Phra Pradaeng",
-                province: "Samut Prakan",
-                agency: "Hydro – Informatics Institute (HII / สสน.)",
-                basin: "Chao Phraya Basin",
-                color: "#3b82f6"
-            }
-        ];
+        // Global Datasets
+        let waterLevelData = [];
+        let waterGateData = [];
+        let combinedLocalData = [];
+        let filteredData = [];
 
-        // Initialize Map
-        const map = L.map('map').setView([13.675, 100.570], 12);
+        let currentTypeFilter = 'all';
 
-        // OpenStreetMap Layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
-            attribution: '© OpenStreetMap contributors | HII'
-        }).addTo(map);
+        // Bangna Local Map Bounding Box
+        const MAP_BOUNDS = {
+            local: [[13.5883, 100.5170], [13.7217, 100.7230]]
+        };
 
-        const markers = {};
+        // Map & Marker Instances
+        let mapLocal, groupLocal;
+        let chartInstance = null;
 
-        // Render Map Markers & Cards
-        const cardsContainer = document.getElementById('cards-container');
-
-        stationsData.forEach(st => {
-            // Add Map Marker
-            const marker = L.circleMarker([st.lat, st.lng], {
-                radius: 8,
-                fillColor: st.color,
-                color: '#ffffff',
-                weight: 2,
-                opacity: 1,
-                fillOpacity: 0.85
-            }).addTo(map);
-
-            const popupContent = `
-                <div class="p-1 space-y-1">
-                    <div class="font-bold text-slate-900 text-sm">${st.nameEN}</div>
-                    <div class="text-xs text-slate-600">${st.nameTH}</div>
-                    <div class="text-xs font-semibold text-blue-600 mt-1">Water In: ${st.waterIn !== null ? st.waterIn + ' ' + st.unit : 'N/A'}</div>
-                    ${st.waterOut !== null ? `<div class="text-xs text-slate-500">Water Out: ${st.waterOut}${st.unit}</div>` : ''}
-                </div>
-            `;
-
-            marker.bindPopup(popupContent);
-            markers[st.id] = marker;
-
-            // Generate Full Detail Card HTML
-            const card = document.createElement('div');
-            card.className = "bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-6 space-y-5 cursor-pointer";
-            card.onclick = () => {
-                map.setView([st.lat, st.lng], 15, { animate: true });
-                marker.openPopup();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            };
-
-            card.innerHTML = `
-                <!-- Card Header -->
-                <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-4">
-                    <div>
-                        <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold uppercase tracking-wider ${st.type === 'Pumping Station' ? 'bg-indigo-50 text-indigo-700' : 'bg-blue-50 text-blue-700'} mb-1">
-                            ${st.type}
-                        </span>
-                        <h3 class="text-base font-bold text-slate-900">${st.nameEN}</h3>
-                        <p class="text-xs text-slate-500">${st.nameTH}</p>
-                    </div>
-                    <div class="text-right font-mono text-xs text-slate-400">
-                        ID: <span class="text-slate-700 font-semibold">${st.id}</span>
-                        ${st.oldCode ? `<span class="block text-slate-400">(${st.oldCode})</span>` : ''}
-                    </div>
-                </div>
-
-                <!-- Water Metrics -->
-                <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
-                    <div>
-                        <span class="text-xs text-slate-400 uppercase font-medium">Level In (Inflow)</span>
-                        <div class="text-xl font-extrabold text-blue-600 mt-0.5">
-                            ${st.waterIn !== null ? st.waterIn : 'N/A'} <span class="text-xs font-normal text-slate-500">${st.unit}</span>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="text-xs text-slate-400 uppercase font-medium">Level Out (Outflow)</span>
-                        <div class="text-xl font-extrabold text-slate-700 mt-0.5">
-                            ${st.waterOut !== null ? st.waterOut + ' ' + st.unit : 'N/A'}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Detail Grid -->
-                <div class="grid grid-cols-2 gap-y-3 gap-x-2 text-xs">
-                    <div>
-                        <span class="text-slate-400">Canal / River:</span>
-                        <p class="font-medium text-slate-800">${st.canal}</p>
-                    </div>
-                    <div>
-                        <span class="text-slate-400">Coordinates:</span>
-                        <p class="font-mono text-slate-600">${st.lat.toFixed(4)}, ${st.lng.toFixed(4)}</p>
-                    </div>
-                    <div>
-                        <span class="text-slate-400">Subdistrict (Tumbon):</span>
-                        <p class="font-medium text-slate-800">${st.tumbon}</p>
-                    </div>
-                    <div>
-                        <span class="text-slate-400">District (Amphoe):</span>
-                        <p class="font-medium text-slate-800">${st.amphoe}</p>
-                    </div>
-                    <div>
-                        <span class="text-slate-400">Basin:</span>
-                        <p class="font-medium text-slate-800">${st.basin}</p>
-                    </div>
-                    <div>
-                        <span class="text-slate-400">Agency:</span>
-                        <p class="font-medium text-slate-800">${st.agency}</p>
-                    </div>
-                </div>
-
-                <!-- Card Footer -->
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                    <span>Updated: ${st.datetime}</span>
-                    <span class="text-blue-600 font-medium hover:underline">Focus on map →</span>
-                </div>
-            `;
-
-            cardsContainer.appendChild(card);
+        document.addEventListener('DOMContentLoaded', () => {
+            initStaticMap();
+            loadAllData();
+            setupEventListeners();
         });
+
+        function createCustomMap(containerId, bounds, imageFile) {
+            const m = L.map(containerId, {
+                crs: L.CRS.EPSG3857,
+                attributionControl: false,
+                renderer: L.svg({ padding: 0.5 })
+            }).fitBounds(bounds);
+
+            m.createPane('circlePane');
+            m.getPane('circlePane').style.zIndex = 650;
+
+            L.imageOverlay(imageFile, bounds).addTo(m);
+            const group = L.layerGroup().addTo(m);
+            return { map: m, group };
+        }
+
+        function initStaticMap() {
+            const objLocal = createCustomMap('mapLocal', MAP_BOUNDS.local, 'bangna_local_map.png');
+            mapLocal = objLocal.map;
+            groupLocal = objLocal.group;
+        }
+
+        function isPointInBounds(lat, lng, bounds) {
+            if (lat === null || lat === undefined || isNaN(lat) || isNaN(lng)) return false;
+            const [[minLat, minLng], [maxLat, maxLng]] = bounds;
+            return lat >= minLat && lat <= maxLat && lng >= minLng && lng <= maxLng;
+        }
+
+        async function loadAllData() {
+            try {
+                const resWL = await fetch('waterlevel_load.json');
+                if (resWL.ok) {
+                    const jsonWL = await resWL.json();
+                    waterLevelData = normalizeWLData(jsonWL.waterlevel_data?.data || []);
+                }
+            } catch (e) { console.warn('waterlevel_load.json fetch failed', e); }
+
+            try {
+                const resWG = await fetch('watergate_load.json');
+                if (resWG.ok) {
+                    const jsonWG = await resWG.json();
+                    waterGateData = normalizeWGData(jsonWG.watergate_data?.data || jsonWG.data || []);
+                }
+            } catch (e) { console.warn('watergate_load.json fetch failed', e); }
+
+            processAndRender();
+        }
+
+        function formatBilingual(en, th, fallback = 'N/A') {
+            const cleanEn = (en || '').trim();
+            const cleanTh = (th || '').trim();
+            if (cleanEn && cleanTh && cleanEn !== cleanTh) {
+                return `${cleanEn} (${cleanTh})`;
+            }
+            return cleanEn || cleanTh || fallback;
+        }
+
+        function getWLStatusInfo(item) {
+            const isOverflow = (item.diff_wl_bank_text || '').includes('ล้นตลิ่ง') || item.situation_level === 5;
+            const storage = item.storage_percent !== null && item.storage_percent !== undefined ? parseFloat(item.storage_percent) : null;
+            const isDanger = item.situation_level === 4 || (storage !== null && storage >= 90);
+            const isWarning = item.situation_level === 3 || (storage !== null && storage >= 70);
+
+            if (isOverflow) {
+                return {
+                    color: '#ef4444',
+                    badgeClass: 'badge-danger',
+                    label: 'Overflowing (ล้นตลิ่ง)',
+                    category: 'overflow'
+                };
+            } else if (isDanger) {
+                return {
+                    color: '#f97316',
+                    badgeClass: 'bg-orange-100 text-orange-800 border border-orange-300',
+                    label: 'Danger / Critical (สภาวะวิกฤต/ใกล้ล้น)',
+                    category: 'danger'
+                };
+            } else if (isWarning) {
+                return {
+                    color: '#f59e0b',
+                    badgeClass: 'badge-warning',
+                    label: 'Warning (เฝ้าระวัง)',
+                    category: 'warning'
+                };
+            } else {
+                return {
+                    color: '#2563eb',
+                    badgeClass: 'badge-info',
+                    label: 'Normal (ปกติ)',
+                    category: 'normal'
+                };
+            }
+        }
+
+        // Robust Watergate Name Extractor
+        function extractWGName(item) {
+            const st = item.station || {};
+            
+            const nameEn = st.tele_station_name?.en || st.watergate_name?.en || st.station_name?.en || item.watergate_name?.en || item.station_name?.en || '';
+            const nameTh = st.tele_station_name?.th || st.watergate_name?.th || st.station_name?.th || item.watergate_name?.th || item.station_name?.th || '';
+            if (nameEn || nameTh) return formatBilingual(nameEn, nameTh);
+
+            const flatName = item.watergate_name || item.water_shortname || item.water_name || item.station_name || st.watergate_name || st.station_name || '';
+            if (typeof flatName === 'string' && flatName.trim()) return flatName.trim();
+
+            return 'Watergate Station';
+        }
+
+        // Robust Watergate River/Canal Extractor
+        function extractWGRiver(item) {
+            if (typeof item.river_name === 'string' && item.river_name.trim() && item.river_name !== '-') return item.river_name.trim();
+            if (typeof item.canal_name === 'string' && item.canal_name.trim() && item.canal_name !== '-') return item.canal_name.trim();
+
+            const rivObj = item.river || item.canal || {};
+            const rivEn = rivObj.river_name?.en || rivObj.canal_name?.en || rivObj.name?.en || '';
+            const rivTh = rivObj.river_name?.th || rivObj.canal_name?.th || rivObj.name?.th || '';
+            if (rivEn || rivTh) return formatBilingual(rivEn, rivTh);
+
+            return 'Bangna Local Canal';
+        }
+
+        // Improved Watergate Status Info
+        function getWGStatusInfo(discharge, waterLevel) {
+            if (discharge !== null && discharge !== undefined) {
+                const disc = parseFloat(discharge);
+                if (disc >= 100) return { color: '#dc2626', badgeClass: 'badge-danger', label: `High Discharge (${disc.toFixed(1)} m³/s)`, category: 'discharging' };
+                if (disc >= 20) return { color: '#ea580c', badgeClass: 'bg-orange-100 text-orange-800 border border-orange-300', label: `Moderate Discharge (${disc.toFixed(1)} m³/s)`, category: 'discharging' };
+                if (disc > 0) return { color: '#0d9488', badgeClass: 'badge-info', label: `Low Discharge (${disc.toFixed(1)} m³/s)`, category: 'discharging' };
+                return { color: '#64748b', badgeClass: 'bg-slate-100 text-slate-600 border border-slate-200', label: 'Closed (ปิดการระบาย)', category: 'closed' };
+            }
+            
+            if (waterLevel !== null && waterLevel !== undefined && !isNaN(waterLevel)) {
+                if (waterLevel >= 5.0) return { color: '#ef4444', badgeClass: 'badge-danger', label: `Overflow MSL (${waterLevel.toFixed(2)} m)`, category: 'overflow' };
+                if (waterLevel >= 3.0) return { color: '#f97316', badgeClass: 'bg-orange-100 text-orange-800 border border-orange-300', label: `Warning MSL (${waterLevel.toFixed(2)} m)`, category: 'warning' };
+                return { color: '#2563eb', badgeClass: 'badge-info', label: `Active Level (${waterLevel.toFixed(2)} m MSL)`, category: 'normal' };
+            }
+
+            return { color: '#94a3b8', badgeClass: 'bg-slate-100 text-slate-600 border border-slate-200', label: 'Data Unavailable', category: 'no_data' };
+        }
+
+        function getWGBorderStyle(item) {
+            const wl = item.waterLevel;
+
+            if (wl === null || wl === undefined || isNaN(wl) || wl < -50 || wl > 800) {
+                return {
+                    borderColor: '#94a3b8',
+                    borderWidth: '1.5px',
+                    label: 'MSL N/A',
+                    colorCode: 'gray'
+                };
+            } else if (wl < 0) {
+                return {
+                    borderColor: '#22c55e',
+                    borderWidth: '2px',
+                    label: `Negative MSL (${wl.toFixed(2)} m)`,
+                    colorCode: 'green'
+                };
+            } else if (wl >= 5.0) {
+                return {
+                    borderColor: '#ef4444',
+                    borderWidth: '2.5px',
+                    label: `Critical Overflow MSL (${wl.toFixed(2)} m)`,
+                    colorCode: 'red'
+                };
+            } else if (wl >= 3.0) {
+                return {
+                    borderColor: '#f97316',
+                    borderWidth: '2px',
+                    label: `Near Overflow MSL (${wl.toFixed(2)} m)`,
+                    colorCode: 'orange'
+                };
+            } else {
+                return {
+                    borderColor: '#3b82f6',
+                    borderWidth: '2px',
+                    label: `Normal Positive MSL (${wl.toFixed(2)} m)`,
+                    colorCode: 'blue'
+                };
+            }
+        }
+
+        function normalizeWLData(data) {
+            return data.map(item => {
+                const nameEn = item.station?.tele_station_name?.en || '';
+                const nameTh = item.station?.tele_station_name?.th || '';
+                const displayName = formatBilingual(nameEn, nameTh);
+
+                const basinEn = item.basin?.basin_name?.en || '';
+                const basinTh = item.basin?.basin_name?.th || '';
+                const displayBasin = formatBilingual(basinEn, basinTh, 'Unspecified (ไม่ระบุ)');
+
+                const provEn = item.geocode?.province_name?.en || '';
+                const provTh = item.geocode?.province_name?.th || '';
+                const amphEn = item.geocode?.amphoe_name?.en || '';
+                const amphTh = item.geocode?.amphoe_name?.th || '';
+                const tumbonEn = item.geocode?.tumbon_name?.en || '';
+                const tumbonTh = item.geocode?.tumbon_name?.th || '';
+
+                const displayProv = formatBilingual(provEn, provTh, '');
+                const displayAmph = formatBilingual(amphEn, amphTh, '');
+                const displayTumbon = formatBilingual(tumbonEn, tumbonTh, '');
+
+                const agencyEn = item.agency?.agency_shortname?.en || item.agency?.agency_name?.en || '';
+                const agencyTh = item.agency?.agency_shortname?.th || item.agency?.agency_name?.th || '';
+                const displayAgency = formatBilingual(agencyEn, agencyTh);
+
+                const statusInfo = getWLStatusInfo(item);
+
+                // Correctly extract waterlevel values from JSON feed properties (waterlevel_msl or waterlevel_m)
+                const rawWL = item.waterlevel_msl ?? item.waterlevel_m ?? item.water_level ?? null;
+                const waterLevel = rawWL !== null && rawWL !== undefined && !isNaN(parseFloat(rawWL)) ? parseFloat(rawWL) : null;
+
+                const rawWLPrev = item.waterlevel_msl_previous ?? null;
+                const waterLevelPrev = rawWLPrev !== null && rawWLPrev !== undefined && !isNaN(parseFloat(rawWLPrev)) ? parseFloat(rawWLPrev) : null;
+
+                const rawDischarge = item.discharge ?? item.flow_rate ?? null;
+                const discharge = rawDischarge !== null && rawDischarge !== undefined && !isNaN(parseFloat(rawDischarge)) ? parseFloat(rawDischarge) : null;
+
+                const rawStorage = item.storage_percent ?? null;
+                const storagePercent = rawStorage !== null && rawStorage !== undefined && !isNaN(parseFloat(rawStorage)) ? parseFloat(rawStorage) : null;
+
+                return {
+                    dataType: 'waterlevel',
+                    id: `WL_${item.station?.id || item.id || Math.random()}`,
+                    stationCode: item.station?.tele_station_oldcode || '-',
+                    nameEn, nameTh, displayName,
+                    basinEn, basinTh, displayBasin,
+                    river: item.river_name || '-',
+                    provEn, provTh, displayProv,
+                    amphEn, amphTh, displayAmph,
+                    tumbonEn, tumbonTh, displayTumbon,
+                    lat: item.station?.tele_station_lat,
+                    lng: item.station?.tele_station_long,
+                    waterLevel,
+                    waterLevelPrev,
+                    bankLeft: item.station?.left_bank ?? null,
+                    bankRight: item.station?.right_bank ?? null,
+                    bankMin: item.station?.min_bank ?? null,
+                    groundLevel: item.station?.ground_level ?? null,
+                    storagePercent,
+                    discharge,
+                    diffWlBank: item.diff_wl_bank ?? null,
+                    diffWlBankText: item.diff_wl_bank_text ?? null,
+                    situationLevel: item.situation_level ?? null,
+                    warningLevel: item.station?.warning_level_m ?? null,
+                    criticalLevel: item.station?.critical_level_m ?? item.station?.critical_level_msl ?? null,
+                    statusInfo,
+                    agency: displayAgency,
+                    datetime: item.waterlevel_datetime || 'N/A',
+                    raw: item
+                };
+            });
+        }
+
+        function normalizeWGData(data) {
+            return data.map(item => {
+                const displayName = extractWGName(item);
+                const river = extractWGRiver(item);
+
+                const basinEn = item.basin?.basin_name?.en || '';
+                const basinTh = item.basin?.basin_name?.th || '';
+                const displayBasin = formatBilingual(basinEn, basinTh, 'Chao Phraya Basin');
+
+                const provEn = item.geocode?.province_name?.en || '';
+                const provTh = item.geocode?.province_name?.th || '';
+                const amphEn = item.geocode?.amphoe_name?.en || '';
+                const amphTh = item.geocode?.amphoe_name?.th || '';
+                const tumbonEn = item.geocode?.tumbon_name?.en || '';
+                const tumbonTh = item.geocode?.tumbon_name?.th || '';
+
+                const displayProv = formatBilingual(provEn, provTh, '');
+                const displayAmph = formatBilingual(amphEn, amphTh, '');
+                const displayTumbon = formatBilingual(tumbonEn, tumbonTh, '');
+
+                const agencyEn = item.agency?.agency_shortname?.en || item.agency?.agency_name?.en || '';
+                const agencyTh = item.agency?.agency_shortname?.th || item.agency?.agency_name?.th || '';
+                const displayAgency = formatBilingual(agencyEn, agencyTh, 'BKK / RID');
+
+                const rawDischarge = item.discharge ?? item.discharge_rate ?? item.watergate_discharge ?? item.flow_rate ?? null;
+                const discharge = rawDischarge !== null && rawDischarge !== undefined && !isNaN(parseFloat(rawDischarge))
+                    ? parseFloat(rawDischarge) 
+                    : null;
+
+                const rawWlIn = item.watergate_in ?? item.wl_in ?? item.water_level ?? item.waterlevel_msl ?? null;
+                const waterLevel = rawWlIn !== null && rawWlIn !== undefined && !isNaN(parseFloat(rawWlIn))
+                    ? parseFloat(rawWlIn)
+                    : null;
+
+                const rawWlOut = item.watergate_out ?? item.wl_out ?? item.watergate_out2 ?? null;
+                const waterLevelOut = rawWlOut !== null && rawWlOut !== undefined && !isNaN(parseFloat(rawWlOut))
+                    ? parseFloat(rawWlOut)
+                    : null;
+
+                const statusInfo = getWGStatusInfo(discharge, waterLevel);
+
+                return {
+                    dataType: 'watergate',
+                    id: `WG_${item.station?.id || item.watergate_id || item.water_id || Math.random()}`,
+                    stationCode: item.station?.tele_station_oldcode || '-',
+                    displayName,
+                    basinEn, basinTh, displayBasin,
+                    river,
+                    provEn, provTh, displayProv,
+                    amphEn, amphTh, displayAmph,
+                    tumbonEn, tumbonTh, displayTumbon,
+                    lat: item.station?.tele_station_lat || item.lat || item.latitude,
+                    lng: item.station?.tele_station_long || item.lng || item.longitude,
+                    waterLevel,
+                    waterLevelOut,
+                    discharge,
+                    pumpOn: item.pump_on ?? null,
+                    pumpCount: item.pump ?? null,
+                    floodgateOpen: item.floodgate_open ?? null,
+                    floodgateCount: item.floodgate ?? null,
+                    floodgateHeight: item.floodgate_height ?? null,
+                    statusInfo,
+                    agency: displayAgency,
+                    datetime: item.watergate_datetime_in || item.watergate_datetime_out || item.datetime || 'N/A',
+                    raw: item
+                };
+            });
+        }
+
+        function processAndRender() {
+            const allRawData = [...waterLevelData, ...waterGateData];
+            combinedLocalData = allRawData.filter(item => {
+                if (!item.lat || !item.lng) return false;
+                const lat = parseFloat(item.lat);
+                const lng = parseFloat(item.lng);
+                return !isNaN(lat) && !isNaN(lng) && isPointInBounds(lat, lng, MAP_BOUNDS.local);
+            });
+
+            populateFilterDropdowns();
+            applyFilters();
+        }
+
+        function setTypeFilter(type) {
+            currentTypeFilter = type;
+            ['btnFilterAll', 'btnFilterWL', 'btnFilterWG'].forEach(id => {
+                const btn = document.getElementById(id);
+                btn.className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-600 hover:text-indigo-900';
+            });
+
+            if (type === 'all') document.getElementById('btnFilterAll').className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-white text-indigo-900 shadow-sm';
+            if (type === 'waterlevel') document.getElementById('btnFilterWL').className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-white text-indigo-900 shadow-sm';
+            if (type === 'watergate') document.getElementById('btnFilterWG').className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-white text-indigo-900 shadow-sm';
+
+            applyFilters();
+        }
+
+        function populateFilterDropdowns() {
+            const riverSelect = document.getElementById('selectRiver');
+            const rivers = new Set();
+
+            combinedLocalData.forEach(item => {
+                if (item.river && item.river !== '-') rivers.add(item.river);
+            });
+
+            riverSelect.innerHTML = '<option value="">All Waterways (ทุกสายน้ำ)</option>';
+            Array.from(rivers).sort().forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r;
+                opt.textContent = r;
+                riverSelect.appendChild(opt);
+            });
+        }
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+            document.getElementById('selectRiver').addEventListener('change', applyFilters);
+            document.getElementById('selectStatus').addEventListener('change', applyFilters);
+        }
+
+        function applyFilters() {
+            const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+            const riverVal = document.getElementById('selectRiver').value;
+            const statusVal = document.getElementById('selectStatus').value;
+
+            filteredData = combinedLocalData.filter(item => {
+                if (currentTypeFilter !== 'all' && item.dataType !== currentTypeFilter) return false;
+
+                if (riverVal && item.river !== riverVal) return false;
+
+                if (statusVal) {
+                    if (statusVal === 'overflow' && item.statusInfo.category !== 'overflow' && item.statusInfo.category !== 'danger') return false;
+                    if (statusVal === 'warning' && item.statusInfo.category !== 'warning') return false;
+                    if (statusVal === 'normal' && item.statusInfo.category !== 'normal') return false;
+                    if (statusVal === 'discharging' && item.statusInfo.category !== 'discharging') return false;
+                    if (statusVal === 'closed' && item.statusInfo.category !== 'closed') return false;
+                    if (statusVal === 'no_data' && item.statusInfo.category !== 'no_data') return false;
+                }
+
+                if (searchVal) {
+                    const haystack = `${item.displayName} ${item.river} ${item.displayProv} ${item.displayAmph} ${item.agency} ${item.stationCode}`.toLowerCase();
+                    if (!haystack.includes(searchVal)) return false;
+                }
+
+                return true;
+            });
+
+            updateSummaryCards();
+            updateMapMarkers();
+            renderTable();
+            renderChart();
+        }
+
+        function updateSummaryCards() {
+            const totalWL = combinedLocalData.filter(d => d.dataType === 'waterlevel').length;
+            const totalWG = combinedLocalData.filter(d => d.dataType === 'watergate').length;
+
+            document.getElementById('statTotalStations').textContent = combinedLocalData.length.toLocaleString();
+            document.getElementById('statSubStations').textContent = `${totalWL} Water Level / ${totalWG} Watergates`;
+
+            const overflowCount = combinedLocalData.filter(d => d.statusInfo.category === 'overflow').length;
+            const dangerCount = combinedLocalData.filter(d => d.statusInfo.category === 'danger').length;
+            const warningCount = combinedLocalData.filter(d => d.statusInfo.category === 'warning').length;
+
+            document.getElementById('statAlerts').textContent = (overflowCount + dangerCount + warningCount).toLocaleString();
+            document.getElementById('statSubAlerts').textContent = `${overflowCount} Overflowing / ${dangerCount} Critical / ${warningCount} Warning`;
+
+            let measuredGatesCount = 0;
+            let totalDischarge = 0;
+            let activeGates = 0;
+            let closedGates = 0;
+            let noDataGates = 0;
+
+            combinedLocalData.filter(d => d.dataType === 'watergate').forEach(wg => {
+                if (wg.discharge !== null && wg.discharge !== undefined) {
+                    measuredGatesCount++;
+                    totalDischarge += wg.discharge;
+                    if (wg.discharge > 0) activeGates++;
+                    else closedGates++;
+                } else {
+                    noDataGates++;
+                }
+            });
+
+            if (measuredGatesCount > 0) {
+                document.getElementById('statDischarge').textContent = `${totalDischarge.toFixed(1)} m³/s`;
+                document.getElementById('statSubDischarge').textContent = `Summed flow across ${measuredGatesCount} local monitoring points`;
+            } else {
+                document.getElementById('statDischarge').textContent = 'N/A';
+                document.getElementById('statSubDischarge').textContent = 'Discharge telemetry not reported in current feed';
+            }
+
+            document.getElementById('statActiveGates').textContent = `${activeGates} Active`;
+            document.getElementById('statSubGates').textContent = `${closedGates} Closed / ${noDataGates} Unmeasured`;
+        }
+
+        function showStationDetailModal(id) {
+            const station = combinedLocalData.find(d => d.id === id);
+            if (!station) return;
+
+            const modal = document.getElementById('detailModal');
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            const icon = document.getElementById('modalTypeIcon');
+            const content = document.getElementById('modalContent');
+
+            title.textContent = station.displayName;
+            subtitle.textContent = `Station ID: ${station.stationCode || station.id} • ${station.displayBasin}`;
+            
+            if (station.dataType === 'waterlevel') {
+                icon.innerHTML = `<i class="fa-solid fa-water"></i>`;
+                icon.className = `w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-base`;
+            } else {
+                icon.innerHTML = `<i class="fa-solid fa-door-open"></i>`;
+                icon.className = `w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-base`;
+            }
+
+            let detailRowsHtml = '';
+
+            if (station.dataType === 'waterlevel') {
+                detailRowsHtml = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Water Level (MSL)</span>
+                            <span class="text-2xl font-extrabold text-slate-800">
+                                ${station.waterLevel !== null ? station.waterLevel.toFixed(2) + ' m' : 'N/A'}
+                            </span>
+                            ${station.waterLevelPrev !== null ? `<span class="text-xs text-slate-500 block mt-1">Previous: ${station.waterLevelPrev.toFixed(2)} m</span>` : ''}
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Storage / Capacity</span>
+                            <span class="text-2xl font-extrabold text-slate-800">
+                                ${station.storagePercent !== null ? station.storagePercent.toFixed(1) + ' %' : 'N/A'}
+                            </span>
+                            <span class="text-xs text-slate-500 block mt-1">Status: ${station.statusInfo.label}</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Discharge / Flow Rate</span>
+                            <span class="text-xl font-bold text-slate-800">
+                                ${station.discharge !== null ? station.discharge.toFixed(2) + ' m³/s' : 'N/A'}
+                            </span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Bank Levels (Left / Right / Min)</span>
+                            <span class="text-sm font-semibold text-slate-800 block">
+                                Min Bank: ${station.bankMin !== null ? station.bankMin + ' m' : 'N/A'}
+                            </span>
+                            <span class="text-xs text-slate-500 block mt-0.5">Left: ${station.bankLeft ?? 'N/A'} m | Right: ${station.bankRight ?? 'N/A'} m</span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4 space-y-2 text-xs">
+                        <div class="font-bold text-slate-700 uppercase tracking-wider text-[11px]">Location & Agency Details</div>
+                        <div class="grid grid-cols-2 gap-2 text-slate-600">
+                            <div><b class="text-slate-800">River / Canal:</b> ${station.river}</div>
+                            <div><b class="text-slate-800">Province:</b> ${station.displayProv || '-'}</div>
+                            <div><b class="text-slate-800">District (อำเภอ):</b> ${station.displayAmph || '-'}</div>
+                            <div><b class="text-slate-800">Subdistrict (ตำบล):</b> ${station.displayTumbon || '-'}</div>
+                            <div><b class="text-slate-800">Agency:</b> ${station.agency}</div>
+                            <div><b class="text-slate-800">Timestamp:</b> ${station.datetime}</div>
+                            <div><b class="text-slate-800">Coordinates:</b> ${station.lat}, ${station.lng}</div>
+                            <div><b class="text-slate-800">Ground Level:</b> ${station.groundLevel !== null ? station.groundLevel + ' m' : 'N/A'}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                detailRowsHtml = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Upstream Water Level (In)</span>
+                            <span class="text-2xl font-extrabold text-slate-800">
+                                ${station.waterLevel !== null ? station.waterLevel.toFixed(2) + ' m (MSL)' : 'N/A'}
+                            </span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Downstream Water Level (Out)</span>
+                            <span class="text-2xl font-extrabold text-slate-800">
+                                ${station.waterLevelOut !== null ? station.waterLevelOut.toFixed(2) + ' m (MSL)' : 'N/A'}
+                            </span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Gate Flow / Discharge</span>
+                            <span class="text-xl font-bold text-slate-800">
+                                ${station.discharge !== null ? station.discharge.toFixed(2) + ' m³/s' : 'N/A'}
+                            </span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <span class="text-slate-400 text-[11px] font-semibold uppercase block mb-1">Pumps / Floodgates</span>
+                            <span class="text-xs font-semibold text-slate-800 block">
+                                Pumps On: ${station.pumpOn ?? 'N/A'} / ${station.pumpCount ?? 'N/A'}
+                            </span>
+                            <span class="text-xs text-slate-500 block mt-1">Gates Open: ${station.floodgateOpen ?? 'N/A'} / ${station.floodgateCount ?? 'N/A'}</span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4 space-y-2 text-xs">
+                        <div class="font-bold text-slate-700 uppercase tracking-wider text-[11px]">Watergate Location & Agency Metadata</div>
+                        <div class="grid grid-cols-2 gap-2 text-slate-600">
+                            <div><b class="text-slate-800">Canal / River:</b> ${station.river}</div>
+                            <div><b class="text-slate-800">Province:</b> ${station.displayProv || '-'}</div>
+                            <div><b class="text-slate-800">District (อำเภอ):</b> ${station.displayAmph || '-'}</div>
+                            <div><b class="text-slate-800">Subdistrict (ตำบล):</b> ${station.displayTumbon || '-'}</div>
+                            <div><b class="text-slate-800">Agency:</b> ${station.agency}</div>
+                            <div><b class="text-slate-800">Timestamp:</b> ${station.datetime}</div>
+                            <div><b class="text-slate-800">Coordinates:</b> ${station.lat}, ${station.lng}</div>
+                            <div><b class="text-slate-800">Station Code:</b> ${station.stationCode}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = detailRowsHtml;
+            modal.classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        function updateMapMarkers() {
+            groupLocal.clearLayers();
+            let countLocal = 0;
+
+            filteredData.forEach(item => {
+                const lat = parseFloat(item.lat);
+                const lng = parseFloat(item.lng);
+                countLocal++;
+
+                const color = item.statusInfo.color;
+                const mslBorderStyle = item.dataType === 'watergate' ? getWGBorderStyle(item) : null;
+
+                const popupContent = `
+                    <div class="p-1.5 font-sans text-xs space-y-1.5 min-w-[200px]">
+                        <div class="font-bold text-slate-800 border-b pb-1 text-sm">${item.displayName}</div>
+                        <div><span class="text-slate-500">Type:</span> ${item.dataType === 'waterlevel' ? 'Water Level Station' : 'Watergate'}</div>
+                        <div><span class="text-slate-500">Canal/River:</span> ${item.river}</div>
+                        <div><span class="text-slate-500">Location:</span> ${item.displayProv || '-'}</div>
+                        <div><span class="text-slate-500">Status:</span> <span class="font-semibold" style="color:${color}">${item.statusInfo.label}</span></div>
+                        ${item.waterLevel !== null ? `<div><span class="text-slate-500">${item.dataType === 'watergate' ? 'Inflow MSL:' : 'MSL Level:'}</span> <b>${item.waterLevel.toFixed(2)} m (MSL)</b></div>` : ''}
+                        ${item.waterLevelOut !== null ? `<div><span class="text-slate-500">Outflow MSL:</span> <b>${item.waterLevelOut.toFixed(2)} m (MSL)</b></div>` : ''}
+                        ${mslBorderStyle ? `<div><span class="text-slate-500">MSL Category:</span> <span class="font-bold" style="color:${mslBorderStyle.borderColor}">${mslBorderStyle.label}</span></div>` : ''}
+                        ${item.discharge !== null ? `<div><span class="text-slate-500">Discharge:</span> <b>${item.discharge.toFixed(1)} m³/s</b></div>` : ''}
+                        <button onclick="showStationDetailModal('${item.id}')" class="mt-2 w-full py-1 px-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-semibold text-[11px] transition-colors">
+                            <i class="fa-solid fa-circle-info mr-1"></i> View All Feed Details
+                        </button>
+                    </div>
+                `;
+
+                let marker;
+                if (item.dataType === 'waterlevel') {
+                    marker = L.circleMarker([lat, lng], {
+                        pane: 'circlePane',
+                        radius: 6.5,
+                        fillColor: color,
+                        color: '#ffffff',
+                        weight: 2.0,
+                        opacity: 1,
+                        fillOpacity: 0.95
+                    });
+                } else {
+                    const squareIcon = L.divIcon({
+                        className: 'custom-square-marker',
+                        html: `<div style="width:10px; height:10px; background-color:${color}; border:${mslBorderStyle.borderWidth} solid ${mslBorderStyle.borderColor}; border-radius:2px; opacity:0.95; box-shadow:0 1px 3px rgba(0,0,0,0.35);"></div>`,
+                        iconSize: [10, 10],
+                        iconAnchor: [5, 5]
+                    });
+                    marker = L.marker([lat, lng], { icon: squareIcon });
+                }
+
+                marker.bindPopup(popupContent);
+                marker.on('click', () => {
+                    showStationDetailModal(item.id);
+                });
+                marker.addTo(groupLocal);
+            });
+
+            document.getElementById('badgeLocalCount').textContent = `${countLocal} Stations`;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('dataTableBody');
+            document.getElementById('tableRecordCount').textContent = `Showing ${filteredData.length.toLocaleString()} records`;
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-8 text-slate-400">
+                            No telemetry stations match the selected filters in the local area.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filteredData.map(item => {
+                const typeBadge = item.dataType === 'waterlevel' 
+                    ? `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">WL</span>`
+                    : `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">GATE</span>`;
+
+                const wlText = item.waterLevel !== null ? `${item.waterLevel.toFixed(2)} m` : '-';
+                const dischargeText = item.discharge !== null ? `${item.discharge.toFixed(1)} m³/s` : 'N/A';
+
+                return `
+                    <tr onclick="showStationDetailModal('${item.id}')" class="hover:bg-indigo-50/50 cursor-pointer transition-colors">
+                        <td class="p-3.5">${typeBadge}</td>
+                        <td class="p-3.5 font-medium text-slate-900">${item.displayName}</td>
+                        <td class="p-3.5 text-slate-500">${item.river}</td>
+                        <td class="p-3.5 text-slate-500">${item.displayProv || '-'}<br/><span class="text-[11px] text-slate-400">${item.displayAmph || ''}</span></td>
+                        <td class="p-3.5 font-semibold text-slate-800">${wlText}</td>
+                        <td class="p-3.5 font-semibold text-slate-800">${dischargeText}</td>
+                        <td class="p-3.5">
+                            <span class="px-2.5 py-1 rounded-full text-[11px] font-medium inline-block ${item.statusInfo.badgeClass}">
+                                ${item.statusInfo.label}
+                            </span>
+                        </td>
+                        <td class="p-3.5 text-center text-slate-400 font-medium">${item.agency || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('localChart').getContext('2d');
+
+            const riverCounts = {};
+            filteredData.forEach(item => {
+                const r = item.river && item.river !== '-' ? item.river : 'Unspecified';
+                if (!riverCounts[r]) riverCounts[r] = { normal: 0, warning: 0, alert: 0 };
+                
+                if (item.statusInfo.category === 'overflow' || item.statusInfo.category === 'danger') {
+                    riverCounts[r].alert++;
+                } else if (item.statusInfo.category === 'warning') {
+                    riverCounts[r].warning++;
+                } else {
+                    riverCounts[r].normal++;
+                }
+            });
+
+            const sortedRivers = Object.keys(riverCounts)
+                .sort((a, b) => (riverCounts[b].normal + riverCounts[b].warning + riverCounts[b].alert) - (riverCounts[a].normal + riverCounts[a].warning + riverCounts[a].alert))
+                .slice(0, 8);
+
+            const labels = sortedRivers.map(r => r.length > 20 ? r.substring(0, 20) + '...' : r);
+            const dataNormal = sortedRivers.map(r => riverCounts[r].normal);
+            const dataWarning = sortedRivers.map(r => riverCounts[r].warning);
+            const dataAlert = sortedRivers.map(r => riverCounts[r].alert);
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [
+                        { label: 'Normal Level (ปกติ)', data: dataNormal, backgroundColor: '#2563eb' },
+                        { label: 'Warning Level (เฝ้าระวัง)', data: dataWarning, backgroundColor: '#f59e0b' },
+                        { label: 'Critical / Overflow (วิกฤต/ล้นตลิ่ง)', data: dataAlert, backgroundColor: '#ef4444' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: { ticks: { font: { size: 10 } } },
+                        y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 10 } } }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
