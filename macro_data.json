@@ -1,10 +1,10 @@
 {
-  "timestamp_utc": "2026-10-18T01:05:05.723383+00:00",
+  "timestamp_utc": "2026-10-18T05:56:11.813208+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
-    "mjo_phase": null,
-    "mjo_amp": null,
+    "mjo_phase": 1,
+    "mjo_amp": 1.2563039,
     "iod": 0.146,
     "heat_content": 2.93,
     "status": "SUCCESS"
@@ -56,17 +56,17 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4596,
-    "max_nationwide_1h_mm": 27,
-    "max_nationwide_24h_mm": 115.4,
-    "bkk_samut_prakan_count": 24,
+    "total_nationwide_stations": 4614,
+    "max_nationwide_1h_mm": 30,
+    "max_nationwide_24h_mm": 115.6,
+    "bkk_samut_prakan_count": 26,
     "top_bkk_samut_stations": [
       {
         "station_name": "คลองภาษีเจริญ เพชรเกษม69",
         "province": "Bangkok",
         "district": "Bang Khae District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 115.4,
+        "rain_24h_mm": 115.6,
         "lat": 13.69158,
         "lon": 100.38127
       },
@@ -84,7 +84,7 @@
         "province": "Samut Prakan",
         "district": "Phra Pradaeng District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 37.6,
+        "rain_24h_mm": 37.4,
         "lat": 13.676162,
         "lon": 100.553085
       },
@@ -102,18 +102,9 @@
         "province": "Bangkok",
         "district": "Khlong Toei District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 25.9,
+        "rain_24h_mm": 26.6,
         "lat": 13.72639,
         "lon": 100.56
-      },
-      {
-        "station_name": "คลองจระเข้ใหญ่ บางเสาธง (วัดศรีวารีน้อย)",
-        "province": "Samut Prakan",
-        "district": "Bang Sao Thong District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 23.4,
-        "lat": 13.66949,
-        "lon": 100.80058
       },
       {
         "station_name": "คลองมหาสวัสดิ บางกรวย-สวนผัก",
@@ -125,6 +116,15 @@
         "lon": 100.43863
       },
       {
+        "station_name": "คลองจระเข้ใหญ่ บางเสาธง (วัดศรีวารีน้อย)",
+        "province": "Samut Prakan",
+        "district": "Bang Sao Thong District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 23.4,
+        "lat": 13.66949,
+        "lon": 100.80058
+      },
+      {
         "station_name": "อบต.ศีรษะจรเข้น้อย",
         "province": "Samut Prakan",
         "district": "Bang Sao Thong District",
@@ -134,15 +134,6 @@
         "lon": 100.7945
       },
       {
-        "station_name": "ตลาดน้ำบางน้ำผึ้ง",
-        "province": "Samut Prakan",
-        "district": "Phra Pradaeng District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 22.8,
-        "lat": 13.678656,
-        "lon": 100.57356
-      },
-      {
         "station_name": "กรุงเทพฯ บางนา สกษ.",
         "province": "Bangkok",
         "district": "Bang Na District",
@@ -150,11 +141,20 @@
         "rain_24h_mm": 21.4,
         "lat": 13.66639,
         "lon": 100.60611
+      },
+      {
+        "station_name": "ตลาดน้ำบางน้ำผึ้ง",
+        "province": "Samut Prakan",
+        "district": "Phra Pradaeng District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 21,
+        "lat": 13.678656,
+        "lon": 100.57356
       }
     ]
   },
   "estuary_tide": {
-    "realtime_msl": 0.412,
+    "realtime_msl": 1.111,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
