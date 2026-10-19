@@ -29,20 +29,8 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         
         /* Interactive Map Marker Visuals */
-        .marker-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .shortname-pill { 
-            background: rgba(15, 23, 42, 0.88); 
-            color: #ffffff; 
-            font-weight: 700; 
-            font-size: 10px; 
-            padding: 1px 5px; 
-            border-radius: 4px; 
-            white-space: nowrap; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-            margin-top: 2px;
-            letter-spacing: 0.3px;
-        }
+        .custom-marker { display: flex; align-items: center; justify-content: center; }
+        
         .pulse-active {
             box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
             animation: pulse-ring 1.8s infinite;
@@ -62,7 +50,7 @@
             animation: flowDash 1s linear infinite;
         }
 
-        /* Gauge visual components */
+        /* Gauge visual components inside modal */
         .gauge-container {
             position: relative;
             width: 100%;
@@ -179,7 +167,7 @@
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Warning</span>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Normal</span>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-teal-500"></span> Active Pump</span>
-                    <span class="flex items-center gap-1.5 text-slate-500 font-mono text-[10px]"><i class="fa-solid fa-arrow-right"></i> Flow Lines</span>
+                    <span class="flex items-center gap-1.5 text-slate-500 font-mono text-[10px]"><span class="w-1.5 h-4 bg-slate-300 border border-slate-400 rounded-sm inline-block"></span> Mini Gauge</span>
                 </div>
             </div>
 
@@ -641,6 +629,16 @@
             document.getElementById('statGates').textContent = `${totalWG} Gates`;
         }
 
+        function calcGaugePct(item) {
+            if (item.wlIn === null || isNaN(item.wlIn)) return 0;
+            const minH = item.bedBank !== null ? item.bedBank : (item.waterMin !== null ? item.waterMin : 0);
+            const maxH = item.waterMax !== null ? item.waterMax : (item.critical !== null ? item.critical + 1.0 : (minH + 3.0));
+            const span = maxH - minH;
+            if (span <= 0) return 50;
+            const pct = ((item.wlIn - minH) / span) * 100;
+            return Math.min(Math.max(pct, 10), 100);
+        }
+
         function updateMapMarkers(list) {
             groupLocal.clearLayers();
             document.getElementById('badgeLocalCount').textContent = `${list.length} Stations`;
@@ -648,60 +646,68 @@
             list.forEach(item => {
                 let iconHtml = '';
                 const displayShort = item.waterShortnameEn !== 'N/A' ? item.waterShortnameEn : item.waterShortname;
+                const gaugePct = calcGaugePct(item);
 
-                // 1. Render Station Shape & Badges by Type
+                // Side-by-side Mini Gauge Scale Component
+                const miniGaugeHtml = `
+                    <div title="Water Level: ${item.wlIn !== null ? item.wlIn.toFixed(2) + 'm' : 'N/A'}" style="width:6px; height:24px; background:#e2e8f0; border:1px solid #94a3b8; border-radius:3px; position:relative; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.3); shrink:0;">
+                        <div style="position:absolute; bottom:0; width:100%; height:${gaugePct}%; background-color:${item.color}; border-top:1px solid rgba(255,255,255,0.8);"></div>
+                    </div>
+                `;
+
+                // Render Clean Marker Icons with attached Mini Gauge
                 if (item.type === 'pump') {
                     const isPumping = item.activePumps > 0;
                     const pumpBg = isPumping ? '#0d9488' : item.color;
                     iconHtml = `
-                        <div class="marker-wrapper">
-                            <div class="${isPumping ? 'pulse-active' : ''}" style="background-color:${pumpBg}; width:28px; height:28px; border-radius:50%; border:2px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; shadow: 0 2px 4px rgba(0,0,0,0.3); position:relative;">
+                        <div class="flex items-center gap-1.5" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+                            <div class="${isPumping ? 'pulse-active' : ''}" style="background-color:${pumpBg}; width:28px; height:28px; border-radius:50%; border:2px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; position:relative;">
                                 <i class="fa-solid fa-gears ${isPumping ? 'fa-spin' : ''}"></i>
-                                <span style="position:absolute; top:-6px; right:-8px; background:#0f172a; color:#5eead4; font-size:8px; font-weight:800; padding:1px 3px; border-radius:4px; border:1px solid #14b8a6;">${item.activePumps}/${item.pumpCount}</span>
+                                <span style="position:absolute; top:-6px; right:-8px; background:#0f172a; color:#5eead4; font-size:8px; font-weight:800; padding:1px 3.5px; border-radius:4px; border:1px solid #14b8a6; line-height:1.1;">${item.activePumps}/${item.pumpCount}</span>
                             </div>
-                            <div class="shortname-pill">${displayShort} ${item.trendIcon}</div>
+                            ${miniGaugeHtml}
                         </div>
                     `;
                 } else if (item.type === 'watergate') {
                     iconHtml = `
-                        <div class="marker-wrapper">
-                            <div style="background-color:${item.color}; width:24px; height:24px; border-radius:4px; border:2px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:10px; shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                        <div class="flex items-center gap-1.5" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+                            <div style="background-color:${item.color}; width:24px; height:24px; border-radius:4px; border:2px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:10px;">
                                 <i class="fa-solid fa-door-open"></i>
                             </div>
-                            <div class="shortname-pill">${displayShort} ${item.trendIcon}</div>
+                            ${miniGaugeHtml}
                         </div>
                     `;
                 } else {
-                    // Standard Water Level Sensor Drop-Pin
+                    // Standard Water Level Drop Pin
                     iconHtml = `
-                        <div class="marker-wrapper">
-                            <div style="background-color:${item.color}; width:22px; height:22px; border-radius:50% 50% 50% 0; transform: rotate(-45deg); border:2px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:9px; shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                        <div class="flex items-center gap-1.5" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+                            <div style="background-color:${item.color}; width:22px; height:22px; border-radius:50% 50% 50% 0; transform: rotate(-45deg); border:2px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:9px;">
                                 <i class="fa-solid fa-droplet" style="transform: rotate(45deg);"></i>
                             </div>
-                            <div class="shortname-pill">${displayShort} ${item.trendIcon}</div>
+                            ${miniGaugeHtml}
                         </div>
                     `;
                 }
 
-                const customIcon = L.divIcon({ className: 'custom-marker', html: iconHtml, iconSize: [60, 50], iconAnchor: [30, 20] });
+                const customIcon = L.divIcon({ className: 'custom-marker', html: iconHtml, iconSize: [40, 30], iconAnchor: [20, 15] });
                 const marker = L.marker([item.lat, item.lng], { icon: customIcon });
 
-                // 2. Draw Inflow / Outflow Vector Lines
+                // Draw Vector Directional Flow Lines
                 if (!isNaN(item.lat) && !isNaN(item.lng)) {
-                    // Upstream Intake Vector (Solid Line)
+                    // Upstream Intake Vector
                     const inLineCoords = [
                         [item.lat - 0.002, item.lng - 0.002],
                         [item.lat, item.lng]
                     ];
                     L.polyline(inLineCoords, { color: item.color, weight: 2.5, opacity: 0.8 }).addTo(groupLocal);
 
-                    // Downstream Discharge Vectors (Dashed/Animated Flow)
+                    // Downstream Discharge Vectors
                     if (item.wlOut01 !== null || item.pumpCount > 0) {
                         const out1LineCoords = [
                             [item.lat, item.lng],
                             [item.lat + 0.0025, item.lng + 0.0025]
                         ];
-                        const lineOut = L.polyline(out1LineCoords, { 
+                        L.polyline(out1LineCoords, { 
                             color: item.activePumps > 0 ? '#10b981' : '#64748b', 
                             weight: 3, 
                             dashArray: '5, 5',
