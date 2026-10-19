@@ -12,14 +12,18 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
-        .map-container { height: 520px; border-radius: 0.75rem; z-index: 1; background-color: #f8fafc; }
+        /* Exact Aspect Ratio Matching Map Bounds (2060 x 1334) */
+        .map-container { 
+            width: 100%; 
+            aspect-ratio: 2060 / 1334; 
+            border-radius: 0.75rem; 
+            z-index: 1; 
+            background-color: #f8fafc; 
+        }
         .badge-danger { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
         .badge-warning { background-color: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
         .badge-info { background-color: #e0f2fe; color: #075985; border: 1px solid #7dd3fc; }
@@ -41,7 +45,7 @@
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        /* Dash flow animation for outflow lines */
+        /* Animated Discharge Vector Lines */
         @keyframes flowDash {
             to { stroke-dashoffset: -20; }
         }
@@ -50,11 +54,11 @@
             animation: flowDash 1s linear infinite;
         }
 
-        /* Gauge visual components inside modal */
+        /* Gauge Visual Scale Bar */
         .gauge-container {
             position: relative;
             width: 100%;
-            height: 220px;
+            height: 200px;
             background: #f1f5f9;
             border-radius: 12px;
             border: 2px solid #cbd5e1;
@@ -149,16 +153,16 @@
             </div>
         </section>
 
-        <!-- Map Section -->
-        <section class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-6">
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-slate-100 pb-4">
+        <!-- Map Section (100% Fit Aspect Ratio Frame) -->
+        <section class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-slate-100 pb-3">
                 <div>
                     <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                         <i class="fa-solid fa-map-location-dot text-indigo-600"></i>
-                        Bangna Local Overlay Map
+                        Bangna Focus Area Overlay Map
                     </h2>
                     <p class="text-xs text-slate-500">
-                        สถานีวัดระดับน้ำ (Drop Pin) | ประตูระบายน้ำ (Square Gate) | สถานีสูบน้ำ (Gear Badge)
+                        Click any station marker on the map below to view real-time parameters and level gauges.
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
@@ -179,133 +183,52 @@
                     </span>
                     <span id="badgeLocalCount" class="px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 font-semibold border border-purple-200">0 Stations</span>
                 </div>
-                <div id="mapLocal" class="map-container border border-slate-300 shadow-inner"></div>
+                <div id="mapLocal" class="map-container border border-slate-300 shadow-inner overflow-hidden"></div>
             </div>
         </section>
 
-        <!-- Data Filter & Search Section -->
-        <section class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
-            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
-                <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 shrink-0">
-                    <button onclick="setTypeFilter('all')" id="btnFilterAll" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-white text-indigo-900 shadow-sm">
-                        All Stations
+        <!-- Inline Station Detail Information Card Section (Replaces Modal & Tables) -->
+        <section id="stationDetailContainer" class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-6">
+            
+            <!-- Default Placeholder State -->
+            <div id="detailPlaceholder" class="text-center py-12 text-slate-400 space-y-3">
+                <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center mx-auto text-2xl">
+                    <i class="fa-solid fa-hand-pointer animate-bounce"></i>
+                </div>
+                <h3 class="font-bold text-slate-700 text-base">No Station Selected</h3>
+                <p class="text-xs text-slate-400 max-w-md mx-auto">
+                    Select any station marker on the map above to display its real-time telemetry parameters, level gauge scale, structural thresholds, and active pump matrix.
+                </p>
+            </div>
+
+            <!-- Active Selected Station Card Content -->
+            <div id="detailCardContent" class="hidden space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 pb-4">
+                    <div class="flex items-center gap-3">
+                        <span id="detailTypeIcon" class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg shrink-0">
+                            <i class="fa-solid fa-tower-observation"></i>
+                        </span>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-lg text-slate-900" id="detailTitle">Station Details</h3>
+                                <span id="detailShortnameTag" class="px-2.5 py-0.5 rounded bg-indigo-900 text-indigo-100 text-xs font-mono font-bold"></span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-0.5" id="detailSubtitle"></p>
+                        </div>
+                    </div>
+                    <button onclick="clearStationSelection()" class="px-3.5 py-1.5 text-xs text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors font-semibold flex items-center gap-1.5 shrink-0">
+                        <i class="fa-solid fa-xmark"></i> Clear Selection
                     </button>
-                    <button onclick="setTypeFilter('waterlevel')" id="btnFilterWL" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-600 hover:text-indigo-900">
-                        Water Level Sensors
-                    </button>
-                    <button onclick="setTypeFilter('watergate')" id="btnFilterWG" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-600 hover:text-indigo-900">
-                        Watergates
-                    </button>
-                    <button onclick="setTypeFilter('pump')" id="btnFilterPump" class="px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-600 hover:text-indigo-900">
-                        Pumping Stations
-                    </button>
                 </div>
 
-                <div class="relative flex-1 max-w-md">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                    <input type="text" id="searchInput" placeholder="Search shortname, station name, river..." 
-                           class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all" />
-                </div>
+                <div id="detailCardBody"></div>
+
+                <div class="pt-3 border-t border-slate-100 flex justify-between items-center text-xs text-slate-400" id="detailFooterMeta"></div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-1">Filter by River / Canal</label>
-                    <select id="selectRiver" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs p-2 focus:bg-white outline-none">
-                        <option value="">All Waterways</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-1">Filter by Status</label>
-                    <select id="selectStatus" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs p-2 focus:bg-white outline-none">
-                        <option value="">All Statuses</option>
-                        <option value="overflow">Critical / Overflow</option>
-                        <option value="warning">Warning Level</option>
-                        <option value="normal">Normal Level</option>
-                    </select>
-                </div>
-            </div>
-        </section>
-
-        <!-- Data Table Section -->
-        <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                <div>
-                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-indigo-600"></i>
-                        Bangna Telemetry Station Records
-                    </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Click any station row to view full station parameters, levels, thresholds, and pump metrics.</p>
-                </div>
-                <span class="text-xs text-slate-500 font-medium shrink-0" id="tableRecordCount">Showing 0 records</span>
-            </div>
-
-            <div class="overflow-x-auto custom-scrollbar">
-                <table class="w-full text-left border-collapse text-xs">
-                    <thead>
-                        <tr class="bg-slate-100 text-slate-600 uppercase font-semibold border-b border-slate-200">
-                            <th class="p-3.5">Shortname</th>
-                            <th class="p-3.5">Type ID</th>
-                            <th class="p-3.5">Station Name</th>
-                            <th class="p-3.5">River / Canal</th>
-                            <th class="p-3.5">WL In (m)</th>
-                            <th class="p-3.5">Max In Day</th>
-                            <th class="p-3.5">Pumps Status</th>
-                            <th class="p-3.5">Alert Level</th>
-                            <th class="p-3.5">Site Timestamp</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dataTableBody" class="divide-y divide-slate-100 text-slate-700">
-                        <!-- Dynamic Rows -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Visual Analytics Chart Section -->
-        <section class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
-            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                <i class="fa-solid fa-chart-column text-indigo-600"></i>
-                Station Distribution by Waterway
-            </h3>
-            <div class="h-80 w-full relative">
-                <canvas id="localChart"></canvas>
-            </div>
         </section>
 
     </main>
-
-    <!-- Comprehensive Detailed Information Modal -->
-    <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
-            <div class="bg-indigo-950 text-white p-5 flex justify-between items-center shrink-0">
-                <div class="flex items-center gap-3">
-                    <span id="modalTypeIcon" class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg">
-                        <i class="fa-solid fa-tower-observation"></i>
-                    </span>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h3 class="font-bold text-base text-white" id="modalTitle">Station Details</h3>
-                            <span id="modalShortnameTag" class="px-2 py-0.5 rounded bg-indigo-800 text-indigo-200 text-xs font-mono font-bold"></span>
-                        </div>
-                        <p class="text-xs text-indigo-200" id="modalSubtitle">Telemetry Station Full Parameters</p>
-                    </div>
-                </div>
-                <button onclick="closeDetailModal()" class="text-slate-300 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-            
-            <div class="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1" id="modalContent"></div>
-
-            <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-between items-center shrink-0">
-                <span class="text-xs text-slate-400" id="modalFooterMeta"></span>
-                <button onclick="closeDetailModal()" class="px-5 py-2 bg-indigo-900 hover:bg-indigo-950 text-white text-xs font-semibold rounded-xl transition-colors">
-                    Close Details
-                </button>
-            </div>
-        </div>
-    </div>
 
     <script>
         const S3_URL = 'https://bkkweather.s3.ap-southeast-1.amazonaws.com/klongmap-latest.json';
@@ -316,15 +239,13 @@
 
         let rawStations = [];
         let filteredData = [];
-        let currentTypeFilter = 'all';
+        let selectedStationId = null;
 
         let mapLocal, groupLocal;
-        let chartInstance = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             initStaticMap();
             loadS3Data();
-            setupEventListeners();
         });
 
         function formatVal(val, unit = '') {
@@ -352,10 +273,15 @@
             const m = L.map(containerId, {
                 crs: L.CRS.EPSG3857,
                 attributionControl: false,
+                zoomControl: true,
                 renderer: L.svg({ padding: 0.5 })
-            }).fitBounds(bounds);
+            });
 
             L.imageOverlay(imageFile, bounds).addTo(m);
+            
+            // Fit bounds perfectly with 0 padding to fill 100% frame
+            m.fitBounds(bounds, { padding: [0, 0] });
+
             const group = L.layerGroup().addTo(m);
             return { map: m, group };
         }
@@ -364,6 +290,17 @@
             const objLocal = createCustomMap('mapLocal', MAP_BOUNDS.local, 'bangna_local_map.png');
             mapLocal = objLocal.map;
             groupLocal = objLocal.group;
+
+            // Trigger size calculation on window load to ensure edge-to-edge fill
+            setTimeout(() => {
+                mapLocal.invalidateSize();
+                mapLocal.fitBounds(MAP_BOUNDS.local, { padding: [0, 0] });
+            }, 200);
+
+            window.addEventListener('resize', () => {
+                mapLocal.invalidateSize();
+                mapLocal.fitBounds(MAP_BOUNDS.local, { padding: [0, 0] });
+            });
         }
 
         function isPointInBounds(lat, lng, bounds) {
@@ -476,13 +413,6 @@
                     }
                 }
 
-                // Calculate Trend
-                let trendIcon = '<i class="fa-solid fa-minus text-slate-300"></i>';
-                if (wlIn !== null && maxInYesterday !== null) {
-                    if (wlIn > maxInYesterday) trendIcon = '<i class="fa-solid fa-arrow-trend-up text-red-400"></i>';
-                    else if (wlIn < maxInYesterday) trendIcon = '<i class="fa-solid fa-arrow-trend-down text-emerald-400"></i>';
-                }
-
                 return {
                     id: item.water_station_id || `ST_${index}`,
                     stationTypeId,
@@ -533,79 +463,15 @@
                     category,
                     color,
                     badgeClass,
-                    label,
-                    trendIcon
+                    label
                 };
             });
         }
 
         function processAndRender() {
             filteredData = rawStations.filter(st => isPointInBounds(st.lat, st.lng, MAP_BOUNDS.local));
-            populateFilterDropdowns();
-            applyFilters();
-        }
-
-        function populateFilterDropdowns() {
-            const riverSelect = document.getElementById('selectRiver');
-            const rivers = new Set();
-
-            filteredData.forEach(item => {
-                if (item.riverName && item.riverName !== 'N/A') rivers.add(item.riverName);
-            });
-
-            riverSelect.innerHTML = '<option value="">All Waterways</option>';
-            Array.from(rivers).sort().forEach(r => {
-                const opt = document.createElement('option');
-                opt.value = r;
-                opt.textContent = r;
-                riverSelect.appendChild(opt);
-            });
-        }
-
-        function setTypeFilter(type) {
-            currentTypeFilter = type;
-            ['btnFilterAll', 'btnFilterWL', 'btnFilterWG', 'btnFilterPump'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) btn.className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all text-slate-600 hover:text-indigo-900';
-            });
-
-            const activeBtn = {
-                all: 'btnFilterAll',
-                waterlevel: 'btnFilterWL',
-                watergate: 'btnFilterWG',
-                pump: 'btnFilterPump'
-            }[type];
-
-            if (activeBtn) {
-                document.getElementById(activeBtn).className = 'px-4 py-2 rounded-lg text-xs font-semibold transition-all bg-white text-indigo-900 shadow-sm';
-            }
-
-            applyFilters();
-        }
-
-        function setupEventListeners() {
-            document.getElementById('searchInput').addEventListener('input', applyFilters);
-            document.getElementById('selectRiver').addEventListener('change', applyFilters);
-            document.getElementById('selectStatus').addEventListener('change', applyFilters);
-        }
-
-        function applyFilters() {
-            const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
-            const riverVal = document.getElementById('selectRiver').value;
-            const statusVal = document.getElementById('selectStatus').value;
-
-            const displayList = filteredData.filter(item => {
-                if (currentTypeFilter !== 'all' && item.type !== currentTypeFilter) return false;
-                if (riverVal && item.riverName !== riverVal) return false;
-                if (statusVal && item.category !== statusVal) return false;
-                if (searchVal && !`${item.stationName} ${item.stationNameEn} ${item.waterShortname} ${item.waterShortnameEn} ${item.riverName}`.toLowerCase().includes(searchVal)) return false;
-                return true;
-            });
-
             updateSummaryCards();
-            updateMapMarkers(displayList);
-            renderTable(displayList);
-            renderChart(displayList);
+            updateMapMarkers(filteredData);
         }
 
         function updateSummaryCards() {
@@ -655,12 +521,12 @@
                     </div>
                 `;
 
-                // Render Clean Marker Icons with attached Mini Gauge
+                // Clean Marker Icons without map text titles
                 if (item.type === 'pump') {
                     const isPumping = item.activePumps > 0;
                     const pumpBg = isPumping ? '#0d9488' : item.color;
                     iconHtml = `
-                        <div class="flex items-center gap-1.5" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+                        <div class="flex items-center gap-1.5 cursor-pointer" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
                             <div class="${isPumping ? 'pulse-active' : ''}" style="background-color:${pumpBg}; width:28px; height:28px; border-radius:50%; border:2px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; position:relative;">
                                 <i class="fa-solid fa-gears ${isPumping ? 'fa-spin' : ''}"></i>
                                 <span style="position:absolute; top:-6px; right:-8px; background:#0f172a; color:#5eead4; font-size:8px; font-weight:800; padding:1px 3.5px; border-radius:4px; border:1px solid #14b8a6; line-height:1.1;">${item.activePumps}/${item.pumpCount}</span>
@@ -670,7 +536,7 @@
                     `;
                 } else if (item.type === 'watergate') {
                     iconHtml = `
-                        <div class="flex items-center gap-1.5" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+                        <div class="flex items-center gap-1.5 cursor-pointer" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
                             <div style="background-color:${item.color}; width:24px; height:24px; border-radius:4px; border:2px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:10px;">
                                 <i class="fa-solid fa-door-open"></i>
                             </div>
@@ -678,9 +544,8 @@
                         </div>
                     `;
                 } else {
-                    // Standard Water Level Drop Pin
                     iconHtml = `
-                        <div class="flex items-center gap-1.5" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+                        <div class="flex items-center gap-1.5 cursor-pointer" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
                             <div style="background-color:${item.color}; width:22px; height:22px; border-radius:50% 50% 50% 0; transform: rotate(-45deg); border:2px solid white; display:flex; align-items:center; justify-content:center; color:white; font-size:9px;">
                                 <i class="fa-solid fa-droplet" style="transform: rotate(45deg);"></i>
                             </div>
@@ -692,7 +557,7 @@
                 const customIcon = L.divIcon({ className: 'custom-marker', html: iconHtml, iconSize: [40, 30], iconAnchor: [20, 15] });
                 const marker = L.marker([item.lat, item.lng], { icon: customIcon });
 
-                // Draw Vector Directional Flow Lines
+                // Draw Vector Directional Lines
                 if (!isNaN(item.lat) && !isNaN(item.lng)) {
                     // Upstream Intake Vector
                     const inLineCoords = [
@@ -716,61 +581,25 @@
                     }
                 }
 
-                marker.bindPopup(`
-                    <div class="p-1 font-sans text-xs space-y-1">
-                        <div class="font-bold text-slate-800 border-b pb-1 flex justify-between items-center">
-                            <span>${displayShort}</span>
-                            <span class="text-[10px] text-slate-400 font-mono">ID: ${item.stationTypeId}</span>
-                        </div>
-                        <div class="text-slate-600">${item.stationNameEn}</div>
-                        <div><span class="text-slate-500">River:</span> <b>${item.riverName}</b></div>
-                        <div><span class="text-slate-500">WL In:</span> <b>${item.wlIn !== null ? item.wlIn.toFixed(2) + ' m' : 'N/A'}</b></div>
-                        <div><span class="text-slate-500">Status:</span> <span style="color:${item.color}" class="font-bold">${item.label}</span></div>
-                    </div>
-                `);
-
-                marker.on('click', () => showStationDetailModal(item));
+                marker.on('click', () => showStationDetailCard(item));
                 marker.addTo(groupLocal);
             });
         }
 
-        function renderTable(list) {
-            const tbody = document.getElementById('dataTableBody');
-            document.getElementById('tableRecordCount').textContent = `Showing ${list.length.toLocaleString()} records`;
+        function showStationDetailCard(st) {
+            selectedStationId = st.id;
 
-            if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400">No telemetry stations match the selected filters.</td></tr>`;
-                return;
-            }
+            // Hide placeholder & display card
+            document.getElementById('detailPlaceholder').classList.add('hidden');
+            document.getElementById('detailCardContent').classList.remove('hidden');
 
-            tbody.innerHTML = list.map(item => `
-                <tr onclick="showStationDetailModalByObj('${item.id}')" class="hover:bg-indigo-50/50 cursor-pointer transition-colors">
-                    <td class="p-3.5 font-bold font-mono text-indigo-900">${item.waterShortnameEn !== 'N/A' ? item.waterShortnameEn : item.waterShortname}</td>
-                    <td class="p-3.5"><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 uppercase">${item.stationTypeId}</span></td>
-                    <td class="p-3.5 font-medium text-slate-900">
-                        <div>${item.stationNameEn}</div>
-                        <div class="text-[10px] text-slate-400">${item.stationName}</div>
-                    </td>
-                    <td class="p-3.5 text-slate-500">${item.riverName}</td>
-                    <td class="p-3.5 font-semibold text-slate-800">${item.wlIn !== null ? item.wlIn.toFixed(2) + ' m' : 'N/A'}</td>
-                    <td class="p-3.5 text-slate-600">${item.maxInDay !== null ? item.maxInDay.toFixed(2) + ' m' : 'N/A'}</td>
-                    <td class="p-3.5">${item.pumpCount > 0 ? `<span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-semibold text-[11px] border border-emerald-200">${item.activePumps}/${item.pumpCount} Running</span>` : '<span class="text-slate-400">-</span>'}</td>
-                    <td class="p-3.5"><span class="px-2.5 py-1 rounded-full text-[11px] font-medium ${item.badgeClass}">${item.label}</span></td>
-                    <td class="p-3.5 text-slate-400">${item.siteTimestamp}</td>
-                </tr>
-            `).join('');
-        }
-
-        function showStationDetailModalByObj(id) {
-            const st = filteredData.find(d => d.id === id);
-            if (st) showStationDetailModal(st);
-        }
-
-        function showStationDetailModal(st) {
-            document.getElementById('modalTitle').textContent = `${st.stationNameEn} (${st.stationName})`;
-            document.getElementById('modalShortnameTag').textContent = st.waterShortnameEn !== 'N/A' ? st.waterShortnameEn : st.waterShortname;
-            document.getElementById('modalSubtitle').textContent = `Type ID: ${st.stationTypeId} • River: ${st.riverName} • Shortcode: ${st.waterShortname}`;
-            document.getElementById('modalFooterMeta').textContent = `Coordinates: ${!isNaN(st.lat) && !isNaN(st.lng) ? `${st.lat.toFixed(5)},${st.lng.toFixed(5)}` : 'N/A'}`;
+            document.getElementById('detailTitle').textContent = `${st.stationNameEn} (${st.stationName})`;
+            document.getElementById('detailShortnameTag').textContent = st.waterShortnameEn !== 'N/A' ? st.waterShortnameEn : st.waterShortname;
+            document.getElementById('detailSubtitle').textContent = `Type ID: ${st.stationTypeId} • River: ${st.riverName} • Shortcode: ${st.waterShortname}`;
+            document.getElementById('detailFooterMeta').innerHTML = `
+                <span>Coordinates: ${!isNaN(st.lat) && !isNaN(st.lng) ? `${st.lat.toFixed(5)},${st.lng.toFixed(5)}` : 'N/A'}</span>
+                <span>Last Updated: ${st.siteTimestamp}</span>
+            `;
 
             // Helper for Level Card Color Matrix
             const getLevelCardStyle = (val, warn, crit) => {
@@ -820,7 +649,7 @@
                 `;
             }
 
-            document.getElementById('modalContent').innerHTML = `
+            document.getElementById('detailCardBody').innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
                     
                     <!-- Left Column: Visual Level Gauge Bar -->
@@ -928,44 +757,15 @@
 
                 </div>
             `;
-            document.getElementById('detailModal').classList.remove('hidden');
+
+            // Scroll smoothly down to detail card if off screen
+            document.getElementById('stationDetailContainer').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        function closeDetailModal() {
-            document.getElementById('detailModal').classList.add('hidden');
-        }
-
-        function renderChart(list) {
-            const ctx = document.getElementById('localChart').getContext('2d');
-            const counts = {};
-
-            list.forEach(st => {
-                const name = st.riverName || 'Unknown';
-                counts[name] = (counts[name] || 0) + 1;
-            });
-
-            const labels = Object.keys(counts).slice(0, 8);
-            const data = labels.map(k => counts[k]);
-
-            if (chartInstance) chartInstance.destroy();
-
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels,
-                    datasets: [{
-                        label: 'Station Count',
-                        data,
-                        backgroundColor: '#3b82f6'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-                }
-            });
+        function clearStationSelection() {
+            selectedStationId = null;
+            document.getElementById('detailCardContent').classList.add('hidden');
+            document.getElementById('detailPlaceholder').classList.remove('hidden');
         }
     </script>
 </body>
