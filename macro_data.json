@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-10-20T04:54:12.369356+00:00",
+  "timestamp_utc": "2026-10-20T10:06:28.881791+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
@@ -56,10 +56,10 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4970,
-    "max_nationwide_1h_mm": 26,
-    "max_nationwide_24h_mm": 252,
-    "bkk_samut_prakan_count": 150,
+    "total_nationwide_stations": 5030,
+    "max_nationwide_1h_mm": 53,
+    "max_nationwide_24h_mm": 256,
+    "bkk_samut_prakan_count": 151,
     "top_bkk_samut_stations": [
       {
         "station_name": "นำร่อง",
@@ -98,22 +98,22 @@
         "lon": 100.54839
       },
       {
-        "station_name": "สนข.ราชเทวี",
-        "province": "Bangkok",
-        "district": "Ratchathewi District",
-        "rain_1h_mm": 0.5,
-        "rain_24h_mm": 15,
-        "lat": 13.75917,
-        "lon": 100.53405
-      },
-      {
         "station_name": "อโศก",
         "province": "Bangkok",
         "district": "Vadhana District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 14.8,
+        "rain_24h_mm": 15,
         "lat": 13.74325,
         "lon": 100.562164
+      },
+      {
+        "station_name": "สนข.ราชเทวี",
+        "province": "Bangkok",
+        "district": "Ratchathewi District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 15,
+        "lat": 13.75917,
+        "lon": 100.53405
       },
       {
         "station_name": "ปากคลองตลาด",
@@ -154,7 +154,7 @@
     ]
   },
   "estuary_tide": {
-    "realtime_msl": 1.157,
+    "realtime_msl": 1.054,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
