@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-10-20T10:06:28.881791+00:00",
+  "timestamp_utc": "2026-10-20T15:07:26.726772+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
@@ -56,9 +56,9 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 5030,
-    "max_nationwide_1h_mm": 53,
-    "max_nationwide_24h_mm": 256,
+    "total_nationwide_stations": 5004,
+    "max_nationwide_1h_mm": 56,
+    "max_nationwide_24h_mm": 197,
     "bkk_samut_prakan_count": 151,
     "top_bkk_samut_stations": [
       {
@@ -80,15 +80,6 @@
         "lon": 100.37676
       },
       {
-        "station_name": "ปตร.คลองอรชร",
-        "province": "Bangkok",
-        "district": "Pathum Wan District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 16.5,
-        "lat": 13.74807,
-        "lon": 100.53618
-      },
-      {
         "station_name": "จุดวัดบึงมักกะสัน",
         "province": "Bangkok",
         "district": "Ratchathewi District",
@@ -98,13 +89,13 @@
         "lon": 100.54839
       },
       {
-        "station_name": "อโศก",
+        "station_name": "ปตร.คลองอรชร",
         "province": "Bangkok",
-        "district": "Vadhana District",
+        "district": "Pathum Wan District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 15,
-        "lat": 13.74325,
-        "lon": 100.562164
+        "rain_24h_mm": 16.5,
+        "lat": 13.74807,
+        "lon": 100.53618
       },
       {
         "station_name": "สนข.ราชเทวี",
@@ -114,6 +105,15 @@
         "rain_24h_mm": 15,
         "lat": 13.75917,
         "lon": 100.53405
+      },
+      {
+        "station_name": "อโศก",
+        "province": "Bangkok",
+        "district": "Vadhana District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 15,
+        "lat": 13.74325,
+        "lon": 100.562164
       },
       {
         "station_name": "ปากคลองตลาด",
@@ -154,7 +154,7 @@
     ]
   },
   "estuary_tide": {
-    "realtime_msl": 1.054,
+    "realtime_msl": 0.547,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
