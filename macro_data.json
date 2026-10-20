@@ -1,10 +1,10 @@
 {
-  "timestamp_utc": "2026-10-20T19:18:31.722484+00:00",
+  "timestamp_utc": "2026-10-20T22:23:08.406384+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
-    "mjo_phase": 2,
-    "mjo_amp": 1.0094762,
+    "mjo_phase": null,
+    "mjo_amp": null,
     "iod": 0.146,
     "heat_content": 2.93,
     "status": "SUCCESS"
@@ -56,9 +56,9 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4788,
-    "max_nationwide_1h_mm": 39,
-    "max_nationwide_24h_mm": 156,
+    "total_nationwide_stations": 4773,
+    "max_nationwide_1h_mm": 21.4,
+    "max_nationwide_24h_mm": 155.6,
     "bkk_samut_prakan_count": 151,
     "top_bkk_samut_stations": [
       {
@@ -71,6 +71,24 @@
         "lon": 100.59944
       },
       {
+        "station_name": "ส.คลองระหาญ",
+        "province": "Bangkok",
+        "district": "Bang Khun Thian District",
+        "rain_1h_mm": 1.5,
+        "rain_24h_mm": 24.5,
+        "lat": 13.60381,
+        "lon": 100.39465
+      },
+      {
+        "station_name": "สนข.บางบอน",
+        "province": "Bangkok",
+        "district": "Bang Bon District",
+        "rain_1h_mm": 6,
+        "rain_24h_mm": 19.5,
+        "lat": 13.63392,
+        "lon": 100.36884
+      },
+      {
         "station_name": "หมู่บ้านเศรษฐกิจ ซอย 26",
         "province": "Bangkok",
         "district": "Bang Khae District",
@@ -80,15 +98,6 @@
         "lon": 100.37676
       },
       {
-        "station_name": "จุดวัดบึงมักกะสัน",
-        "province": "Bangkok",
-        "district": "Ratchathewi District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 16.5,
-        "lat": 13.75665,
-        "lon": 100.54839
-      },
-      {
         "station_name": "ปตร.คลองอรชร",
         "province": "Bangkok",
         "district": "Pathum Wan District",
@@ -96,6 +105,15 @@
         "rain_24h_mm": 16.5,
         "lat": 13.74807,
         "lon": 100.53618
+      },
+      {
+        "station_name": "จุดวัดบึงมักกะสัน",
+        "province": "Bangkok",
+        "district": "Ratchathewi District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 16.5,
+        "lat": 13.75665,
+        "lon": 100.54839
       },
       {
         "station_name": "อโศก",
@@ -116,6 +134,15 @@
         "lon": 100.53405
       },
       {
+        "station_name": "จุดวัด ค.บางบอน-ค.สะแกงาม",
+        "province": "Bangkok",
+        "district": "Bang Bon District",
+        "rain_1h_mm": 0.5,
+        "rain_24h_mm": 14,
+        "lat": 13.64255,
+        "lon": 100.37952
+      },
+      {
         "station_name": "ปากคลองตลาด",
         "province": "Bangkok",
         "district": "Phra Nakhon District",
@@ -123,38 +150,11 @@
         "rain_24h_mm": 13.5,
         "lat": 13.74228,
         "lon": 100.49454
-      },
-      {
-        "station_name": "ส.คลองบางจาก",
-        "province": "Bangkok",
-        "district": "Bang Khae District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 13,
-        "lat": 13.71471,
-        "lon": 100.39555
-      },
-      {
-        "station_name": "สนข.ภาษีเจริญ",
-        "province": "Bangkok",
-        "district": "Phasi Charoen District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 12.5,
-        "lat": 13.71441,
-        "lon": 100.43696
-      },
-      {
-        "station_name": "ส.คลองบางกอกใหญ่",
-        "province": "Bangkok",
-        "district": "Bangkok Yai District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 11,
-        "lat": 13.74022,
-        "lon": 100.49012
       }
     ]
   },
   "estuary_tide": {
-    "realtime_msl": -0.16,
+    "realtime_msl": -0.506,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
