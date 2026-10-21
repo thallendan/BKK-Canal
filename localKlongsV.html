@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
-        /* Exact Mercator Projection Aspect Ratio Matching Map Bounds (1.5006:1) */
+        /* Aspect Ratio Matching Map Bounds (1.5006:1) */
         .map-container { 
             width: 100%; 
             aspect-ratio: 1.5006 / 1; 
@@ -46,13 +46,19 @@
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        /* Animated Discharge Vector Lines */
-        @keyframes flowDash {
-            to { stroke-dashoffset: -20; }
+        /* Focus Area Label Styling */
+        .area-box-label {
+            background-color: rgba(15, 23, 42, 0.85);
+            color: #ffffff;
+            border: 1px solid #8b5cf6;
+            border-radius: 4px;
+            font-weight: 800;
+            font-size: 11px;
+            padding: 2px 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        .animated-flow-line {
-            stroke-dasharray: 6, 6;
-            animation: flowDash 1s linear infinite;
+        .area-box-label::before {
+            display: none;
         }
     </style>
 </head>
@@ -124,7 +130,7 @@
             </div>
         </section>
 
-        <!-- Map Section (100% Fit Aspect Ratio Frame) -->
+        <!-- Map Section -->
         <section class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-slate-100 pb-3">
                 <div>
@@ -133,16 +139,16 @@
                         Bangna Focus Area Overlay Map
                     </h2>
                     <p class="text-xs text-slate-500">
-                        Click any station marker on the map below to view real-time parameters and dynamic 2D canal cross-section.
+                        Color-coded Canal Lines & Focus Area Polygons (ICS, BV).
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                     <span class="font-bold text-slate-600 text-[11px]">Legend:</span>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-red-500"></span> Critical</span>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Warning</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Normal</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-teal-500"></span> Active Pump</span>
-                    <span class="flex items-center gap-1.5 text-slate-500 font-mono text-[10px]"><span class="w-1.5 h-4 bg-slate-300 border border-slate-400 rounded-sm inline-block"></span> Mini Gauge</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-600"></span> Normal Water Level</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3.5 h-1.5 bg-blue-600 rounded"></span> Canal Segment</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm border-2 border-purple-500 bg-purple-200"></span> ICS / BV Areas</span>
                 </div>
             </div>
 
@@ -168,7 +174,7 @@
                 </div>
                 <h3 class="font-bold text-slate-700 text-base">No Station Selected</h3>
                 <p class="text-xs text-slate-400 max-w-md mx-auto">
-                    Select any station marker on the map above to display its real-time telemetry parameters, dynamic 2D canal cross-section diagram, structural thresholds, and active pump matrix.
+                    Select any station marker, canal segment, or focus box on the map above to display its real-time telemetry parameters, dynamic 2D canal cross-section diagram, structural thresholds, and active pump matrix.
                 </p>
             </div>
 
@@ -207,6 +213,254 @@
         const MAP_BOUNDS = {
             local: [[13.5883, 100.5170], [13.7217, 100.7230]]
         };
+
+        // Coordinates definition for Bang Na area canal network
+        const CANALS_DATA = [
+            {
+                id: "bangna_canal",
+                name: "Bang Na Canal (คลองบางนา)",
+                flowDirection: "Flows West / South",
+                segments: [
+                    {
+                        name: "Bang Na Pumping Station ↔ Sukhumvit Road",
+                        from: "Bang Na Pumping Station",
+                        to: "Khlong Bang Na (Sukhumvit)",
+                        coords: [[13.67482, 100.58775], [13.66948, 100.60535]]
+                    },
+                    {
+                        name: "Sukhumvit Road ↔ Srinakarin Road",
+                        from: "Khlong Bang Na (Sukhumvit)",
+                        to: "Khlong Bang Na (Srinakarin)",
+                        coords: [[13.66948, 100.60535], [13.66102, 100.63926]]
+                    },
+                    {
+                        name: "Srinakarin Road ↔ Bang Na Water Gate",
+                        from: "Khlong Bang Na (Srinakarin)",
+                        to: "Khlong Bang Na Water Gate",
+                        coords: [[13.66102, 100.63926], [13.65940, 100.64935]]
+                    },
+                    {
+                        name: "Bang Na Water Gate ↔ Mid Segment",
+                        from: "Khlong Bang Na Water Gate",
+                        to: "Mid Segment Point",
+                        coords: [[13.65940, 100.64935], [13.672150, 100.655232]]
+                    },
+                    {
+                        name: "Mid Segment ↔ Point 100.65989",
+                        from: "Mid Segment Point",
+                        to: "Point 100.65989",
+                        coords: [[13.672150, 100.655232], [13.670134501229029, 100.65989175809709]]
+                    },
+                    {
+                        name: "Point 100.65989 ↔ Point 100.66110",
+                        from: "Point 100.65989",
+                        to: "Point 100.66110",
+                        coords: [[13.670134501229029, 100.65989175809709], [13.671681703737322, 100.66110330011492]]
+                    },
+                    {
+                        name: "Point 100.66110 ↔ Nong Bon Connector",
+                        from: "Point 100.66110",
+                        to: "Connector to Nong Bon",
+                        coords: [[13.671681703737322, 100.66110330011492], [13.671204782623128, 100.66237839283374]]
+                    },
+                    {
+                        name: "Nong Bon Connector ↔ Chaloem Phrakiat Rama 9 Soi 14",
+                        from: "Connector to Nong Bon",
+                        to: "Khlong Plat Priang (Rama 9 Soi 14)",
+                        coords: [[13.671204782623128, 100.66237839283374], [13.67009, 100.66787]]
+                    }
+                ]
+            },
+            {
+                id: "nongbon_bangna_connector",
+                name: "Connector Nong Bon ↔ Khlong Bangna",
+                flowDirection: "Flows South-West",
+                segments: [
+                    {
+                        name: "Nong Bon ↔ Khlong Bangna Junction",
+                        from: "Nong Bon Point",
+                        to: "Khlong Bangna Connector",
+                        coords: [[13.6769240436144, 100.66582564602447], [13.671204782623128, 100.66237839283374]]
+                    }
+                ]
+            },
+            {
+                id: "khlong_khled",
+                name: "Khlong Khled (คลองเคล็ด)",
+                flowDirection: "Flows South-East",
+                segments: [
+                    {
+                        name: "Supaphong 1 ↔ Soi Prem Ruethai 20",
+                        from: "Khlong Kled (Supaphong 1)",
+                        to: "Khlong Kled (Soi Prem Ruethai 20)",
+                        coords: [[13.68886, 100.63809], [13.68033, 100.63959]]
+                    },
+                    {
+                        name: "Soi Prem Ruethai 20 ↔ Srinakarin Road",
+                        from: "Khlong Kled (Soi Prem Ruethai 20)",
+                        to: "Khlong Kled (Srinakarin)",
+                        coords: [[13.68033, 100.63959], [13.67123, 100.64390]]
+                    },
+                    {
+                        name: "Srinakarin Road ↔ ICS Area Junction",
+                        from: "Khlong Kled (Srinakarin)",
+                        to: "ICS Area Junction",
+                        coords: [[13.67123, 100.64390], [13.668922037108066, 100.6537435476576]]
+                    }
+                ]
+            },
+            {
+                id: "samrong_canal",
+                name: "Samrong Canal (คลองสำโรง)",
+                flowDirection: "Flows West / South",
+                segments: [
+                    {
+                        name: "West Mouth ↔ Samrong Pumping Station",
+                        from: "West Canal Mouth",
+                        to: "Khlong Samrong Pumping Station",
+                        coords: [[13.658469245092823, 100.57169991692452], [13.64855, 100.59523]]
+                    },
+                    {
+                        name: "Samrong Pumping Station ↔ Srinakarin Junction",
+                        from: "Khlong Samrong Pumping Station",
+                        to: "Palat Priang South Junction",
+                        coords: [[13.64855, 100.59523], [13.620751139105831, 100.64604029060013]]
+                    }
+                ]
+            },
+            {
+                id: "palat_priang_canal",
+                name: "Palat Priang Canal (คลองปลัดเปรียง)",
+                flowDirection: "Flows South / West",
+                segments: [
+                    {
+                        name: "Samrong Junction ↔ Mid Palat Priang",
+                        from: "Palat Priang South Junction",
+                        to: "Mid Segment Point",
+                        coords: [[13.620751139105831, 100.64604029060013], [13.668169512659615, 100.66690353954672]]
+                    },
+                    {
+                        name: "Mid Palat Priang ↔ Chaloem Phrakiat Rama 9 Soi 14",
+                        from: "Mid Segment Point",
+                        to: "Khlong Plat Priang (Rama 9 Soi 14)",
+                        coords: [[13.668169512659615, 100.66690353954672], [13.67009, 100.66787]]
+                    },
+                    {
+                        name: "Chaloem Phrakiat Rama 9 Soi 14 ↔ Upper North",
+                        from: "Khlong Plat Priang (Rama 9 Soi 14)",
+                        to: "North Extension Point",
+                        coords: [[13.67009, 100.66787], [13.680213200860061, 100.6721974824571]]
+                    }
+                ]
+            },
+            {
+                id: "nong_bon",
+                name: "Khlong Nong Bon (คลองหนองบอน)",
+                flowDirection: "Flows South-East",
+                segments: [
+                    {
+                        name: "Bueng Nong Bon Pumping Station ↔ Segment 2",
+                        from: "Bueng Nong Bon Pumping Station",
+                        to: "Nong Bon Segment 2",
+                        coords: [[13.69479, 100.65350], [13.685908894141976, 100.65392896800932]]
+                    },
+                    {
+                        name: "Segment 2 ↔ Segment 3",
+                        from: "Nong Bon Segment 2",
+                        to: "Nong Bon Segment 3",
+                        coords: [[13.685908894141976, 100.65392896800932], [13.68071836274505, 100.6579800242163]]
+                    },
+                    {
+                        name: "Segment 3 ↔ Thanon Chaloem Phrakiat Rama 9",
+                        from: "Nong Bon Segment 3",
+                        to: "Khlong Nong Bon (Rama 9)",
+                        coords: [[13.68071836274505, 100.6579800242163], [13.67800, 100.66295]]
+                    },
+                    {
+                        name: "Thanon Chaloem Phrakiat Rama 9 ↔ Segment 5",
+                        from: "Khlong Nong Bon (Rama 9)",
+                        to: "Nong Bon Segment 5",
+                        coords: [[13.67800, 100.66295], [13.676310300915754, 100.66705599456597]]
+                    },
+                    {
+                        name: "Segment 5 ↔ Segment 6",
+                        from: "Nong Bon Segment 5",
+                        to: "Nong Bon Segment 6",
+                        coords: [[13.676310300915754, 100.66705599456597], [13.675311117398914, 100.66684020127637]]
+                    },
+                    {
+                        name: "Segment 6 ↔ East End Point",
+                        from: "Nong Bon Segment 6",
+                        to: "East End Point",
+                        coords: [[13.675311117398914, 100.66684020127637], [13.674141009798324, 100.66963090509896]]
+                    }
+                ]
+            },
+            {
+                id: "khlong_lod_2",
+                name: "Khlong Lod 2 (คลองหลอด 2)",
+                flowDirection: "Flows South-West",
+                segments: [
+                    {
+                        name: "Bang Na-Trat ↔ South-West End",
+                        from: "Khlong Lod 2 (Bang Na-Trat)",
+                        to: "South-West End",
+                        coords: [[13.67099, 100.62222], [13.666506183476965, 100.6176131740184]]
+                    }
+                ]
+            },
+            {
+                id: "khlong_lod_3",
+                name: "Khlong Lod 3 (คลองหลอด 3)",
+                flowDirection: "Flows South-West",
+                segments: [
+                    {
+                        name: "Bang Na-Trat ↔ South-West End",
+                        from: "Khlong Lod 3 (Bang Na-Trat)",
+                        to: "South-West End",
+                        coords: [[13.66749, 100.63337], [13.66256744208415, 100.63194677535033]]
+                    }
+                ]
+            },
+            {
+                id: "khlong_bang_ao_1",
+                name: "Khlong Bang Ao 1 (คลองบางอ้อ 1)",
+                flowDirection: "Flows West",
+                segments: [
+                    {
+                        name: "Sukhumvit 101/1 ↔ Soi Sukhumvit 66/1",
+                        from: "Khlong Bang Nang Chin (Sukhumvit 101/1)",
+                        to: "Khlong Bang O Yai (Soi Sukhumvit 66/1)",
+                        coords: [[13.68443, 100.61107], [13.68076, 100.60305]]
+                    },
+                    {
+                        name: "Soi Sukhumvit 66/1 ↔ Khlong Bang O Mouth",
+                        from: "Khlong Bang O Yai (Soi Sukhumvit 66/1)",
+                        to: "Khlong Bang O",
+                        coords: [[13.68076, 100.60305], [13.68206, 100.59226]]
+                    }
+                ]
+            },
+            {
+                id: "khlong_bang_ao_2",
+                name: "Khlong Bang Ao 2 (คลองบางอ้อ 2)",
+                flowDirection: "Flows West",
+                segments: [
+                    {
+                        name: "Soi Sukhumvit 64 ↔ Soi Sukhumvit 64 (Noi)",
+                        from: "Khlong Bang O (Soi Sukhumvit 64)",
+                        to: "Khlong Bang O Noi (Soi Sukhumvit 64)",
+                        coords: [[13.68559, 100.60441], [13.68495, 100.60233]]
+                    },
+                    {
+                        name: "Soi Sukhumvit 64 (Noi) ↔ Khlong Bang O Mouth",
+                        from: "Khlong Bang O Noi (Soi Sukhumvit 64)",
+                        to: "Khlong Bang O",
+                        coords: [[13.68495, 100.60233], [13.68206, 100.59226]]
+                    }
+                ]
+            }
+        ];
 
         let rawStations = [];
         let filteredData = [];
@@ -364,8 +618,8 @@
 
                 // Safety Category & Colors
                 let category = 'normal';
-                let color = '#10b981';
-                let badgeClass = 'badge-success';
+                let color = '#2563eb'; // Blue for normal
+                let badgeClass = 'badge-info';
                 let label = 'Normal Level';
 
                 if (wlIn !== null && !isNaN(wlIn)) {
@@ -474,10 +728,196 @@
             return Math.min(Math.max(pct, 10), 100);
         }
 
+        // Helper: Euclidean distance to segment for matching stations to canal lines
+        function distToSegment(p, p1, p2) {
+            const x = p[0], y = p[1];
+            const x1 = p1[0], y1 = p1[1];
+            const x2 = p2[0], y2 = p2[1];
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            if (dx === 0 && dy === 0) return Math.hypot(x - x1, y - y1);
+            const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / (dx * dx + dy * dy)));
+            return Math.hypot(x - (x1 + t * dx), y - (y1 + t * dy));
+        }
+
+        // Render Color-Coded Canal Polylines
+        function renderCanalPolylines(stationsList) {
+            CANALS_DATA.forEach(canal => {
+                canal.segments.forEach(seg => {
+                    const p1 = seg.coords[0];
+                    const p2 = seg.coords[1];
+
+                    // Find nearest monitoring station to this segment
+                    let nearestStation = null;
+                    let minDist = Infinity;
+
+                    stationsList.forEach(st => {
+                        if (!isNaN(st.lat) && !isNaN(st.lng)) {
+                            const d = distToSegment([st.lat, st.lng], p1, p2);
+                            if (d < minDist) {
+                                minDist = d;
+                                nearestStation = st;
+                            }
+                        }
+                    });
+
+                    // Determine water level color
+                    let segColor = '#2563eb'; // Default Blue (Normal)
+                    let alertLabel = 'Normal Level';
+                    let wlInText = 'N/A';
+                    let wlOutText = 'N/A';
+                    let stationName = 'General Monitoring';
+
+                    if (nearestStation) {
+                        stationName = nearestStation.stationNameEn;
+                        if (nearestStation.wlIn !== null) wlInText = nearestStation.wlIn.toFixed(2) + ' m';
+                        if (nearestStation.wlOut01 !== null) wlOutText = nearestStation.wlOut01.toFixed(2) + ' m';
+
+                        if (nearestStation.category === 'overflow') {
+                            segColor = '#ef4444'; // Red (Critical)
+                            alertLabel = 'Critical / Overflow';
+                        } else if (nearestStation.category === 'warning') {
+                            segColor = '#f59e0b'; // Amber (Warning)
+                            alertLabel = 'Warning Level';
+                        } else {
+                            segColor = '#0284c7'; // Sky / Blue (Normal)
+                            alertLabel = 'Normal Level';
+                        }
+                    }
+
+                    // Outer casing polyline for high contrast
+                    const bgPolyline = L.polyline(seg.coords, {
+                        color: '#0f172a',
+                        weight: 8,
+                        opacity: 0.45,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    }).addTo(groupLocal);
+
+                    // Core colored polyline
+                    const mainPolyline = L.polyline(seg.coords, {
+                        color: segColor,
+                        weight: 5,
+                        opacity: 0.9,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    }).addTo(groupLocal);
+
+                    // Interactive Tooltip & Popup
+                    const popupContent = `
+                        <div class="p-2 font-sans text-xs space-y-1.5">
+                            <div class="font-bold text-slate-900 border-b pb-1 text-sm flex items-center justify-between">
+                                <span>${canal.name}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded font-semibold text-white" style="background-color:${segColor};">${alertLabel}</span>
+                            </div>
+                            <div><span class="text-slate-500 font-semibold">Segment:</span> ${seg.name}</div>
+                            <div><span class="text-slate-500 font-semibold">Nearest Station:</span> <b>${stationName}</b></div>
+                            <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100 mt-1">
+                                <div class="bg-slate-50 p-1.5 rounded border"><span class="text-[10px] text-slate-400 block">WL In</span><b class="text-indigo-900">${wlInText}</b></div>
+                                <div class="bg-slate-50 p-1.5 rounded border"><span class="text-[10px] text-slate-400 block">WL Out</span><b class="text-slate-800">${wlOutText}</b></div>
+                            </div>
+                            <div class="text-[10px] text-indigo-600 font-semibold pt-0.5"><i class="fa-solid fa-compass"></i> Flow Direction: ${canal.flowDirection}</div>
+                        </div>
+                    `;
+
+                    mainPolyline.bindPopup(popupContent);
+                    mainPolyline.bindTooltip(`${canal.name}: ${seg.name}`, { sticky: true });
+
+                    // Hover dynamics
+                    mainPolyline.on('mouseover', function () {
+                        this.setStyle({ weight: 8, opacity: 1.0 });
+                        bgPolyline.setStyle({ weight: 11, opacity: 0.6 });
+                    });
+                    mainPolyline.on('mouseout', function () {
+                        this.setStyle({ weight: 5, opacity: 0.9 });
+                        bgPolyline.setStyle({ weight: 8, opacity: 0.45 });
+                    });
+                });
+            });
+        }
+
+        // Defined Focus Area Polygons (BV and ICS)
+        const FOCUS_AREAS = [
+            {
+                id: "BV",
+                name: "BV Area",
+                type: "rectangle",
+                polygonCoords: [
+                    [13.667534868374565, 100.66237893850511],
+                    [13.667534868374565, 100.6650188196318],
+                    [13.663920916329783, 100.6650188196318],
+                    [13.663920916329783, 100.66237893850511]
+                ],
+                color: "#8b5cf6",
+                fillColor: "#c084fc"
+            },
+            {
+                id: "ICS",
+                name: "ICS Area",
+                type: "polygon",
+                polygonCoords: [
+                    [13.669156292237544, 100.6520794619012],
+                    [13.66910422530577, 100.65316999285967],
+                    [13.666485285270511, 100.65223123883123],
+                    [13.666692479480895, 100.6515844190798]
+                ],
+                color: "#ec4899",
+                fillColor: "#f472b6"
+            }
+        ];
+
+        function renderFocusAreaBoxes() {
+            FOCUS_AREAS.forEach(area => {
+                const poly = L.polygon(area.polygonCoords, {
+                    color: area.color,
+                    weight: 2.5,
+                    dashArray: '5, 5',
+                    fillColor: area.fillColor,
+                    fillOpacity: 0.25,
+                    lineCap: 'round',
+                    lineJoin: 'round'
+                }).addTo(groupLocal);
+
+                poly.bindTooltip(`<b>${area.id}</b>`, {
+                    permanent: true,
+                    direction: 'center',
+                    className: 'area-box-label'
+                });
+
+                const cornerListHtml = area.polygonCoords.map((c, i) => 
+                    `<div class="text-slate-600">Corner ${i + 1}: ${c[0].toFixed(5)}, ${c[1].toFixed(5)}</div>`
+                ).join('');
+
+                poly.bindPopup(`
+                    <div class="p-1.5 font-sans text-xs space-y-1">
+                        <div class="font-bold text-slate-900 border-b pb-1 mb-1 text-sm flex items-center justify-between">
+                            <span>${area.name} (${area.id})</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold text-white" style="background-color:${area.color}">Focus Zone</span>
+                        </div>
+                        ${cornerListHtml}
+                    </div>
+                `);
+
+                poly.on('mouseover', function () {
+                    this.setStyle({ weight: 4, fillOpacity: 0.45 });
+                });
+                poly.on('mouseout', function () {
+                    this.setStyle({ weight: 2.5, fillOpacity: 0.25 });
+                });
+            });
+        }
+
         function updateMapMarkers(list) {
             groupLocal.clearLayers();
             document.getElementById('badgeLocalCount').textContent = `${list.length} Stations`;
 
+            // First draw canal polyline network
+            renderCanalPolylines(list);
+
+            // Draw defined focus area boxes (ICS & BV)
+            renderFocusAreaBoxes();
+
+            // Then draw station markers on top
             list.forEach(item => {
                 let iconHtml = '';
                 const displayShort = item.waterShortnameEn !== 'N/A' ? item.waterShortnameEn : item.waterShortname;
@@ -524,28 +964,6 @@
 
                 const customIcon = L.divIcon({ className: 'custom-marker', html: iconHtml, iconSize: [40, 30], iconAnchor: [20, 15] });
                 const marker = L.marker([item.lat, item.lng], { icon: customIcon });
-
-                // Draw Vector Directional Lines
-                if (!isNaN(item.lat) && !isNaN(item.lng)) {
-                    const inLineCoords = [
-                        [item.lat - 0.002, item.lng - 0.002],
-                        [item.lat, item.lng]
-                    ];
-                    L.polyline(inLineCoords, { color: item.color, weight: 2.5, opacity: 0.8 }).addTo(groupLocal);
-
-                    if (item.wlOut01 !== null || item.pumpCount > 0) {
-                        const out1LineCoords = [
-                            [item.lat, item.lng],
-                            [item.lat + 0.0025, item.lng + 0.0025]
-                        ];
-                        L.polyline(out1LineCoords, { 
-                            color: item.activePumps > 0 ? '#10b981' : '#64748b', 
-                            weight: 3, 
-                            dashArray: '5, 5',
-                            className: item.activePumps > 0 ? 'animated-flow-line' : '' 
-                        }).addTo(groupLocal);
-                    }
-                }
 
                 marker.on('click', () => showStationDetailCard(item));
                 marker.addTo(groupLocal);
@@ -601,7 +1019,7 @@
             const groundPath = `M 0,${yLb.toFixed(1)} L ${xLbTop},${yLb.toFixed(1)} L ${xLbBot},${yBed.toFixed(1)} L ${xRbBot},${yBed.toFixed(1)} L ${xRbTop},${yRb.toFixed(1)} L ${svgW},${yRb.toFixed(1)} L ${svgW},${svgH} L 0,${svgH} Z`;
 
             let waterPathHtml = '';
-            let waterColor = '#3b82f6';
+            let waterColor = '#2563eb';
             let waterOpacity = '0.65';
             let waterLabelColor = '#1e40af';
 
@@ -730,7 +1148,7 @@
                 if (val === null || isNaN(val)) return 'bg-white border-slate-200';
                 if (crit !== null && val >= crit) return 'bg-red-50 border-red-300 text-red-900 font-bold';
                 if (warn !== null && val >= warn) return 'bg-amber-50 border-amber-300 text-amber-900 font-bold';
-                return 'bg-emerald-50/50 border-emerald-200 text-emerald-950';
+                return 'bg-blue-50/50 border-blue-200 text-blue-950';
             };
 
             let pumpSectionHtml = '';
@@ -842,7 +1260,7 @@
                         </div>
                     </div>
 
-                    <!-- Full Width Row: Structural Thresholds & Heights -->
+                    <!-- Full Width Row: Structural Thresholds & Limits -->
                     <div class="col-span-1 md:col-span-4 bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                         <span class="text-xs font-bold text-slate-800 uppercase flex items-center gap-2 border-b pb-2">
                             <i class="fa-solid fa-shield-halved text-amber-600"></i> Structural Thresholds & Limits
