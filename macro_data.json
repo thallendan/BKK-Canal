@@ -1,10 +1,10 @@
 {
-  "timestamp_utc": "2026-10-20T22:23:08.406384+00:00",
+  "timestamp_utc": "2026-10-21T01:37:05.071022+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
-    "mjo_phase": null,
-    "mjo_amp": null,
+    "mjo_phase": 2,
+    "mjo_amp": 1.0453577,
     "iod": 0.146,
     "heat_content": 2.93,
     "status": "SUCCESS"
@@ -56,25 +56,16 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4773,
-    "max_nationwide_1h_mm": 21.4,
-    "max_nationwide_24h_mm": 155.6,
+    "total_nationwide_stations": 4765,
+    "max_nationwide_1h_mm": 35.4,
+    "max_nationwide_24h_mm": 154.4,
     "bkk_samut_prakan_count": 151,
     "top_bkk_samut_stations": [
-      {
-        "station_name": "นำร่อง",
-        "province": "Samut Prakan",
-        "district": "Phra Samut Chedi District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 43.2,
-        "lat": 13.37722,
-        "lon": 100.59944
-      },
       {
         "station_name": "ส.คลองระหาญ",
         "province": "Bangkok",
         "district": "Bang Khun Thian District",
-        "rain_1h_mm": 1.5,
+        "rain_1h_mm": 0.0,
         "rain_24h_mm": 24.5,
         "lat": 13.60381,
         "lon": 100.39465
@@ -83,8 +74,8 @@
         "station_name": "สนข.บางบอน",
         "province": "Bangkok",
         "district": "Bang Bon District",
-        "rain_1h_mm": 6,
-        "rain_24h_mm": 19.5,
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 20,
         "lat": 13.63392,
         "lon": 100.36884
       },
@@ -137,7 +128,7 @@
         "station_name": "จุดวัด ค.บางบอน-ค.สะแกงาม",
         "province": "Bangkok",
         "district": "Bang Bon District",
-        "rain_1h_mm": 0.5,
+        "rain_1h_mm": 0.0,
         "rain_24h_mm": 14,
         "lat": 13.64255,
         "lon": 100.37952
@@ -150,11 +141,20 @@
         "rain_24h_mm": 13.5,
         "lat": 13.74228,
         "lon": 100.49454
+      },
+      {
+        "station_name": "ส.คลองบางจาก",
+        "province": "Bangkok",
+        "district": "Bang Khae District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 13,
+        "lat": 13.71471,
+        "lon": 100.39555
       }
     ]
   },
   "estuary_tide": {
-    "realtime_msl": -0.506,
+    "realtime_msl": -0.073,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
