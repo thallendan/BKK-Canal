@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-10-21T07:41:42.459086+00:00",
+  "timestamp_utc": "2026-10-21T13:50:10.299155+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
@@ -56,9 +56,9 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4798,
-    "max_nationwide_1h_mm": 74,
-    "max_nationwide_24h_mm": 154.4,
+    "total_nationwide_stations": 4810,
+    "max_nationwide_1h_mm": 25,
+    "max_nationwide_24h_mm": 115,
     "bkk_samut_prakan_count": 152,
     "top_bkk_samut_stations": [
       {
@@ -66,7 +66,7 @@
         "province": "Bangkok",
         "district": "Bang Khun Thian District",
         "rain_1h_mm": 0.0,
-        "rain_24h_mm": 34,
+        "rain_24h_mm": 34.5,
         "lat": 13.67325,
         "lon": 100.44615
       },
@@ -116,15 +116,6 @@
         "lon": 100.41311
       },
       {
-        "station_name": "ส.ดาวคะนอง",
-        "province": "Bangkok",
-        "district": "Rat Burana District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 10,
-        "lat": 13.6949,
-        "lon": 100.48758
-      },
-      {
         "station_name": "สนข.จอมทอง",
         "province": "Bangkok",
         "district": "Chom Thong District",
@@ -132,6 +123,15 @@
         "rain_24h_mm": 10,
         "lat": 13.67744,
         "lon": 100.48427
+      },
+      {
+        "station_name": "ส.ดาวคะนอง",
+        "province": "Bangkok",
+        "district": "Rat Burana District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 10,
+        "lat": 13.6949,
+        "lon": 100.48758
       },
       {
         "station_name": "คลองภาษีเจริญ เพชรเกษม69",
@@ -154,7 +154,7 @@
     ]
   },
   "estuary_tide": {
-    "realtime_msl": 1.22,
+    "realtime_msl": 0.3,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
