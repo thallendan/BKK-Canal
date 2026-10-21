@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <style>
-        /* Exact Mercator Projection Aspect Ratio Matching Map Bounds (1.5006:1) */
+        /* Aspect Ratio Matching Map Bounds (1.5006:1) */
         .map-container { 
             width: 100%; 
             aspect-ratio: 1.5006 / 1; 
@@ -44,45 +44,6 @@
             0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        /* Animated Discharge Vector Lines */
-        @keyframes flowDash {
-            to { stroke-dashoffset: -20; }
-        }
-        .animated-flow-line {
-            stroke-dasharray: 6, 6;
-            animation: flowDash 1s linear infinite;
-        }
-
-        /* Gauge Visual Scale Bar */
-        .gauge-container {
-            position: relative;
-            width: 100%;
-            height: 200px;
-            background: #f1f5f9;
-            border-radius: 12px;
-            border: 2px solid #cbd5e1;
-            overflow: hidden;
-        }
-        .gauge-liquid {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            transition: height 0.6s ease-in-out;
-            opacity: 0.85;
-        }
-        .gauge-line {
-            position: absolute;
-            left: 0;
-            right: 0;
-            border-top: 1.5px dashed;
-            display: flex;
-            justify-content: flex-end;
-            padding-right: 6px;
-            font-size: 9px;
-            font-weight: 700;
         }
     </style>
 </head>
@@ -154,7 +115,7 @@
             </div>
         </section>
 
-        <!-- Map Section (100% Fit Aspect Ratio Frame) -->
+        <!-- Map Section -->
         <section class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
             <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-slate-100 pb-3">
                 <div>
@@ -163,16 +124,15 @@
                         Bangna Focus Area Overlay Map
                     </h2>
                     <p class="text-xs text-slate-500">
-                        Click any station marker on the map below to view real-time parameters and level gauges.
+                        Color-coded Canal Lines (Bang Na, Samrong, Palat Priang) updated dynamically by station water level telemetry.
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                     <span class="font-bold text-slate-600 text-[11px]">Legend:</span>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-red-500"></span> Critical</span>
                     <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Warning</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Normal</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-teal-500"></span> Active Pump</span>
-                    <span class="flex items-center gap-1.5 text-slate-500 font-mono text-[10px]"><span class="w-1.5 h-4 bg-slate-300 border border-slate-400 rounded-sm inline-block"></span> Mini Gauge</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-blue-600"></span> Normal Water Level</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3.5 h-1.5 bg-blue-600 rounded"></span> Canal Route</span>
                 </div>
             </div>
 
@@ -198,7 +158,7 @@
                 </div>
                 <h3 class="font-bold text-slate-700 text-base">No Station Selected</h3>
                 <p class="text-xs text-slate-400 max-w-md mx-auto">
-                    Select any station marker on the map above to display its real-time telemetry parameters, level gauge scale, structural thresholds, and active pump matrix.
+                    Select any station marker or canal segment on the map above to display its real-time telemetry parameters, dynamic 2D canal cross-section diagram, structural thresholds, and active pump matrix.
                 </p>
             </div>
 
@@ -238,6 +198,91 @@
             local: [[13.5883, 100.5170], [13.7217, 100.7230]]
         };
 
+        // Coordinates definition for Bang Na, Samrong, and Palat Priang Canals
+        const CANALS_DATA = [
+            {
+                id: "bangna_canal",
+                name: "Bang Na Canal (คลองบางนา)",
+                flowDirection: "Flows West / South",
+                segments: [
+                    {
+                        name: "Bang Na Pumping Station ↔ Sukhumvit Road",
+                        from: "Bang Na Pumping Station",
+                        to: "Khlong Bang Na (Sukhumvit)",
+                        coords: [[13.67482, 100.58775], [13.66948, 100.60535]]
+                    },
+                    {
+                        name: "Sukhumvit Road ↔ Srinakarin Road",
+                        from: "Khlong Bang Na (Sukhumvit)",
+                        to: "Khlong Bang Na (Srinakarin)",
+                        coords: [[13.66948, 100.60535], [13.66102, 100.63926]]
+                    },
+                    {
+                        name: "Srinakarin Road ↔ Bang Na Water Gate",
+                        from: "Khlong Bang Na (Srinakarin)",
+                        to: "Khlong Bang Na Water Gate",
+                        coords: [[13.66102, 100.63926], [13.65940, 100.64935]]
+                    },
+                    {
+                        name: "Bang Na Water Gate ↔ Mid Segment",
+                        from: "Khlong Bang Na Water Gate",
+                        to: "Mid Segment Point",
+                        coords: [[13.65940, 100.64935], [13.672150, 100.655232]]
+                    },
+                    {
+                        name: "Mid Segment ↔ Chaloem Phrakiat Rama 9 Soi 14",
+                        from: "Mid Segment Point",
+                        to: "Khlong Plat Priang (Rama 9 Soi 14)",
+                        coords: [[13.672150, 100.655232], [13.67009, 100.66787]]
+                    }
+                ]
+            },
+            {
+                id: "samrong_canal",
+                name: "Samrong Canal (คลองสำโรง)",
+                flowDirection: "Flows West / South",
+                segments: [
+                    {
+                        name: "West Mouth ↔ Samrong Pumping Station",
+                        from: "West Canal Mouth",
+                        to: "Khlong Samrong Pumping Station",
+                        coords: [[13.658469245092823, 100.57169991692452], [13.64855, 100.59523]]
+                    },
+                    {
+                        name: "Samrong Pumping Station ↔ Srinakarin Junction",
+                        from: "Khlong Samrong Pumping Station",
+                        to: "Palat Priang South Junction",
+                        coords: [[13.64855, 100.59523], [13.620751139105831, 100.64604029060013]]
+                    }
+                ]
+            },
+            {
+                id: "palat_priang_canal",
+                name: "Palat Priang Canal (คลองปลัดเปรียง)",
+                flowDirection: "Flows South / West",
+                segments: [
+                    {
+                        name: "Samrong Junction ↔ Mid Palat Priang",
+                        from: "Palat Priang South Junction",
+                        to: "Mid Segment Point",
+                        coords: [[13.620751139105831, 100.64604029060013], [13.668169512659615, 100.66690353954672]]
+                    },
+                    {
+                        name: "Mid Palat Priang ↔ Chaloem Phrakiat Rama 9 Soi 14",
+                        from: "Mid Segment Point",
+                        to: "Khlong Plat Priang (Rama 9 Soi 14)",
+                        coords: [[13.668169512659615, 100.66690353954672], [13.67009, 100.66787]]
+                    },
+                    {
+                        name: "Chaloem Phrakiat Rama 9 Soi 14 ↔ Upper North",
+                        from: "Khlong Plat Priang (Rama 9 Soi 14)",
+                        to: "North Extension Point",
+                        coords: [[13.67009, 100.66787], [13.680213200860061, 100.6721974824571]]
+                    }
+                ]
+            }
+        ];
+
         let rawStations = [];
         let filteredData = [];
         let selectedStationId = null;
@@ -275,7 +320,7 @@
                 crs: L.CRS.EPSG3857,
                 attributionControl: false,
                 zoomControl: true,
-                zoomSnap: 0, // Enables fractional zoom to fit boundaries exactly without margins
+                zoomSnap: 0,
                 maxBounds: bounds,
                 maxBoundsViscosity: 1.0
             });
@@ -394,8 +439,8 @@
 
                 // Safety Category & Colors
                 let category = 'normal';
-                let color = '#10b981';
-                let badgeClass = 'badge-success';
+                let color = '#2563eb'; // Blue for normal
+                let badgeClass = 'badge-info';
                 let label = 'Normal Level';
 
                 if (wlIn !== null && !isNaN(wlIn)) {
@@ -504,10 +549,122 @@
             return Math.min(Math.max(pct, 10), 100);
         }
 
+        // Helper: Euclidean distance to segment for matching stations to canal lines
+        function distToSegment(p, p1, p2) {
+            const x = p[0], y = p[1];
+            const x1 = p1[0], y1 = p1[1];
+            const x2 = p2[0], y2 = p2[1];
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            if (dx === 0 && dy === 0) return Math.hypot(x - x1, y - y1);
+            const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / (dx * dx + dy * dy)));
+            return Math.hypot(x - (x1 + t * dx), y - (y1 + t * dy));
+        }
+
+        // Render Color-Coded Canal Polylines
+        function renderCanalPolylines(stationsList) {
+            CANALS_DATA.forEach(canal => {
+                canal.segments.forEach(seg => {
+                    const p1 = seg.coords[0];
+                    const p2 = seg.coords[1];
+
+                    // Find nearest monitoring station to this segment
+                    let nearestStation = null;
+                    let minDist = Infinity;
+
+                    stationsList.forEach(st => {
+                        if (!isNaN(st.lat) && !isNaN(st.lng)) {
+                            const d = distToSegment([st.lat, st.lng], p1, p2);
+                            if (d < minDist) {
+                                minDist = d;
+                                nearestStation = st;
+                            }
+                        }
+                    });
+
+                    // Determine water level color
+                    let segColor = '#2563eb'; // Default Blue (Normal)
+                    let alertLabel = 'Normal Level';
+                    let wlInText = 'N/A';
+                    let wlOutText = 'N/A';
+                    let stationName = 'General Monitoring';
+
+                    if (nearestStation) {
+                        stationName = nearestStation.stationNameEn;
+                        if (nearestStation.wlIn !== null) wlInText = nearestStation.wlIn.toFixed(2) + ' m';
+                        if (nearestStation.wlOut01 !== null) wlOutText = nearestStation.wlOut01.toFixed(2) + ' m';
+
+                        if (nearestStation.category === 'overflow') {
+                            segColor = '#ef4444'; // Red (Critical)
+                            alertLabel = 'Critical / Overflow';
+                        } else if (nearestStation.category === 'warning') {
+                            segColor = '#f59e0b'; // Amber (Warning)
+                            alertLabel = 'Warning Level';
+                        } else {
+                            segColor = '#0284c7'; // Sky / Blue (Normal)
+                            alertLabel = 'Normal Level';
+                        }
+                    }
+
+                    // Outer casing polyline for high contrast
+                    const bgPolyline = L.polyline(seg.coords, {
+                        color: '#0f172a',
+                        weight: 8,
+                        opacity: 0.45,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    }).addTo(groupLocal);
+
+                    // Core colored polyline
+                    const mainPolyline = L.polyline(seg.coords, {
+                        color: segColor,
+                        weight: 5,
+                        opacity: 0.9,
+                        lineCap: 'round',
+                        lineJoin: 'round'
+                    }).addTo(groupLocal);
+
+                    // Interactive Tooltip & Popup
+                    const popupContent = `
+                        <div class="p-2 font-sans text-xs space-y-1.5">
+                            <div class="font-bold text-slate-900 border-b pb-1 text-sm flex items-center justify-between">
+                                <span>${canal.name}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded font-semibold text-white" style="background-color:${segColor};">${alertLabel}</span>
+                            </div>
+                            <div><span class="text-slate-500 font-semibold">Segment:</span> ${seg.name}</div>
+                            <div><span class="text-slate-500 font-semibold">Nearest Station:</span> <b>${stationName}</b></div>
+                            <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-100 mt-1">
+                                <div class="bg-slate-50 p-1.5 rounded border"><span class="text-[10px] text-slate-400 block">WL In</span><b class="text-indigo-900">${wlInText}</b></div>
+                                <div class="bg-slate-50 p-1.5 rounded border"><span class="text-[10px] text-slate-400 block">WL Out</span><b class="text-slate-800">${wlOutText}</b></div>
+                            </div>
+                            <div class="text-[10px] text-indigo-600 font-semibold pt-0.5"><i class="fa-solid fa-compass"></i> Flow Direction: ${canal.flowDirection}</div>
+                        </div>
+                    `;
+
+                    mainPolyline.bindPopup(popupContent);
+                    mainPolyline.bindTooltip(`${canal.name}: ${seg.name}`, { sticky: true });
+
+                    // Hover dynamics
+                    mainPolyline.on('mouseover', function () {
+                        this.setStyle({ weight: 8, opacity: 1.0 });
+                        bgPolyline.setStyle({ weight: 11, opacity: 0.6 });
+                    });
+                    mainPolyline.on('mouseout', function () {
+                        this.setStyle({ weight: 5, opacity: 0.9 });
+                        bgPolyline.setStyle({ weight: 8, opacity: 0.45 });
+                    });
+                });
+            });
+        }
+
         function updateMapMarkers(list) {
             groupLocal.clearLayers();
             document.getElementById('badgeLocalCount').textContent = `${list.length} Stations`;
 
+            // First draw canal polyline network
+            renderCanalPolylines(list);
+
+            // Then draw station markers on top
             list.forEach(item => {
                 let iconHtml = '';
                 const displayShort = item.waterShortnameEn !== 'N/A' ? item.waterShortnameEn : item.waterShortname;
@@ -555,31 +712,169 @@
                 const customIcon = L.divIcon({ className: 'custom-marker', html: iconHtml, iconSize: [40, 30], iconAnchor: [20, 15] });
                 const marker = L.marker([item.lat, item.lng], { icon: customIcon });
 
-                // Draw Vector Directional Lines
-                if (!isNaN(item.lat) && !isNaN(item.lng)) {
-                    const inLineCoords = [
-                        [item.lat - 0.002, item.lng - 0.002],
-                        [item.lat, item.lng]
-                    ];
-                    L.polyline(inLineCoords, { color: item.color, weight: 2.5, opacity: 0.8 }).addTo(groupLocal);
-
-                    if (item.wlOut01 !== null || item.pumpCount > 0) {
-                        const out1LineCoords = [
-                            [item.lat, item.lng],
-                            [item.lat + 0.0025, item.lng + 0.0025]
-                        ];
-                        L.polyline(out1LineCoords, { 
-                            color: item.activePumps > 0 ? '#10b981' : '#64748b', 
-                            weight: 3, 
-                            dashArray: '5, 5',
-                            className: item.activePumps > 0 ? 'animated-flow-line' : '' 
-                        }).addTo(groupLocal);
-                    }
-                }
-
                 marker.on('click', () => showStationDetailCard(item));
                 marker.addTo(groupLocal);
             });
+        }
+
+        // SVG Dynamic 2D Canal Cross-Section Generator
+        function renderCanalCrossSectionSVG(st) {
+            const wl = (st.wlIn !== null && !isNaN(st.wlIn)) ? st.wlIn : null;
+            const bed = (st.bedBank !== null && !isNaN(st.bedBank)) ? st.bedBank : (st.waterMin !== null ? st.waterMin : (wl !== null ? wl - 2.0 : 0.0));
+            
+            let lb = (st.leftBank !== null && !isNaN(st.leftBank)) ? st.leftBank : null;
+            let rb = (st.rightBank !== null && !isNaN(st.rightBank)) ? st.rightBank : null;
+            if (lb === null && rb === null) {
+                const defaultBank = (st.critical !== null) ? st.critical + 0.3 : (st.warning !== null ? st.warning + 0.5 : bed + 3.0);
+                lb = defaultBank;
+                rb = defaultBank;
+            } else if (lb === null) {
+                lb = rb;
+            } else if (rb === null) {
+                rb = lb;
+            }
+
+            const warn = (st.warning !== null && !isNaN(st.warning)) ? st.warning : null;
+            const crit = (st.critical !== null && !isNaN(st.critical)) ? st.critical : null;
+
+            const vals = [bed, lb, rb];
+            if (wl !== null) vals.push(wl);
+            if (warn !== null) vals.push(warn);
+            if (crit !== null) vals.push(crit);
+
+            const minElev = Math.min(...vals) - 0.4;
+            const maxElev = Math.max(...vals) + 0.5;
+            const elevRange = (maxElev - minElev) > 0 ? (maxElev - minElev) : 3.0;
+
+            const svgW = 460;
+            const svgH = 220;
+            const yTop = 35;
+            const yBot = 185;
+            const ySpan = yBot - yTop;
+
+            const toY = (elev) => yBot - ((elev - minElev) / elevRange) * ySpan;
+
+            const yBed = toY(bed);
+            const yLb = toY(lb);
+            const yRb = toY(rb);
+
+            const xLbTop = 60;
+            const xLbBot = 130;
+            const xRbBot = 330;
+            const xRbTop = 400;
+
+            const groundPath = `M 0,${yLb.toFixed(1)} L ${xLbTop},${yLb.toFixed(1)} L ${xLbBot},${yBed.toFixed(1)} L ${xRbBot},${yBed.toFixed(1)} L ${xRbTop},${yRb.toFixed(1)} L ${svgW},${yRb.toFixed(1)} L ${svgW},${svgH} L 0,${svgH} Z`;
+
+            let waterPathHtml = '';
+            let waterColor = '#2563eb';
+            let waterOpacity = '0.65';
+            let waterLabelColor = '#1e40af';
+
+            if (st.category === 'overflow') {
+                waterColor = '#ef4444';
+                waterOpacity = '0.75';
+                waterLabelColor = '#991b1b';
+            } else if (st.category === 'warning') {
+                waterColor = '#f59e0b';
+                waterOpacity = '0.7';
+                waterLabelColor = '#92400e';
+            }
+
+            if (wl !== null) {
+                const yWl = toY(wl);
+
+                let xWLeft = xLbBot;
+                if (wl <= lb) {
+                    const tLeft = (yBed !== yLb) ? Math.max(0, Math.min(1, (yBed - yWl) / (yBed - yLb))) : 1;
+                    xWLeft = xLbBot - tLeft * (xLbBot - xLbTop);
+                } else {
+                    xWLeft = 0;
+                }
+
+                let xWRight = xRbBot;
+                if (wl <= rb) {
+                    const tRight = (yBed !== yRb) ? Math.max(0, Math.min(1, (yBed - yWl) / (yBed - yRb))) : 1;
+                    xWRight = xRbBot + tRight * (xRbTop - xRbBot);
+                } else {
+                    xWRight = svgW;
+                }
+
+                const wPts = [];
+                if (wl > lb) {
+                    wPts.push(`0,${yWl.toFixed(1)}`);
+                    wPts.push(`${xLbTop},${yLb.toFixed(1)}`);
+                } else {
+                    wPts.push(`${xWLeft.toFixed(1)},${yWl.toFixed(1)}`);
+                }
+
+                if (wl > rb) {
+                    wPts.push(`${xWRight.toFixed(1)},${yWl.toFixed(1)}`);
+                    wPts.push(`${svgW},${yRb.toFixed(1)}`);
+                    wPts.push(`${xRbTop},${yRb.toFixed(1)}`);
+                } else {
+                    wPts.push(`${xWRight.toFixed(1)},${yWl.toFixed(1)}`);
+                }
+
+                wPts.push(`${xRbBot},${yBed.toFixed(1)}`);
+                wPts.push(`${xLbBot},${yBed.toFixed(1)}`);
+
+                const dWater = `M ${wPts[0]} ` + wPts.slice(1).map(p => `L ${p}`).join(' ') + ' Z';
+                
+                waterPathHtml = `
+                    <path d="${dWater}" fill="${waterColor}" fill-opacity="${waterOpacity}" stroke="${waterColor}" stroke-width="1.5" />
+                    <line x1="${xWLeft.toFixed(1)}" y1="${yWl.toFixed(1)}" x2="${xWRight.toFixed(1)}" y2="${yWl.toFixed(1)}" stroke="${waterColor}" stroke-width="2.5" />
+                    <g transform="translate(230, ${yWl.toFixed(1) - 12})">
+                        <rect x="-55" y="-10" width="110" height="20" rx="4" fill="#ffffff" stroke="${waterColor}" stroke-width="1.5" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.15))"/>
+                        <text x="0" y="3" text-anchor="middle" font-size="10" font-weight="bold" fill="${waterLabelColor}">WL In: ${wl.toFixed(2)}m</text>
+                    </g>
+                `;
+            }
+
+            let warnLineHtml = '';
+            if (warn !== null) {
+                const yWarn = toY(warn);
+                warnLineHtml = `
+                    <line x1="20" y1="${yWarn.toFixed(1)}" x2="${svgW - 20}" y2="${yWarn.toFixed(1)}" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3" />
+                    <rect x="${svgW - 105}" y="${yWarn.toFixed(1) - 9}" width="85" height="16" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+                    <text x="${svgW - 62.5}" y="${yWarn.toFixed(1) + 3}" text-anchor="middle" font-size="9" font-weight="bold" fill="#92400e">WARN ${warn.toFixed(2)}m</text>
+                `;
+            }
+
+            let critLineHtml = '';
+            if (crit !== null) {
+                const yCrit = toY(crit);
+                critLineHtml = `
+                    <line x1="20" y1="${yCrit.toFixed(1)}" x2="${svgW - 20}" y2="${yCrit.toFixed(1)}" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3" />
+                    <rect x="${svgW - 105}" y="${yCrit.toFixed(1) - 9}" width="85" height="16" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+                    <text x="${svgW - 62.5}" y="${yCrit.toFixed(1) + 3}" text-anchor="middle" font-size="9" font-weight="bold" fill="#991b1b">CRIT ${crit.toFixed(2)}m</text>
+                `;
+            }
+
+            return `
+                <svg viewBox="0 0 ${svgW} ${svgH}" class="w-full h-auto rounded-lg bg-slate-50 border border-slate-200">
+                    <rect x="0" y="0" width="${svgW}" height="${svgH}" fill="#f8fafc" />
+
+                    <!-- Water Body -->
+                    ${waterPathHtml}
+
+                    <!-- Earth & Levees -->
+                    <path d="${groundPath}" fill="#cbd5e1" stroke="#475569" stroke-width="2.5" />
+                    <line x1="0" y1="${yBed.toFixed(1)}" x2="${svgW}" y2="${yBed.toFixed(1)}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2,4"/>
+
+                    <!-- Threshold Markers -->
+                    ${warnLineHtml}
+                    ${critLineHtml}
+
+                    <!-- Levee & Bed Height Annotations -->
+                    <circle cx="${xLbTop}" cy="${yLb.toFixed(1)}" r="3" fill="#475569" />
+                    <text x="15" y="${Math.max(16, yLb - 8).toFixed(1)}" font-size="9" font-weight="bold" fill="#475569">Left Bank: ${lb.toFixed(2)}m</text>
+
+                    <circle cx="${xRbTop}" cy="${yRb.toFixed(1)}" r="3" fill="#475569" />
+                    <text x="${svgW - 15}" y="${Math.max(16, yRb - 8).toFixed(1)}" text-anchor="end" font-size="9" font-weight="bold" fill="#475569">Right Bank: ${rb.toFixed(2)}m</text>
+
+                    <text x="230" y="${Math.min(svgH - 8, yBed + 15).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="bold" fill="#64748b">Bed Level: ${bed.toFixed(2)}m</text>
+                </svg>
+            `;
         }
 
         function showStationDetailCard(st) {
@@ -600,17 +895,8 @@
                 if (val === null || isNaN(val)) return 'bg-white border-slate-200';
                 if (crit !== null && val >= crit) return 'bg-red-50 border-red-300 text-red-900 font-bold';
                 if (warn !== null && val >= warn) return 'bg-amber-50 border-amber-300 text-amber-900 font-bold';
-                return 'bg-emerald-50/50 border-emerald-200 text-emerald-950';
+                return 'bg-blue-50/50 border-blue-200 text-blue-950';
             };
-
-            const minH = st.bedBank !== null ? st.bedBank : (st.waterMin !== null ? st.waterMin : 0);
-            const maxH = st.waterMax !== null ? st.waterMax : (st.critical !== null ? st.critical + 1.0 : 5.0);
-            const currentWl = st.wlIn !== null ? st.wlIn : minH;
-            const gaugePct = Math.min(Math.max(((currentWl - minH) / (maxH - minH)) * 100, 5), 100);
-
-            let gaugeLiquidColor = '#10b981';
-            if (st.category === 'overflow') gaugeLiquidColor = '#ef4444';
-            else if (st.category === 'warning') gaugeLiquidColor = '#f59e0b';
 
             let pumpSectionHtml = '';
             if (st.pumpCount > 0) {
@@ -644,104 +930,106 @@
             document.getElementById('detailCardBody').innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
                     
-                    <!-- Left Column: Visual Level Gauge Bar -->
-                    <div class="col-span-1 bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between space-y-3">
-                        <div class="text-xs font-bold text-slate-800 uppercase flex items-center gap-2 border-b pb-2">
-                            <i class="fa-solid fa-ruler-vertical text-indigo-600"></i> Relative Gauge Scale
+                    <!-- Left Column: Dynamic 2D Canal Cross-Section Diagram -->
+                    <div class="col-span-1 md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-xs font-bold text-slate-800 uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-water text-indigo-600"></i> 2D Canal Cross-Section Diagram
+                            </span>
+                            <span class="text-[11px] font-bold px-2 py-0.5 rounded ${st.badgeClass}">${st.label}</span>
                         </div>
                         
-                        <div class="gauge-container my-auto">
-                            <div class="gauge-liquid" style="height: ${gaugePct}%; background-color: ${gaugeLiquidColor};"></div>
-                            
-                            ${st.critical !== null ? `<div class="gauge-line text-red-600 border-red-500" style="bottom: ${Math.min(((st.critical - minH)/(maxH - minH))*100, 95)}\%;">CRIT ${st.critical}m</div>` : ''}
-                            ${st.warning !== null ? `<div class="gauge-line text-amber-600 border-amber-500" style="bottom: ${Math.min(((st.warning - minH)/(maxH - minH))*100, 95)}\%;">WARN ${st.warning}m</div>` : ''}
+                        <!-- Dynamic SVG Render -->
+                        <div class="my-auto">
+                            ${renderCanalCrossSectionSVG(st)}
                         </div>
 
-                        <div class="text-center bg-white p-2.5 rounded-lg border border-slate-200">
-                            <span class="text-[10px] text-slate-400 block uppercase font-bold">Current WL In</span>
-                            <span class="text-xl font-extrabold" style="color: ${st.color};">${formatVal(st.wlIn, 'm')}</span>
+                        <div class="flex justify-between items-center bg-white p-2.5 rounded-lg border border-slate-200 text-xs">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block uppercase font-bold">Primary Sensor Intake</span>
+                                <span class="text-base font-extrabold" style="color: ${st.color};">${formatVal(st.wlIn, 'm')}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] text-slate-400 block uppercase font-bold">Bank Freeboard Remaining</span>
+                                <span class="text-xs font-bold text-slate-700">${st.leftBank !== null && st.wlIn !== null ? (st.leftBank - st.wlIn).toFixed(2) + 'm to crest' : 'N/A'}</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Right Column: Telemetry Matrix Cards -->
-                    <div class="col-span-1 md:col-span-3 space-y-4">
-                        
-                        <!-- Water Levels Grid -->
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                            <div class="flex justify-between items-center border-b pb-2">
-                                <span class="text-xs font-bold text-indigo-900 uppercase flex items-center gap-2">
-                                    <i class="fa-solid fa-water text-indigo-600"></i> Real-Time Water Levels (water_level_last)
-                                </span>
-                                <span class="text-xs text-indigo-600 font-medium">site_timestamp: ${st.siteTimestamp}</span>
-                            </div>
-
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                                <div class="p-3 rounded-lg border shadow-sm ${getLevelCardStyle(st.wlIn, st.warning, st.critical)}">
-                                    <span class="text-slate-500 block text-[11px]">wl_in (Primary)</span>
-                                    <span class="text-base font-extrabold">${formatVal(st.wlIn, 'm')}</span>
-                                </div>
-                                <div class="p-3 rounded-lg border shadow-sm bg-white border-slate-200">
-                                    <span class="text-slate-400 block text-[11px]">max_in_day</span>
-                                    <span class="text-base font-bold text-slate-800">${formatVal(st.maxInDay, 'm')}</span>
-                                </div>
-                                <div class="p-3 rounded-lg border shadow-sm bg-white border-slate-200">
-                                    <span class="text-slate-400 block text-[11px]">max_in_yesterday</span>
-                                    <span class="text-base font-bold text-slate-800">${formatVal(st.maxInYesterday, 'm')}</span>
-                                </div>
-
-                                <div class="p-3 rounded-lg border shadow-sm ${getLevelCardStyle(st.wlOut01, st.warningOut01, st.criticalOut01)}">
-                                    <span class="text-slate-500 block text-[11px]">wl_out01</span>
-                                    <span class="text-base font-bold">${formatVal(st.wlOut01, 'm')}</span>
-                                </div>
-                                <div class="p-3 rounded-lg border shadow-sm bg-white border-slate-200">
-                                    <span class="text-slate-400 block text-[11px]">max_out01_day</span>
-                                    <span class="text-base font-bold text-slate-800">${formatVal(st.maxOut01Day, 'm')}</span>
-                                </div>
-                                <div class="p-3 rounded-lg border shadow-sm bg-white border-slate-200">
-                                    <span class="text-slate-400 block text-[11px]">max_out01_yesterday</span>
-                                    <span class="text-base font-bold text-slate-800">${formatVal(st.maxOut01Yesterday, 'm')}</span>
-                                </div>
-
-                                <div class="p-3 rounded-lg border shadow-sm ${getLevelCardStyle(st.wlOut02, st.warningOut02, st.criticalOut02)}">
-                                    <span class="text-slate-500 block text-[11px]">wl_out02</span>
-                                    <span class="text-base font-bold">${formatVal(st.wlOut02, 'm')}</span>
-                                </div>
-                                <div class="p-3 rounded-lg border shadow-sm bg-white border-slate-200">
-                                    <span class="text-slate-400 block text-[11px]">max_out02_day</span>
-                                    <span class="text-base font-bold text-slate-800">${formatVal(st.maxOut02Day, 'm')}</span>
-                                </div>
-                                <div class="p-3 rounded-lg border shadow-sm bg-white border-slate-200">
-                                    <span class="text-slate-400 block text-[11px]">max_out02_yesterday</span>
-                                    <span class="text-base font-bold text-slate-800">${formatVal(st.maxOut02Yesterday, 'm')}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Thresholds & Heights -->
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                            <span class="text-xs font-bold text-slate-800 uppercase flex items-center gap-2 border-b pb-2">
-                                <i class="fa-solid fa-shield-halved text-amber-600"></i> Structural Thresholds & Limits
+                    <!-- Right Column: Real-Time Water Level Grid -->
+                    <div class="col-span-1 md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="text-xs font-bold text-indigo-900 uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-list text-indigo-600"></i> Water Level Telemetry (water_level_last)
                             </span>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
-                                <div class="bg-white p-2.5 rounded-lg border border-amber-200 bg-amber-50/40">
-                                    <span class="text-amber-800 block text-[10px] font-bold">warning (In)</span>
-                                    <span class="font-extrabold text-amber-950">${formatVal(st.warning, 'm')}</span>
-                                </div>
-                                <div class="bg-white p-2.5 rounded-lg border border-red-200 bg-red-50/40">
-                                    <span class="text-red-800 block text-[10px] font-bold">critical (In)</span>
-                                    <span class="font-extrabold text-red-950">${formatVal(st.critical, 'm')}</span>
-                                </div>
-                                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
-                                    <span class="text-slate-400 block text-[10px]">bed_bank</span>
-                                    <span class="font-bold text-slate-800">${formatVal(st.bedBank, 'm')}</span>
-                                </div>
-                                <div class="bg-white p-2.5 rounded-lg border border-slate-200">
-                                    <span class="text-slate-400 block text-[10px]">left / right bank</span>
-                                    <span class="font-bold text-slate-800">${formatVal(st.leftBank, 'm')} / ${formatVal(st.rightBank, 'm')}</span>
-                                </div>
-                            </div>
+                            <span class="text-xs text-indigo-600 font-medium">site_dt: ${st.siteTimestamp}</span>
                         </div>
 
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+                            <div class="p-2.5 rounded-lg border shadow-sm ${getLevelCardStyle(st.wlIn, st.warning, st.critical)}">
+                                <span class="text-slate-500 block text-[10px]">wl_in (Primary)</span>
+                                <span class="text-sm font-extrabold">${formatVal(st.wlIn, 'm')}</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg border shadow-sm bg-white border-slate-200">
+                                <span class="text-slate-400 block text-[10px]">max_in_day</span>
+                                <span class="text-sm font-bold text-slate-800">${formatVal(st.maxInDay, 'm')}</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg border shadow-sm bg-white border-slate-200">
+                                <span class="text-slate-400 block text-[10px]">max_in_yesterday</span>
+                                <span class="text-sm font-bold text-slate-800">${formatVal(st.maxInYesterday, 'm')}</span>
+                            </div>
+
+                            <div class="p-2.5 rounded-lg border shadow-sm ${getLevelCardStyle(st.wlOut01, st.warningOut01, st.criticalOut01)}">
+                                <span class="text-slate-500 block text-[10px]">wl_out01</span>
+                                <span class="text-sm font-bold">${formatVal(st.wlOut01, 'm')}</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg border shadow-sm bg-white border-slate-200">
+                                <span class="text-slate-400 block text-[10px]">max_out01_day</span>
+                                <span class="text-sm font-bold text-slate-800">${formatVal(st.maxOut01Day, 'm')}</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg border shadow-sm bg-white border-slate-200">
+                                <span class="text-slate-400 block text-[10px]">max_out01_yesterday</span>
+                                <span class="text-sm font-bold text-slate-800">${formatVal(st.maxOut01Yesterday, 'm')}</span>
+                            </div>
+
+                            <div class="p-2.5 rounded-lg border shadow-sm ${getLevelCardStyle(st.wlOut02, st.warningOut02, st.criticalOut02)}">
+                                <span class="text-slate-500 block text-[10px]">wl_out02</span>
+                                <span class="text-sm font-bold">${formatVal(st.wlOut02, 'm')}</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg border shadow-sm bg-white border-slate-200">
+                                <span class="text-slate-400 block text-[10px]">max_out02_day</span>
+                                <span class="text-sm font-bold text-slate-800">${formatVal(st.maxOut02Day, 'm')}</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg border shadow-sm bg-white border-slate-200">
+                                <span class="text-slate-400 block text-[10px]">max_out02_yesterday</span>
+                                <span class="text-sm font-bold text-slate-800">${formatVal(st.maxOut02Yesterday, 'm')}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Full Width Row: Structural Thresholds & Heights -->
+                    <div class="col-span-1 md:col-span-4 bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <span class="text-xs font-bold text-slate-800 uppercase flex items-center gap-2 border-b pb-2">
+                            <i class="fa-solid fa-shield-halved text-amber-600"></i> Structural Thresholds & Limits
+                        </span>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+                            <div class="bg-white p-2.5 rounded-lg border border-amber-200 bg-amber-50/40">
+                                <span class="text-amber-800 block text-[10px] font-bold">warning (In)</span>
+                                <span class="font-extrabold text-amber-950">${formatVal(st.warning, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-lg border border-red-200 bg-red-50/40">
+                                <span class="text-red-800 block text-[10px] font-bold">critical (In)</span>
+                                <span class="font-extrabold text-red-950">${formatVal(st.critical, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[10px]">bed_bank</span>
+                                <span class="font-bold text-slate-800">${formatVal(st.bedBank, 'm')}</span>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                                <span class="text-slate-400 block text-[10px]">left / right bank</span>
+                                <span class="font-bold text-slate-800">${formatVal(st.leftBank, 'm')} / ${formatVal(st.rightBank, 'm')}</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Dynamic Pumps Row -->
