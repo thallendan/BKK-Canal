@@ -1,5 +1,5 @@
 {
-  "timestamp_utc": "2026-10-22T01:32:45.569254+00:00",
+  "timestamp_utc": "2026-10-22T07:37:12.471283+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
@@ -56,105 +56,105 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4782,
-    "max_nationwide_1h_mm": 19.4,
-    "max_nationwide_24h_mm": 122.7,
+    "total_nationwide_stations": 4805,
+    "max_nationwide_1h_mm": 57.4,
+    "max_nationwide_24h_mm": 124.3,
     "bkk_samut_prakan_count": 151,
     "top_bkk_samut_stations": [
       {
-        "station_name": "ส.คลองสี่บาท",
+        "station_name": "ปตร.คลองขุนศรีฯ-ค.มหาสวัสดิ์",
         "province": "Bangkok",
-        "district": "Bang Khun Thian District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 34.5,
-        "lat": 13.67325,
-        "lon": 100.44615
+        "district": "Thawi Watthana District",
+        "rain_1h_mm": 7,
+        "rain_24h_mm": 12,
+        "lat": 13.80244,
+        "lon": 100.3707
       },
       {
-        "station_name": "สนข.บางขุนเทียน",
+        "station_name": "สนข.ธนบุรี",
         "province": "Bangkok",
-        "district": "Bang Khun Thian District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 19,
-        "lat": 13.66083,
-        "lon": 100.43531
-      },
-      {
-        "station_name": "จุดวัด ค.สนามชัย-ค.บางขุนเทียน",
-        "province": "Bangkok",
-        "district": "Chom Thong District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 11.5,
-        "lat": 13.70123,
-        "lon": 100.46491
+        "district": "Thon Buri District",
+        "rain_1h_mm": 4.5,
+        "rain_24h_mm": 4.5,
+        "lat": 13.72497,
+        "lon": 100.48558
       },
       {
         "station_name": "สนข.จอมทอง",
         "province": "Bangkok",
         "district": "Chom Thong District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 10,
+        "rain_1h_mm": 3.5,
+        "rain_24h_mm": 3.5,
         "lat": 13.67744,
         "lon": 100.48427
       },
       {
-        "station_name": "ส.ดาวคะนอง",
+        "station_name": "สนข.ราษฎร์บูรณะ",
         "province": "Bangkok",
         "district": "Rat Burana District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 10,
-        "lat": 13.6949,
-        "lon": 100.48758
-      },
-      {
-        "station_name": "ค.ราชมนตรี-ภาษีเจริญ",
-        "province": "Bangkok",
-        "district": "Bang Khae District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 7,
-        "lat": 13.70754,
-        "lon": 100.42622
-      },
-      {
-        "station_name": "ปตร.คลองขุนศรีฯ-ค.มหาสวัสดิ์",
-        "province": "Bangkok",
-        "district": "Thawi Watthana District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 5,
-        "lat": 13.80244,
-        "lon": 100.3707
-      },
-      {
-        "station_name": "สนข.ภาษีเจริญ",
-        "province": "Bangkok",
-        "district": "Phasi Charoen District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 5,
-        "lat": 13.71441,
-        "lon": 100.43696
-      },
-      {
-        "station_name": "ส.คลองภาษีเจริญ",
-        "province": "Bangkok",
-        "district": "Phasi Charoen District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 3.5,
-        "lat": 13.72204,
-        "lon": 100.46863
+        "rain_1h_mm": 2.5,
+        "rain_24h_mm": 2.5,
+        "lat": 13.68207,
+        "lon": 100.50586
       },
       {
         "station_name": "สนข.บางแค",
         "province": "Bangkok",
         "district": "Bang Khae District",
-        "rain_1h_mm": 0.0,
+        "rain_1h_mm": 2.5,
         "rain_24h_mm": 2.5,
         "lat": 13.69622,
         "lon": 100.40919
+      },
+      {
+        "station_name": "สนข.หนองจอก",
+        "province": "Bangkok",
+        "district": "Nong Chok District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 2.5,
+        "lat": 13.85584,
+        "lon": 100.86259
+      },
+      {
+        "station_name": "ปตร.คลองแสนแสบ",
+        "province": "Bangkok",
+        "district": "Nong Chok District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 2,
+        "lat": 13.85516,
+        "lon": 100.87292
+      },
+      {
+        "station_name": "สนข.คลองสาน",
+        "province": "Bangkok",
+        "district": "Khlong San District",
+        "rain_1h_mm": 1.5,
+        "rain_24h_mm": 1.5,
+        "lat": 13.73044,
+        "lon": 100.50947
+      },
+      {
+        "station_name": "ปตร.คลองสิบสาม",
+        "province": "Bangkok",
+        "district": "Nong Chok District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 1.5,
+        "lat": 13.85859,
+        "lon": 100.86754
+      },
+      {
+        "station_name": "สนข.บางกอกใหญ่",
+        "province": "Bangkok",
+        "district": "Bangkok Yai District",
+        "rain_1h_mm": 1.5,
+        "rain_24h_mm": 1.5,
+        "lat": 13.72332,
+        "lon": 100.47622
       }
     ]
   },
   "estuary_tide": {
-    "realtime_msl": -0.444,
+    "realtime_msl": 1.257,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
