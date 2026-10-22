@@ -3,10 +3,10 @@
     "result": "OK",
     "data": [
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 7.75,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": null,
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 3.25,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 2.45,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -35,20 +35,20 @@
           }
         },
         "station": {
-          "id": 492330,
+          "id": 492335,
           "subbasin_id": 240,
           "tele_station_name": {
-            "en": "Yang Manee Gate",
-            "th": "ปตร.ยางมณี"
+            "en": "Khlong Khao Mao",
+            "th": "ปตร.กลางคลองข้าวเม่า (วัดกระสังข์)"
           },
-          "tele_station_lat": 14.75102,
-          "tele_station_long": 100.41464,
-          "tele_station_oldcode": "ATG16",
+          "tele_station_lat": 14.357306,
+          "tele_station_long": 100.60569,
+          "tele_station_oldcode": "HDA003",
           "left_bank": null,
           "right_bank": null,
           "offset": null,
           "agency_id": 9,
-          "geocode_id": 875,
+          "geocode_id": 408,
           "hydro_id": null,
           "qmax": null,
           "is_key_station": false,
@@ -62,28 +62,413 @@
             "th": "ภาคกลาง",
             "en": "Central"
           },
-          "amphoe_code": "05",
+          "amphoe_code": "01",
           "amphoe_name": {
-            "th": "ท่าช้าง",
-            "en": "Tha Chang District"
+            "th": "พระนครศรีอยุธยา",
+            "en": "Phra Nakhon Si Ayutthaya District"
           },
-          "tumbon_code": "04",
+          "tumbon_code": "13",
           "tumbon_name": {
-            "th": "พิกุลทอง",
-            "en": "Phikun Thong"
+            "th": "หันตรา",
+            "en": "Han Tra"
           },
-          "province_code": "17",
+          "province_code": "14",
           "province_name": {
-            "th": "สิงห์บุรี",
-            "en": "Sing Buri"
+            "th": "พระนครศรีอยุธยา",
+            "en": "Phra Nakhon Si Ayutthaya"
           }
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 11.738,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 12.913,
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 16.113,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 15.818125,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 10,
+          "basin_code": 10,
+          "basin_name": {
+            "th": "ลุ่มน้ำเจ้าพระยา",
+            "en": "Chao Phraya Basin"
+          }
+        },
+        "station": {
+          "id": 492316,
+          "subbasin_id": 240,
+          "tele_station_name": {
+            "en": "Pholthep Gate",
+            "th": "ปตร.พลเทพ"
+          },
+          "tele_station_lat": 15.21593,
+          "tele_station_long": 100.07285,
+          "tele_station_oldcode": "ATG011",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 894,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "2",
+          "area_name": {
+            "th": "ภาคกลาง",
+            "en": "Central"
+          },
+          "amphoe_code": "01",
+          "amphoe_name": {
+            "th": "เมืองชัยนาท",
+            "en": "Mueang Chai Nat District"
+          },
+          "tumbon_code": "06",
+          "tumbon_name": {
+            "th": "หาดท่าเสา",
+            "en": "Hat Tha Sao"
+          },
+          "province_code": "18",
+          "province_name": {
+            "th": "ชัยนาท",
+            "en": "Chai Nat"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 112.02,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 109.3,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 5,
+          "basin_code": 5,
+          "basin_name": {
+            "th": "ลุ่มน้ำมูล",
+            "en": "Mun Basin"
+          }
+        },
+        "station": {
+          "id": 602818,
+          "subbasin_id": 142,
+          "tele_station_name": {
+            "en": "Hua Na Weir",
+            "th": "ฝายหัวนา"
+          },
+          "tele_station_lat": 15.13496,
+          "tele_station_long": 104.70208,
+          "tele_station_oldcode": "WEI10",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 2417,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "4",
+          "area_name": {
+            "th": "ภาคตะวันออกเฉียงเหนือ",
+            "en": "Northeast"
+          },
+          "amphoe_code": "03",
+          "amphoe_name": {
+            "th": "กันทรารมย์",
+            "en": "Kanthararom District"
+          },
+          "tumbon_code": "06",
+          "tumbon_name": {
+            "th": "หนองแก้ว",
+            "en": "Nong Kaeo"
+          },
+          "province_code": "33",
+          "province_name": {
+            "th": "ศรีสะเกษ",
+            "en": "Si Sa Ket"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": null,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 142.92,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 3,
+          "basin_code": 3,
+          "basin_name": {
+            "th": "ลุ่มน้ำโขงตะวันออกเฉียงเหนือ",
+            "en": "Northeast Khong Basin"
+          }
+        },
+        "station": {
+          "id": 1117942,
+          "subbasin_id": 70,
+          "tele_station_name": {
+            "en": "BanNa Kham Gate",
+            "th": "ปตร. บ้านนาขาม"
+          },
+          "tele_station_lat": 17.00136,
+          "tele_station_long": 104.42568,
+          "tele_station_oldcode": "ONE14",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 4625,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "4",
+          "area_name": {
+            "th": "ภาคตะวันออกเฉียงเหนือ",
+            "en": "Northeast"
+          },
+          "amphoe_code": "12",
+          "amphoe_name": {
+            "th": "วังยาง",
+            "en": "Wang Yang District"
+          },
+          "tumbon_code": "01",
+          "tumbon_name": {
+            "th": "วังยาง",
+            "en": "Wang Yang"
+          },
+          "province_code": "48",
+          "province_name": {
+            "th": "นครพนม",
+            "en": "Nakhon Phanom"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 12.874,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 15.149,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 10,
+          "basin_code": 10,
+          "basin_name": {
+            "th": "ลุ่มน้ำเจ้าพระยา",
+            "en": "Chao Phraya Basin"
+          }
+        },
+        "station": {
+          "id": 492325,
+          "subbasin_id": 240,
+          "tele_station_name": {
+            "en": "Maharaj Gate",
+            "th": "ปตร.มหาราช"
+          },
+          "tele_station_lat": 15.15893,
+          "tele_station_long": 100.17328,
+          "tele_station_oldcode": "ATG11",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 890,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "2",
+          "area_name": {
+            "th": "ภาคกลาง",
+            "en": "Central"
+          },
+          "amphoe_code": "01",
+          "amphoe_name": {
+            "th": "เมืองชัยนาท",
+            "en": "Mueang Chai Nat District"
+          },
+          "tumbon_code": "02",
+          "tumbon_name": {
+            "th": "บ้านกล้วย",
+            "en": "Ban Kluai"
+          },
+          "province_code": "18",
+          "province_name": {
+            "th": "ชัยนาท",
+            "en": "Chai Nat"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 2.36,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 2.99,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 10,
+          "basin_code": 10,
+          "basin_name": {
+            "th": "ลุ่มน้ำเจ้าพระยา",
+            "en": "Chao Phraya Basin"
+          }
+        },
+        "station": {
+          "id": 492334,
+          "subbasin_id": 240,
+          "tele_station_name": {
+            "en": "Kamang Gate",
+            "th": "ปตร.กระมัง (ปากคลองข้าวเม่า)"
+          },
+          "tele_station_lat": 14.355055,
+          "tele_station_long": 100.58354,
+          "tele_station_oldcode": "HDA002",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 399,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "2",
+          "area_name": {
+            "th": "ภาคกลาง",
+            "en": "Central"
+          },
+          "amphoe_code": "01",
+          "amphoe_name": {
+            "th": "พระนครศรีอยุธยา",
+            "en": "Phra Nakhon Si Ayutthaya District"
+          },
+          "tumbon_code": "04",
+          "tumbon_name": {
+            "th": "หัวรอ",
+            "en": "Hua Ro"
+          },
+          "province_code": "14",
+          "province_name": {
+            "th": "พระนครศรีอยุธยา",
+            "en": "Phra Nakhon Si Ayutthaya"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 11.677,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 12.904,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -157,9 +542,86 @@
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 142.95,
-        "watergate_datetime_out": "2026-10-22 22:10",
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 138.81,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 133.46,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 3,
+          "basin_code": 3,
+          "basin_name": {
+            "th": "ลุ่มน้ำโขงตะวันออกเฉียงเหนือ",
+            "en": "Northeast Khong Basin"
+          }
+        },
+        "station": {
+          "id": 1117940,
+          "subbasin_id": 70,
+          "tele_station_name": {
+            "en": "Huai Kean Upper Gate",
+            "th": "ปตร. ห้วยแคน"
+          },
+          "tele_station_lat": 16.92842,
+          "tele_station_long": 104.72051,
+          "tele_station_oldcode": "ONE08",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 4561,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "4",
+          "area_name": {
+            "th": "ภาคตะวันออกเฉียงเหนือ",
+            "en": "Northeast"
+          },
+          "amphoe_code": "05",
+          "amphoe_name": {
+            "th": "ธาตุพนม",
+            "en": "That Phanom District"
+          },
+          "tumbon_code": "01",
+          "tumbon_name": {
+            "th": "ธาตุพนม",
+            "en": "That Phanom"
+          },
+          "province_code": "48",
+          "province_name": {
+            "th": "นครพนม",
+            "en": "Nakhon Phanom"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 142.92,
+        "watergate_datetime_out": "2026-10-23 02:30",
         "watergate_out": 138.56,
         "watergate_out2": null,
         "pump_on": null,
@@ -234,10 +696,87 @@
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 12.929,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 15.189,
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 117.38,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 114.9,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 5,
+          "basin_code": 5,
+          "basin_name": {
+            "th": "ลุ่มน้ำมูล",
+            "en": "Mun Basin"
+          }
+        },
+        "station": {
+          "id": 602819,
+          "subbasin_id": 136,
+          "tele_station_name": {
+            "en": "Rasi Salai Weir",
+            "th": "ฝายราษีไศล"
+          },
+          "tele_station_lat": 15.344394,
+          "tele_station_long": 104.09881,
+          "tele_station_oldcode": "WEI11",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 2511,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "4",
+          "area_name": {
+            "th": "ภาคตะวันออกเฉียงเหนือ",
+            "en": "Northeast"
+          },
+          "amphoe_code": "09",
+          "amphoe_name": {
+            "th": "ราษีไศล",
+            "en": "Rasi Salai District"
+          },
+          "tumbon_code": "10",
+          "tumbon_name": {
+            "th": "บัวหุ่ง",
+            "en": "Bua Hung"
+          },
+          "province_code": "33",
+          "province_name": {
+            "th": "ศรีสะเกษ",
+            "en": "Si Sa Ket"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 1.239,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 1.855312,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -266,20 +805,20 @@
           }
         },
         "station": {
-          "id": 492325,
+          "id": 492324,
           "subbasin_id": 240,
           "tele_station_name": {
-            "en": "Maharaj Gate",
-            "th": "ปตร.มหาราช"
+            "en": "Chulalongkorn Gate",
+            "th": "ปตร.จุฬาลงกรณ์"
           },
-          "tele_station_lat": 15.15893,
-          "tele_station_long": 100.17328,
-          "tele_station_oldcode": "ATG11",
+          "tele_station_lat": 13.98135,
+          "tele_station_long": 100.6057,
+          "tele_station_oldcode": "ATG101",
           "left_bank": null,
           "right_bank": null,
           "offset": null,
           "agency_id": 9,
-          "geocode_id": 890,
+          "geocode_id": 351,
           "hydro_id": null,
           "qmax": null,
           "is_key_station": false,
@@ -293,25 +832,641 @@
             "th": "ภาคกลาง",
             "en": "Central"
           },
-          "amphoe_code": "01",
+          "amphoe_code": "03",
           "amphoe_name": {
-            "th": "เมืองชัยนาท",
-            "en": "Mueang Chai Nat District"
+            "th": "ธัญบุรี",
+            "en": "Thanyaburi District"
           },
-          "tumbon_code": "02",
+          "tumbon_code": "01",
           "tumbon_name": {
-            "th": "บ้านกล้วย",
-            "en": "Ban Kluai"
+            "th": "ประชาธิปัตย์",
+            "en": "Pracha Thipat"
           },
-          "province_code": "18",
+          "province_code": "13",
           "province_name": {
-            "th": "ชัยนาท",
-            "en": "Chai Nat"
+            "th": "ปทุมธานี",
+            "en": "Pathum Thani"
           }
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 137.36,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 131.3,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 4,
+          "basin_code": 4,
+          "basin_name": {
+            "th": "ลุ่มน้ำชี",
+            "en": "Chi Basin Basin"
+          }
+        },
+        "station": {
+          "id": 602814,
+          "subbasin_id": 96,
+          "tele_station_name": {
+            "en": "Wang Yang Weir",
+            "th": "ฝายวังยาง"
+          },
+          "tele_station_lat": 16.1994,
+          "tele_station_long": 103.472946,
+          "tele_station_oldcode": "WEI06",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 4372,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "4",
+          "area_name": {
+            "th": "ภาคตะวันออกเฉียงเหนือ",
+            "en": "Northeast"
+          },
+          "amphoe_code": "18",
+          "amphoe_name": {
+            "th": "ฆ้องชัย",
+            "en": "Khong Chai District"
+          },
+          "tumbon_code": "05",
+          "tumbon_name": {
+            "th": "ลำชี",
+            "en": "Lam Chi"
+          },
+          "province_code": "46",
+          "province_name": {
+            "th": "กาฬสินธุ์",
+            "en": "Kalasin"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 130.55,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 126.7,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 4,
+          "basin_code": 4,
+          "basin_name": {
+            "th": "ลุ่มน้ำชี",
+            "en": "Chi Basin Basin"
+          }
+        },
+        "station": {
+          "id": 602815,
+          "subbasin_id": 100,
+          "tele_station_name": {
+            "en": "Roi Et Weir",
+            "th": "ฝายร้อยเอ็ด"
+          },
+          "tele_station_lat": 16.172606,
+          "tele_station_long": 103.78899,
+          "tele_station_oldcode": "WEI07",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 4204,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "4",
+          "area_name": {
+            "th": "ภาคตะวันออกเฉียงเหนือ",
+            "en": "Northeast"
+          },
+          "amphoe_code": "18",
+          "amphoe_name": {
+            "th": "เชียงขวัญ",
+            "en": "Chiang Khwan District"
+          },
+          "tumbon_code": "03",
+          "tumbon_name": {
+            "th": "พระธาตุ",
+            "en": "Phrathat"
+          },
+          "province_code": "45",
+          "province_name": {
+            "th": "ร้อยเอ็ด",
+            "en": "Roi Et"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 150.72,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 146.84,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 3,
+          "basin_code": 3,
+          "basin_name": {
+            "th": "ลุ่มน้ำโขงตะวันออกเฉียงเหนือ",
+            "en": "Northeast Khong Basin"
+          }
+        },
+        "station": {
+          "id": 1117945,
+          "subbasin_id": 70,
+          "tele_station_name": {
+            "en": "Ban Nong Bueng Gate",
+            "th": "ปตร. บ้านหนองบึง"
+          },
+          "tele_station_lat": 17.081032,
+          "tele_station_long": 104.36085,
+          "tele_station_oldcode": "ONE28",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 4498,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "4",
+          "area_name": {
+            "th": "ภาคตะวันออกเฉียงเหนือ",
+            "en": "Northeast"
+          },
+          "amphoe_code": "15",
+          "amphoe_name": {
+            "th": "โคกศรีสุพรรณ",
+            "en": "Khok Si Suphan District"
+          },
+          "tumbon_code": "03",
+          "tumbon_name": {
+            "th": "ด่านม่วงคำ",
+            "en": "Dan Muang Kham"
+          },
+          "province_code": "47",
+          "province_name": {
+            "th": "สกลนคร",
+            "en": "Sakon Nakhon"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 7.75,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": null,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 10,
+          "basin_code": 10,
+          "basin_name": {
+            "th": "ลุ่มน้ำเจ้าพระยา",
+            "en": "Chao Phraya Basin"
+          }
+        },
+        "station": {
+          "id": 492330,
+          "subbasin_id": 240,
+          "tele_station_name": {
+            "en": "Yang Manee Gate",
+            "th": "ปตร.ยางมณี"
+          },
+          "tele_station_lat": 14.75102,
+          "tele_station_long": 100.41464,
+          "tele_station_oldcode": "ATG16",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 875,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "2",
+          "area_name": {
+            "th": "ภาคกลาง",
+            "en": "Central"
+          },
+          "amphoe_code": "05",
+          "amphoe_name": {
+            "th": "ท่าช้าง",
+            "en": "Tha Chang District"
+          },
+          "tumbon_code": "04",
+          "tumbon_name": {
+            "th": "พิกุลทอง",
+            "en": "Phikun Thong"
+          },
+          "province_code": "17",
+          "province_name": {
+            "th": "สิงห์บุรี",
+            "en": "Sing Buri"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 116.09,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 110.17,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 4,
+          "basin_code": 4,
+          "basin_name": {
+            "th": "ลุ่มน้ำชี",
+            "en": "Chi Basin Basin"
+          }
+        },
+        "station": {
+          "id": 602817,
+          "subbasin_id": 102,
+          "tele_station_name": {
+            "en": "Tat Noi Weir",
+            "th": "ฝายธาตุน้อย"
+          },
+          "tele_station_lat": 15.31053,
+          "tele_station_long": 104.45604,
+          "tele_station_oldcode": "WEI09",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 2661,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "4",
+          "area_name": {
+            "th": "ภาคตะวันออกเฉียงเหนือ",
+            "en": "Northeast"
+          },
+          "amphoe_code": "04",
+          "amphoe_name": {
+            "th": "เขื่องใน",
+            "en": "Khueang Nai District"
+          },
+          "tumbon_code": "17",
+          "tumbon_name": {
+            "th": "สหธาตุ",
+            "en": "Sahathat"
+          },
+          "province_code": "34",
+          "province_name": {
+            "th": "อุบลราชธานี",
+            "en": "Ubon Ratchathani"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": null,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 399.32,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 2,
+          "basin_code": 2,
+          "basin_name": {
+            "th": "ลุ่มน้ำโขงเหนือ",
+            "en": "North Khong Basin"
+          }
+        },
+        "station": {
+          "id": 1117429,
+          "subbasin_id": 33,
+          "tele_station_name": {
+            "en": "Nong Leng Sai Weir",
+            "th": "ฝายพับได้หนองเล็งทราย"
+          },
+          "tele_station_lat": 19.350946,
+          "tele_station_long": 99.82508,
+          "tele_station_oldcode": "PYO002",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 5439,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "3",
+          "area_name": {
+            "th": "ภาคเหนือ",
+            "en": "North"
+          },
+          "amphoe_code": "07",
+          "amphoe_name": {
+            "th": "แม่ใจ",
+            "en": "Mae Chai District"
+          },
+          "tumbon_code": "05",
+          "tumbon_name": {
+            "th": "บ้านเหล่า",
+            "en": "Ban Lao"
+          },
+          "province_code": "56",
+          "province_name": {
+            "th": "พะเยา",
+            "en": "Phayao"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 138.52,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 131.01,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 3,
+          "basin_code": 3,
+          "basin_name": {
+            "th": "ลุ่มน้ำโขงตะวันออกเฉียงเหนือ",
+            "en": "Northeast Khong Basin"
+          }
+        },
+        "station": {
+          "id": 1117939,
+          "subbasin_id": 70,
+          "tele_station_name": {
+            "en": "Ni Naruemit Gate ",
+            "th": "ปตร.ธรณิศนฤมิต"
+          },
+          "tele_station_lat": 16.92315,
+          "tele_station_long": 104.71618,
+          "tele_station_oldcode": "ONE06",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 4568,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "4",
+          "area_name": {
+            "th": "ภาคตะวันออกเฉียงเหนือ",
+            "en": "Northeast"
+          },
+          "amphoe_code": "05",
+          "amphoe_name": {
+            "th": "ธาตุพนม",
+            "en": "That Phanom District"
+          },
+          "tumbon_code": "08",
+          "tumbon_name": {
+            "th": "น้ำก่ำ",
+            "en": "Nam Kam"
+          },
+          "province_code": "48",
+          "province_name": {
+            "th": "นครพนม",
+            "en": "Nakhon Phanom"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 0.219,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 2.226,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 10,
+          "basin_code": 10,
+          "basin_name": {
+            "th": "ลุ่มน้ำเจ้าพระยา",
+            "en": "Chao Phraya Basin"
+          }
+        },
+        "station": {
+          "id": 492323,
+          "subbasin_id": 240,
+          "tele_station_name": {
+            "en": "Intararaja Gate",
+            "th": "ปตร.พระอินทราชา"
+          },
+          "tele_station_lat": 14.144052,
+          "tele_station_long": 100.62136,
+          "tele_station_oldcode": "ATG09",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 556,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "2",
+          "area_name": {
+            "th": "ภาคกลาง",
+            "en": "Central"
+          },
+          "amphoe_code": "11",
+          "amphoe_name": {
+            "th": "วังน้อย",
+            "en": "Wang Noi District"
+          },
+          "tumbon_code": "03",
+          "tumbon_name": {
+            "th": "วังน้อย",
+            "en": "Wang Noi"
+          },
+          "province_code": "14",
+          "province_name": {
+            "th": "พระนครศรีอยุธยา",
+            "en": "Phra Nakhon Si Ayutthaya"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
         "watergate_in": null,
         "watergate_datetime_out": "2000-01-01 00:00",
         "watergate_out": null,
@@ -388,240 +1543,9 @@
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": null,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 399.32,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 2,
-          "basin_code": 2,
-          "basin_name": {
-            "th": "ลุ่มน้ำโขงเหนือ",
-            "en": "North Khong Basin"
-          }
-        },
-        "station": {
-          "id": 1117429,
-          "subbasin_id": 33,
-          "tele_station_name": {
-            "en": "Nong Leng Sai Weir",
-            "th": "ฝายพับได้หนองเล็งทราย"
-          },
-          "tele_station_lat": 19.350946,
-          "tele_station_long": 99.82508,
-          "tele_station_oldcode": "PYO002",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 5439,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "3",
-          "area_name": {
-            "th": "ภาคเหนือ",
-            "en": "North"
-          },
-          "amphoe_code": "07",
-          "amphoe_name": {
-            "th": "แม่ใจ",
-            "en": "Mae Chai District"
-          },
-          "tumbon_code": "05",
-          "tumbon_name": {
-            "th": "บ้านเหล่า",
-            "en": "Ban Lao"
-          },
-          "province_code": "56",
-          "province_name": {
-            "th": "พะเยา",
-            "en": "Phayao"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 0.53,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 0.98,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 10,
-          "basin_code": 10,
-          "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
-          }
-        },
-        "station": {
-          "id": 575571,
-          "subbasin_id": 240,
-          "tele_station_name": {
-            "en": "Khlong Phae Gate",
-            "th": "ปตร. คลองแพ"
-          },
-          "tele_station_lat": 13.694974,
-          "tele_station_long": 100.58231,
-          "tele_station_oldcode": "BKC007",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 253,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "2",
-          "area_name": {
-            "th": "ภาคกลาง",
-            "en": "Central"
-          },
-          "amphoe_code": "04",
-          "amphoe_name": {
-            "th": "พระประแดง",
-            "en": "Phra Pradaeng District"
-          },
-          "tumbon_code": "12",
-          "tumbon_name": {
-            "th": "บางกอบัว",
-            "en": "Bang Ko Bua"
-          },
-          "province_code": "11",
-          "province_name": {
-            "th": "สมุทรปราการ",
-            "en": "Samut Prakan"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 0.199,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 2.244,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 10,
-          "basin_code": 10,
-          "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
-          }
-        },
-        "station": {
-          "id": 492323,
-          "subbasin_id": 240,
-          "tele_station_name": {
-            "en": "Intararaja Gate",
-            "th": "ปตร.พระอินทราชา"
-          },
-          "tele_station_lat": 14.144052,
-          "tele_station_long": 100.62136,
-          "tele_station_oldcode": "ATG09",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 556,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "2",
-          "area_name": {
-            "th": "ภาคกลาง",
-            "en": "Central"
-          },
-          "amphoe_code": "11",
-          "amphoe_name": {
-            "th": "วังน้อย",
-            "en": "Wang Noi District"
-          },
-          "tumbon_code": "03",
-          "tumbon_name": {
-            "th": "วังน้อย",
-            "en": "Wang Noi"
-          },
-          "province_code": "14",
-          "province_name": {
-            "th": "พระนครศรีอยุธยา",
-            "en": "Phra Nakhon Si Ayutthaya"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 147.33,
-        "watergate_datetime_out": "2026-10-22 22:10",
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 147.34,
+        "watergate_datetime_out": "2026-10-23 02:30",
         "watergate_out": 142.5,
         "watergate_out2": null,
         "pump_on": null,
@@ -696,10 +1620,87 @@
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 3.04,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 2.45,
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 0.79,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 0.98,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 10,
+          "basin_code": 10,
+          "basin_name": {
+            "th": "ลุ่มน้ำเจ้าพระยา",
+            "en": "Chao Phraya Basin"
+          }
+        },
+        "station": {
+          "id": 575571,
+          "subbasin_id": 240,
+          "tele_station_name": {
+            "en": "Khlong Phae Gate",
+            "th": "ปตร. คลองแพ"
+          },
+          "tele_station_lat": 13.694974,
+          "tele_station_long": 100.58231,
+          "tele_station_oldcode": "BKC007",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 253,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "2",
+          "area_name": {
+            "th": "ภาคกลาง",
+            "en": "Central"
+          },
+          "amphoe_code": "04",
+          "amphoe_name": {
+            "th": "พระประแดง",
+            "en": "Phra Pradaeng District"
+          },
+          "tumbon_code": "12",
+          "tumbon_name": {
+            "th": "บางกอบัว",
+            "en": "Bang Ko Bua"
+          },
+          "province_code": "11",
+          "province_name": {
+            "th": "สมุทรปราการ",
+            "en": "Samut Prakan"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 3,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 2.36,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -773,10 +1774,10 @@
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 2.46,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 3.05,
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 7.52,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 6.033,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -797,28 +1798,28 @@
           }
         },
         "basin": {
-          "id": 10,
-          "basin_code": 10,
+          "id": 13,
+          "basin_code": 12,
           "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
+            "th": "ลุ่มน้ำป่าสัก",
+            "en": "Pasak Basin"
           }
         },
         "station": {
-          "id": 492334,
-          "subbasin_id": 240,
+          "id": 492320,
+          "subbasin_id": 257,
           "tele_station_name": {
-            "en": "Kamang Gate",
-            "th": "ปตร.กระมัง (ปากคลองข้าวเม่า)"
+            "en": "Phra Narai Gate",
+            "th": "ปตร.พระนารายน์"
           },
-          "tele_station_lat": 14.355055,
-          "tele_station_long": 100.58354,
-          "tele_station_oldcode": "HDA002",
+          "tele_station_lat": 14.558294,
+          "tele_station_long": 100.76207,
+          "tele_station_oldcode": "ATG05",
           "left_bank": null,
           "right_bank": null,
           "offset": null,
           "agency_id": 9,
-          "geocode_id": 399,
+          "geocode_id": 420,
           "hydro_id": null,
           "qmax": null,
           "is_key_station": false,
@@ -832,15 +1833,15 @@
             "th": "ภาคกลาง",
             "en": "Central"
           },
-          "amphoe_code": "01",
+          "amphoe_code": "02",
           "amphoe_name": {
-            "th": "พระนครศรีอยุธยา",
-            "en": "Phra Nakhon Si Ayutthaya District"
+            "th": "ท่าเรือ",
+            "en": "Tha Ruea District"
           },
-          "tumbon_code": "04",
+          "tumbon_code": "03",
           "tumbon_name": {
-            "th": "หัวรอ",
-            "en": "Hua Ro"
+            "th": "ท่าหลวง",
+            "en": "Tha Luang"
           },
           "province_code": "14",
           "province_name": {
@@ -850,10 +1851,10 @@
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 0.47,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 0.72,
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 0.76,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 0.71,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -927,10 +1928,10 @@
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 0.72,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 1.1,
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 0.9,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 1.06,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -1004,10 +2005,10 @@
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 83.335,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 52.282,
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 83.315,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 52.303,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -1081,164 +2082,10 @@
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 116.08,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 110.14,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 4,
-          "basin_code": 4,
-          "basin_name": {
-            "th": "ลุ่มน้ำชี",
-            "en": "Chi Basin Basin"
-          }
-        },
-        "station": {
-          "id": 602817,
-          "subbasin_id": 102,
-          "tele_station_name": {
-            "en": "Tat Noi Weir",
-            "th": "ฝายธาตุน้อย"
-          },
-          "tele_station_lat": 15.31053,
-          "tele_station_long": 104.45604,
-          "tele_station_oldcode": "WEI09",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 2661,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "4",
-          "area_name": {
-            "th": "ภาคตะวันออกเฉียงเหนือ",
-            "en": "Northeast"
-          },
-          "amphoe_code": "04",
-          "amphoe_name": {
-            "th": "เขื่องใน",
-            "en": "Khueang Nai District"
-          },
-          "tumbon_code": "17",
-          "tumbon_name": {
-            "th": "สหธาตุ",
-            "en": "Sahathat"
-          },
-          "province_code": "34",
-          "province_name": {
-            "th": "อุบลราชธานี",
-            "en": "Ubon Ratchathani"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 11.661,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 7.388,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 10,
-          "basin_code": 10,
-          "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
-          }
-        },
-        "station": {
-          "id": 492329,
-          "subbasin_id": 240,
-          "tele_station_name": {
-            "en": "Bang Rachan Gate",
-            "th": "ปตร.บางระจัน"
-          },
-          "tele_station_lat": 14.925949,
-          "tele_station_long": 100.275826,
-          "tele_station_oldcode": "ATG15",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 850,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "2",
-          "area_name": {
-            "th": "ภาคกลาง",
-            "en": "Central"
-          },
-          "amphoe_code": "02",
-          "amphoe_name": {
-            "th": "บางระจัน",
-            "en": "Bang Rachan District"
-          },
-          "tumbon_code": "03",
-          "tumbon_name": {
-            "th": "เชิงกลัด",
-            "en": "Choeng Klat"
-          },
-          "province_code": "17",
-          "province_name": {
-            "th": "สิงห์บุรี",
-            "en": "Sing Buri"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 9.352,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 6.856,
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 6.027,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 5.288,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -1267,174 +2114,20 @@
           }
         },
         "station": {
-          "id": 492327,
+          "id": 492328,
           "subbasin_id": 259,
           "tele_station_name": {
-            "en": "Cholmakpijarn Gate",
-            "th": "ปตร.ชลมาร์คพิจารณ์"
+            "en": "Pho Phraya Gate",
+            "th": "ปตร.โพธิ์พระยา"
           },
-          "tele_station_lat": 14.77117,
-          "tele_station_long": 100.08841,
-          "tele_station_oldcode": "ATG13",
+          "tele_station_lat": 14.532452,
+          "tele_station_long": 100.122246,
+          "tele_station_oldcode": "ATG14",
           "left_bank": null,
           "right_bank": null,
           "offset": null,
           "agency_id": 9,
-          "geocode_id": 6788,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "2",
-          "area_name": {
-            "th": "ภาคกลาง",
-            "en": "Central"
-          },
-          "amphoe_code": "08",
-          "amphoe_name": {
-            "th": "สามชุก",
-            "en": "Sam Chuk District"
-          },
-          "tumbon_code": "03",
-          "tumbon_name": {
-            "th": "สามชุก",
-            "en": "Sam Chuk"
-          },
-          "province_code": "72",
-          "province_name": {
-            "th": "สุพรรณบุรี",
-            "en": "Suphan Buri"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 2.58,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 1.922,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 10,
-          "basin_code": 10,
-          "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
-          }
-        },
-        "station": {
-          "id": 492322,
-          "subbasin_id": 240,
-          "tele_station_name": {
-            "en": "Dhammaraja Gate",
-            "th": "ปตร.พระธรรมราชา"
-          },
-          "tele_station_lat": 14.077689,
-          "tele_station_long": 100.89208,
-          "tele_station_oldcode": "ATG08",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 356,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "2",
-          "area_name": {
-            "th": "ภาคกลาง",
-            "en": "Central"
-          },
-          "amphoe_code": "03",
-          "amphoe_name": {
-            "th": "ธัญบุรี",
-            "en": "Thanyaburi District"
-          },
-          "tumbon_code": "06",
-          "tumbon_name": {
-            "th": "บึงน้ำรักษ์",
-            "en": "Bueng Nam Rak"
-          },
-          "province_code": "13",
-          "province_name": {
-            "th": "ปทุมธานี",
-            "en": "Pathum Thani"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 3.25,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 2.54,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 10,
-          "basin_code": 10,
-          "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
-          }
-        },
-        "station": {
-          "id": 492335,
-          "subbasin_id": 240,
-          "tele_station_name": {
-            "en": "Khlong Khao Mao",
-            "th": "ปตร.กลางคลองข้าวเม่า (วัดกระสังข์)"
-          },
-          "tele_station_lat": 14.357306,
-          "tele_station_long": 100.60569,
-          "tele_station_oldcode": "HDA003",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 408,
+          "geocode_id": 6713,
           "hydro_id": null,
           "qmax": null,
           "is_key_station": false,
@@ -1450,102 +2143,25 @@
           },
           "amphoe_code": "01",
           "amphoe_name": {
-            "th": "พระนครศรีอยุธยา",
-            "en": "Phra Nakhon Si Ayutthaya District"
+            "th": "เมืองสุพรรณบุรี",
+            "en": "Mueang Suphan Buri District"
           },
-          "tumbon_code": "13",
+          "tumbon_code": "19",
           "tumbon_name": {
-            "th": "หันตรา",
-            "en": "Han Tra"
+            "th": "โพธิ์พระยา",
+            "en": "Pho Phraya"
           },
-          "province_code": "14",
+          "province_code": "72",
           "province_name": {
-            "th": "พระนครศรีอยุธยา",
-            "en": "Phra Nakhon Si Ayutthaya"
+            "th": "สุพรรณบุรี",
+            "en": "Suphan Buri"
           }
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": null,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": null,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 10,
-          "basin_code": 10,
-          "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
-          }
-        },
-        "station": {
-          "id": 575566,
-          "subbasin_id": 240,
-          "tele_station_name": {
-            "en": "Wat Bangkachao Nok Gate",
-            "th": "ปตร.วัดบางกระเจ้านอก"
-          },
-          "tele_station_lat": 13.689612,
-          "tele_station_long": 100.554886,
-          "tele_station_oldcode": "BKC002",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 250,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "2",
-          "area_name": {
-            "th": "ภาคกลาง",
-            "en": "Central"
-          },
-          "amphoe_code": "04",
-          "amphoe_name": {
-            "th": "พระประแดง",
-            "en": "Phra Pradaeng District"
-          },
-          "tumbon_code": "09",
-          "tumbon_name": {
-            "th": "บางกระเจ้า",
-            "en": "Bang Krachao"
-          },
-          "province_code": "11",
-          "province_name": {
-            "th": "สมุทรปราการ",
-            "en": "Samut Prakan"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 143.21,
-        "watergate_datetime_out": "2026-10-22 22:10",
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 143.22,
+        "watergate_datetime_out": "2026-10-23 02:30",
         "watergate_out": 139.77,
         "watergate_out2": null,
         "pump_on": null,
@@ -1620,395 +2236,10 @@
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 138.51,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 131.02,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 3,
-          "basin_code": 3,
-          "basin_name": {
-            "th": "ลุ่มน้ำโขงตะวันออกเฉียงเหนือ",
-            "en": "Northeast Khong Basin"
-          }
-        },
-        "station": {
-          "id": 1117939,
-          "subbasin_id": 70,
-          "tele_station_name": {
-            "en": "Ni Naruemit Gate ",
-            "th": "ปตร.ธรณิศนฤมิต"
-          },
-          "tele_station_lat": 16.92315,
-          "tele_station_long": 104.71618,
-          "tele_station_oldcode": "ONE06",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 4568,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "4",
-          "area_name": {
-            "th": "ภาคตะวันออกเฉียงเหนือ",
-            "en": "Northeast"
-          },
-          "amphoe_code": "05",
-          "amphoe_name": {
-            "th": "ธาตุพนม",
-            "en": "That Phanom District"
-          },
-          "tumbon_code": "08",
-          "tumbon_name": {
-            "th": "น้ำก่ำ",
-            "en": "Nam Kam"
-          },
-          "province_code": "48",
-          "province_name": {
-            "th": "นครพนม",
-            "en": "Nakhon Phanom"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 150.73,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 146.84,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 3,
-          "basin_code": 3,
-          "basin_name": {
-            "th": "ลุ่มน้ำโขงตะวันออกเฉียงเหนือ",
-            "en": "Northeast Khong Basin"
-          }
-        },
-        "station": {
-          "id": 1117945,
-          "subbasin_id": 70,
-          "tele_station_name": {
-            "en": "Ban Nong Bueng Gate",
-            "th": "ปตร. บ้านหนองบึง"
-          },
-          "tele_station_lat": 17.081032,
-          "tele_station_long": 104.36085,
-          "tele_station_oldcode": "ONE28",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 4498,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "4",
-          "area_name": {
-            "th": "ภาคตะวันออกเฉียงเหนือ",
-            "en": "Northeast"
-          },
-          "amphoe_code": "15",
-          "amphoe_name": {
-            "th": "โคกศรีสุพรรณ",
-            "en": "Khok Si Suphan District"
-          },
-          "tumbon_code": "03",
-          "tumbon_name": {
-            "th": "ด่านม่วงคำ",
-            "en": "Dan Muang Kham"
-          },
-          "province_code": "47",
-          "province_name": {
-            "th": "สกลนคร",
-            "en": "Sakon Nakhon"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 137.35,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 131.29,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 4,
-          "basin_code": 4,
-          "basin_name": {
-            "th": "ลุ่มน้ำชี",
-            "en": "Chi Basin Basin"
-          }
-        },
-        "station": {
-          "id": 602814,
-          "subbasin_id": 96,
-          "tele_station_name": {
-            "en": "Wang Yang Weir",
-            "th": "ฝายวังยาง"
-          },
-          "tele_station_lat": 16.1994,
-          "tele_station_long": 103.472946,
-          "tele_station_oldcode": "WEI06",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 4372,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "4",
-          "area_name": {
-            "th": "ภาคตะวันออกเฉียงเหนือ",
-            "en": "Northeast"
-          },
-          "amphoe_code": "18",
-          "amphoe_name": {
-            "th": "ฆ้องชัย",
-            "en": "Khong Chai District"
-          },
-          "tumbon_code": "05",
-          "tumbon_name": {
-            "th": "ลำชี",
-            "en": "Lam Chi"
-          },
-          "province_code": "46",
-          "province_name": {
-            "th": "กาฬสินธุ์",
-            "en": "Kalasin"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 117.37,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 114.9,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 5,
-          "basin_code": 5,
-          "basin_name": {
-            "th": "ลุ่มน้ำมูล",
-            "en": "Mun Basin"
-          }
-        },
-        "station": {
-          "id": 602819,
-          "subbasin_id": 136,
-          "tele_station_name": {
-            "en": "Rasi Salai Weir",
-            "th": "ฝายราษีไศล"
-          },
-          "tele_station_lat": 15.344394,
-          "tele_station_long": 104.09881,
-          "tele_station_oldcode": "WEI11",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 2511,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "4",
-          "area_name": {
-            "th": "ภาคตะวันออกเฉียงเหนือ",
-            "en": "Northeast"
-          },
-          "amphoe_code": "09",
-          "amphoe_name": {
-            "th": "ราษีไศล",
-            "en": "Rasi Salai District"
-          },
-          "tumbon_code": "10",
-          "tumbon_name": {
-            "th": "บัวหุ่ง",
-            "en": "Bua Hung"
-          },
-          "province_code": "33",
-          "province_name": {
-            "th": "ศรีสะเกษ",
-            "en": "Si Sa Ket"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 138.8,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 133.46,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 3,
-          "basin_code": 3,
-          "basin_name": {
-            "th": "ลุ่มน้ำโขงตะวันออกเฉียงเหนือ",
-            "en": "Northeast Khong Basin"
-          }
-        },
-        "station": {
-          "id": 1117940,
-          "subbasin_id": 70,
-          "tele_station_name": {
-            "en": "Huai Kean Upper Gate",
-            "th": "ปตร. ห้วยแคน"
-          },
-          "tele_station_lat": 16.92842,
-          "tele_station_long": 104.72051,
-          "tele_station_oldcode": "ONE08",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 4561,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "4",
-          "area_name": {
-            "th": "ภาคตะวันออกเฉียงเหนือ",
-            "en": "Northeast"
-          },
-          "amphoe_code": "05",
-          "amphoe_name": {
-            "th": "ธาตุพนม",
-            "en": "That Phanom District"
-          },
-          "tumbon_code": "01",
-          "tumbon_name": {
-            "th": "ธาตุพนม",
-            "en": "That Phanom"
-          },
-          "province_code": "48",
-          "province_name": {
-            "th": "นครพนม",
-            "en": "Nakhon Phanom"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 1.233,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 1.7625,
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": null,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": null,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -2037,20 +2268,97 @@
           }
         },
         "station": {
-          "id": 492324,
+          "id": 575566,
           "subbasin_id": 240,
           "tele_station_name": {
-            "en": "Chulalongkorn Gate",
-            "th": "ปตร.จุฬาลงกรณ์"
+            "en": "Wat Bangkachao Nok Gate",
+            "th": "ปตร.วัดบางกระเจ้านอก"
           },
-          "tele_station_lat": 13.98135,
-          "tele_station_long": 100.6057,
-          "tele_station_oldcode": "ATG101",
+          "tele_station_lat": 13.689612,
+          "tele_station_long": 100.554886,
+          "tele_station_oldcode": "BKC002",
           "left_bank": null,
           "right_bank": null,
           "offset": null,
           "agency_id": 9,
-          "geocode_id": 351,
+          "geocode_id": 250,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_code": "2",
+          "area_name": {
+            "th": "ภาคกลาง",
+            "en": "Central"
+          },
+          "amphoe_code": "04",
+          "amphoe_name": {
+            "th": "พระประแดง",
+            "en": "Phra Pradaeng District"
+          },
+          "tumbon_code": "09",
+          "tumbon_name": {
+            "th": "บางกระเจ้า",
+            "en": "Bang Krachao"
+          },
+          "province_code": "11",
+          "province_name": {
+            "th": "สมุทรปราการ",
+            "en": "Samut Prakan"
+          }
+        }
+      },
+      {
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 2.574,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 1.949,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "id": 9,
+          "agency_name": {
+            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
+            "en": "Hydro – Informatics Institute (Public Organization)",
+            "jp": ""
+          },
+          "agency_shortname": {
+            "th": "สสน.",
+            "en": "HII",
+            "jp": ""
+          }
+        },
+        "basin": {
+          "id": 10,
+          "basin_code": 10,
+          "basin_name": {
+            "th": "ลุ่มน้ำเจ้าพระยา",
+            "en": "Chao Phraya Basin"
+          }
+        },
+        "station": {
+          "id": 492322,
+          "subbasin_id": 240,
+          "tele_station_name": {
+            "en": "Dhammaraja Gate",
+            "th": "ปตร.พระธรรมราชา"
+          },
+          "tele_station_lat": 14.077689,
+          "tele_station_long": 100.89208,
+          "tele_station_oldcode": "ATG08",
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "agency_id": 9,
+          "geocode_id": 356,
           "hydro_id": null,
           "qmax": null,
           "is_key_station": false,
@@ -2069,10 +2377,10 @@
             "th": "ธัญบุรี",
             "en": "Thanyaburi District"
           },
-          "tumbon_code": "01",
+          "tumbon_code": "06",
           "tumbon_name": {
-            "th": "ประชาธิปัตย์",
-            "en": "Pracha Thipat"
+            "th": "บึงน้ำรักษ์",
+            "en": "Bueng Nam Rak"
           },
           "province_code": "13",
           "province_name": {
@@ -2082,10 +2390,10 @@
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 7.645,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 6.063,
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 11.664,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 7.393,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -2106,28 +2414,28 @@
           }
         },
         "basin": {
-          "id": 13,
-          "basin_code": 12,
+          "id": 10,
+          "basin_code": 10,
           "basin_name": {
-            "th": "ลุ่มน้ำป่าสัก",
-            "en": "Pasak Basin"
+            "th": "ลุ่มน้ำเจ้าพระยา",
+            "en": "Chao Phraya Basin"
           }
         },
         "station": {
-          "id": 492320,
-          "subbasin_id": 257,
+          "id": 492329,
+          "subbasin_id": 240,
           "tele_station_name": {
-            "en": "Phra Narai Gate",
-            "th": "ปตร.พระนารายน์"
+            "en": "Bang Rachan Gate",
+            "th": "ปตร.บางระจัน"
           },
-          "tele_station_lat": 14.558294,
-          "tele_station_long": 100.76207,
-          "tele_station_oldcode": "ATG05",
+          "tele_station_lat": 14.925949,
+          "tele_station_long": 100.275826,
+          "tele_station_oldcode": "ATG15",
           "left_bank": null,
           "right_bank": null,
           "offset": null,
           "agency_id": 9,
-          "geocode_id": 420,
+          "geocode_id": 850,
           "hydro_id": null,
           "qmax": null,
           "is_key_station": false,
@@ -2143,180 +2451,26 @@
           },
           "amphoe_code": "02",
           "amphoe_name": {
-            "th": "ท่าเรือ",
-            "en": "Tha Ruea District"
+            "th": "บางระจัน",
+            "en": "Bang Rachan District"
           },
           "tumbon_code": "03",
           "tumbon_name": {
-            "th": "ท่าหลวง",
-            "en": "Tha Luang"
+            "th": "เชิงกลัด",
+            "en": "Choeng Klat"
           },
-          "province_code": "14",
+          "province_code": "17",
           "province_name": {
-            "th": "พระนครศรีอยุธยา",
-            "en": "Phra Nakhon Si Ayutthaya"
+            "th": "สิงห์บุรี",
+            "en": "Sing Buri"
           }
         }
       },
       {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 112.01,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 109.3,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 5,
-          "basin_code": 5,
-          "basin_name": {
-            "th": "ลุ่มน้ำมูล",
-            "en": "Mun Basin"
-          }
-        },
-        "station": {
-          "id": 602818,
-          "subbasin_id": 142,
-          "tele_station_name": {
-            "en": "Hua Na Weir",
-            "th": "ฝายหัวนา"
-          },
-          "tele_station_lat": 15.13496,
-          "tele_station_long": 104.70208,
-          "tele_station_oldcode": "WEI10",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 2417,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "4",
-          "area_name": {
-            "th": "ภาคตะวันออกเฉียงเหนือ",
-            "en": "Northeast"
-          },
-          "amphoe_code": "03",
-          "amphoe_name": {
-            "th": "กันทรารมย์",
-            "en": "Kanthararom District"
-          },
-          "tumbon_code": "06",
-          "tumbon_name": {
-            "th": "หนองแก้ว",
-            "en": "Nong Kaeo"
-          },
-          "province_code": "33",
-          "province_name": {
-            "th": "ศรีสะเกษ",
-            "en": "Si Sa Ket"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": null,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 142.94,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 3,
-          "basin_code": 3,
-          "basin_name": {
-            "th": "ลุ่มน้ำโขงตะวันออกเฉียงเหนือ",
-            "en": "Northeast Khong Basin"
-          }
-        },
-        "station": {
-          "id": 1117942,
-          "subbasin_id": 70,
-          "tele_station_name": {
-            "en": "BanNa Kham Gate",
-            "th": "ปตร. บ้านนาขาม"
-          },
-          "tele_station_lat": 17.00136,
-          "tele_station_long": 104.42568,
-          "tele_station_oldcode": "ONE14",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 4625,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "4",
-          "area_name": {
-            "th": "ภาคตะวันออกเฉียงเหนือ",
-            "en": "Northeast"
-          },
-          "amphoe_code": "12",
-          "amphoe_name": {
-            "th": "วังยาง",
-            "en": "Wang Yang District"
-          },
-          "tumbon_code": "01",
-          "tumbon_name": {
-            "th": "วังยาง",
-            "en": "Wang Yang"
-          },
-          "province_code": "48",
-          "province_name": {
-            "th": "นครพนม",
-            "en": "Nakhon Phanom"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 6.027,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 5.547,
+        "watergate_datetime_in": "2026-10-23 02:30",
+        "watergate_in": 9.335,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 6.842,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -2345,20 +2499,20 @@
           }
         },
         "station": {
-          "id": 492328,
+          "id": 492327,
           "subbasin_id": 259,
           "tele_station_name": {
-            "en": "Pho Phraya Gate",
-            "th": "ปตร.โพธิ์พระยา"
+            "en": "Cholmakpijarn Gate",
+            "th": "ปตร.ชลมาร์คพิจารณ์"
           },
-          "tele_station_lat": 14.532452,
-          "tele_station_long": 100.122246,
-          "tele_station_oldcode": "ATG14",
+          "tele_station_lat": 14.77117,
+          "tele_station_long": 100.08841,
+          "tele_station_oldcode": "ATG13",
           "left_bank": null,
           "right_bank": null,
           "offset": null,
           "agency_id": 9,
-          "geocode_id": 6713,
+          "geocode_id": 6788,
           "hydro_id": null,
           "qmax": null,
           "is_key_station": false,
@@ -2372,174 +2526,20 @@
             "th": "ภาคกลาง",
             "en": "Central"
           },
-          "amphoe_code": "01",
+          "amphoe_code": "08",
           "amphoe_name": {
-            "th": "เมืองสุพรรณบุรี",
-            "en": "Mueang Suphan Buri District"
+            "th": "สามชุก",
+            "en": "Sam Chuk District"
           },
-          "tumbon_code": "19",
+          "tumbon_code": "03",
           "tumbon_name": {
-            "th": "โพธิ์พระยา",
-            "en": "Pho Phraya"
+            "th": "สามชุก",
+            "en": "Sam Chuk"
           },
           "province_code": "72",
           "province_name": {
             "th": "สุพรรณบุรี",
             "en": "Suphan Buri"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:10",
-        "watergate_in": 130.51,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 126.71,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 4,
-          "basin_code": 4,
-          "basin_name": {
-            "th": "ลุ่มน้ำชี",
-            "en": "Chi Basin Basin"
-          }
-        },
-        "station": {
-          "id": 602815,
-          "subbasin_id": 100,
-          "tele_station_name": {
-            "en": "Roi Et Weir",
-            "th": "ฝายร้อยเอ็ด"
-          },
-          "tele_station_lat": 16.172606,
-          "tele_station_long": 103.78899,
-          "tele_station_oldcode": "WEI07",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 4204,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "4",
-          "area_name": {
-            "th": "ภาคตะวันออกเฉียงเหนือ",
-            "en": "Northeast"
-          },
-          "amphoe_code": "18",
-          "amphoe_name": {
-            "th": "เชียงขวัญ",
-            "en": "Chiang Khwan District"
-          },
-          "tumbon_code": "03",
-          "tumbon_name": {
-            "th": "พระธาตุ",
-            "en": "Phrathat"
-          },
-          "province_code": "45",
-          "province_name": {
-            "th": "ร้อยเอ็ด",
-            "en": "Roi Et"
-          }
-        }
-      },
-      {
-        "watergate_datetime_in": "2026-10-22 22:00",
-        "watergate_in": 16.169,
-        "watergate_datetime_out": "2026-10-22 22:00",
-        "watergate_out": 15.815312,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 10,
-          "basin_code": 10,
-          "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
-          }
-        },
-        "station": {
-          "id": 492316,
-          "subbasin_id": 240,
-          "tele_station_name": {
-            "en": "Pholthep Gate",
-            "th": "ปตร.พลเทพ"
-          },
-          "tele_station_lat": 15.21593,
-          "tele_station_long": 100.07285,
-          "tele_station_oldcode": "ATG011",
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "agency_id": 9,
-          "geocode_id": 894,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "2",
-          "area_name": {
-            "th": "ภาคกลาง",
-            "en": "Central"
-          },
-          "amphoe_code": "01",
-          "amphoe_name": {
-            "th": "เมืองชัยนาท",
-            "en": "Mueang Chai Nat District"
-          },
-          "tumbon_code": "06",
-          "tumbon_name": {
-            "th": "หาดท่าเสา",
-            "en": "Hat Tha Sao"
-          },
-          "province_code": "18",
-          "province_name": {
-            "th": "ชัยนาท",
-            "en": "Chai Nat"
           }
         }
       },
@@ -2777,8 +2777,8 @@
       {
         "watergate_datetime_in": "2026-09-07 06:30",
         "watergate_in": null,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 141.38,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 141.39,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -2931,8 +2931,8 @@
       {
         "watergate_datetime_in": "2026-08-16 09:10",
         "watergate_in": null,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 9.977,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 9.94,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -3316,8 +3316,8 @@
       {
         "watergate_datetime_in": "2026-07-07 08:40",
         "watergate_in": null,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 140.44,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 140.47,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -4012,45 +4012,6 @@
         }
       },
       {
-        "watergate_datetime_in": "0001-01-01 00:00",
-        "watergate_in": null,
-        "watergate_datetime_out": "0001-01-01 00:00",
-        "watergate_out": null,
-        "watergate_out2": null,
-        "pump_on": null,
-        "pump": null,
-        "floodgate_open": null,
-        "floodgate": null,
-        "floodgate_height": null,
-        "agency": {
-          "agency_name": {},
-          "agency_shortname": {}
-        },
-        "basin": {
-          "id": 0,
-          "basin_name": {}
-        },
-        "station": {
-          "id": 0,
-          "tele_station_name": {},
-          "left_bank": null,
-          "right_bank": null,
-          "offset": null,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_name": {},
-          "amphoe_name": {},
-          "tumbon_name": {},
-          "province_name": {}
-        }
-      },
-      {
         "watergate_datetime_in": "2023-08-10 00:00",
         "watergate_in": null,
         "watergate_datetime_out": "2023-08-10 00:00",
@@ -4125,6 +4086,45 @@
             "th": "ชัยนาท",
             "en": "Chai Nat"
           }
+        }
+      },
+      {
+        "watergate_datetime_in": "0001-01-01 00:00",
+        "watergate_in": null,
+        "watergate_datetime_out": "0001-01-01 00:00",
+        "watergate_out": null,
+        "watergate_out2": null,
+        "pump_on": null,
+        "pump": null,
+        "floodgate_open": null,
+        "floodgate": null,
+        "floodgate_height": null,
+        "agency": {
+          "agency_name": {},
+          "agency_shortname": {}
+        },
+        "basin": {
+          "id": 0,
+          "basin_name": {}
+        },
+        "station": {
+          "id": 0,
+          "tele_station_name": {},
+          "left_bank": null,
+          "right_bank": null,
+          "offset": null,
+          "hydro_id": null,
+          "qmax": null,
+          "is_key_station": false,
+          "warning_level_m": null,
+          "critical_level_m": null,
+          "critical_level_msl": null
+        },
+        "geocode": {
+          "area_name": {},
+          "amphoe_name": {},
+          "tumbon_name": {},
+          "province_name": {}
         }
       },
       {
@@ -164620,8 +164620,8 @@
       {
         "watergate_datetime_in": "2019-09-11 18:40",
         "watergate_in": null,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 15.288,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 15.284,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
@@ -170701,8 +170701,8 @@
       {
         "watergate_datetime_in": "2017-12-27 18:10",
         "watergate_in": null,
-        "watergate_datetime_out": "2026-10-22 22:10",
-        "watergate_out": 2.876,
+        "watergate_datetime_out": "2026-10-23 02:30",
+        "watergate_out": 2.863,
         "watergate_out2": null,
         "pump_on": null,
         "pump": null,
