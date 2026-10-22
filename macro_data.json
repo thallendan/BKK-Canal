@@ -1,10 +1,10 @@
 {
-  "timestamp_utc": "2026-10-21T22:22:59.218239+00:00",
+  "timestamp_utc": "2026-10-22T01:32:45.569254+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
     "mjo_phase": 2,
-    "mjo_amp": 1.0453577,
+    "mjo_amp": 1.1046786,
     "iod": 0.146,
     "heat_content": 2.93,
     "status": "SUCCESS"
@@ -56,10 +56,10 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4786,
-    "max_nationwide_1h_mm": 27,
+    "total_nationwide_stations": 4782,
+    "max_nationwide_1h_mm": 19.4,
     "max_nationwide_24h_mm": 122.7,
-    "bkk_samut_prakan_count": 152,
+    "bkk_samut_prakan_count": 151,
     "top_bkk_samut_stations": [
       {
         "station_name": "ส.คลองสี่บาท",
@@ -116,15 +116,6 @@
         "lon": 100.42622
       },
       {
-        "station_name": "สนข.ภาษีเจริญ",
-        "province": "Bangkok",
-        "district": "Phasi Charoen District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 5,
-        "lat": 13.71441,
-        "lon": 100.43696
-      },
-      {
         "station_name": "ปตร.คลองขุนศรีฯ-ค.มหาสวัสดิ์",
         "province": "Bangkok",
         "district": "Thawi Watthana District",
@@ -132,6 +123,15 @@
         "rain_24h_mm": 5,
         "lat": 13.80244,
         "lon": 100.3707
+      },
+      {
+        "station_name": "สนข.ภาษีเจริญ",
+        "province": "Bangkok",
+        "district": "Phasi Charoen District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 5,
+        "lat": 13.71441,
+        "lon": 100.43696
       },
       {
         "station_name": "ส.คลองภาษีเจริญ",
@@ -154,7 +154,7 @@
     ]
   },
   "estuary_tide": {
-    "realtime_msl": -0.332,
+    "realtime_msl": -0.444,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
