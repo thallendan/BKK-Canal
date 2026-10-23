@@ -1,156 +1,21 @@
 {
   "master_type": "WATER_LEVEL_AND_HYDROLOGICAL_TELEMETRY",
-  "timestamp_utc": "2026-10-23T08:50:13.376738+00:00",
-  "total_endpoints": 13,
-  "successful_count": 7,
-  "failed_count": 6,
+  "timestamp_utc": "2026-10-23T09:19:38.229266+00:00",
+  "total_endpoints": 11,
+  "successful_count": 3,
+  "failed_count": 8,
   "parsed_summary": {
     "waterlevel_thaiwater": {
-      "record_count": 805,
-      "sample_record": {
-        "id": 1329706171,
-        "waterlevel_datetime": "2026-10-23 15:30",
-        "waterlevel_m": null,
-        "waterlevel_msl": "1.91",
-        "waterlevel_msl_previous": "1.79",
-        "flow_rate": null,
-        "discharge": null,
-        "storage_percent": "139.64",
-        "sort_order": null,
-        "station_type": "tele_waterlevel",
-        "situation_level": 5,
-        "agency": {
-          "id": 9,
-          "agency_name": {
-            "th": "สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน)",
-            "en": "Hydro – Informatics Institute (Public Organization)",
-            "jp": ""
-          },
-          "agency_shortname": {
-            "th": "สสน.",
-            "en": "HII",
-            "jp": ""
-          }
-        },
-        "basin": {
-          "id": 10,
-          "basin_code": 10,
-          "basin_name": {
-            "th": "ลุ่มน้ำเจ้าพระยา",
-            "en": "Chao Phraya Basin"
-          }
-        },
-        "station": {
-          "id": 575568,
-          "tele_station_name": {
-            "en": "Khlong Lat Bang Yo 2 Gate",
-            "th": "ปตร. คลองลัดบางยอ 2"
-          },
-          "tele_station_lat": 13.661021,
-          "tele_station_long": 100.56727,
-          "tele_station_oldcode": "BKC004",
-          "tele_station_type": "tele_waterlevel",
-          "left_bank": 1.49,
-          "right_bank": 0.905,
-          "min_bank": 0.91,
-          "ground_level": -1.63,
-          "offset": null,
-          "sub_basin_id": 240,
-          "agency_id": 9,
-          "geocode_id": 252,
-          "hydro_id": null,
-          "qmax": null,
-          "is_key_station": false,
-          "warning_level_m": null,
-          "critical_level_m": null,
-          "critical_level_msl": null
-        },
-        "geocode": {
-          "area_code": "2",
-          "area_name": {
-            "th": "ภาคกลาง",
-            "en": "Central"
-          },
-          "amphoe_code": "04",
-          "amphoe_name": {
-            "th": "พระประแดง",
-            "en": "Phra Pradaeng District"
-          },
-          "tumbon_code": "11",
-          "tumbon_name": {
-            "th": "บางกระสอบ",
-            "en": "Bang Krasop"
-          },
-          "province_code": "11",
-          "province_name": {
-            "th": "สมุทรปราการ",
-            "en": "Samut Prakan"
-          }
-        },
-        "diff_wl_bank": "1.00",
-        "diff_wl_bank_text": "ล้นตลิ่ง (ม.)",
-        "river_gid": 188375,
-        "river_name": "แม่น้ำเจ้าพระยา"
-      }
+      "record_count": 0,
+      "sample_record": {}
     },
     "watergate_load": {
       "watergate_count": 0,
       "sample_watergate": {}
     },
-    "estuary_tide": {
-      "realtime_glf001_msl": 1.441,
-      "predicted_n03_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
-      "period": "2026-10-23 15:40"
-    },
-    "dam_storage": {
-      "bhumibol": {
-        "capacity_mcm": 0.0,
-        "storage_mcm": 1.0,
-        "storage_pct": 40.0,
-        "usable_mcm": 400.0
-      },
-      "sirikit": {
-        "capacity_mcm": 0.0,
-        "storage_mcm": 2.0,
-        "storage_pct": 40.0,
-        "usable_mcm": 400.0
-      },
-      "kwai_noi": {
-        "capacity_mcm": 0.0,
-        "storage_mcm": 41.0,
-        "storage_pct": 40.0,
-        "usable_mcm": 400.0
-      },
-      "pasak": {
-        "capacity_mcm": 0.0,
-        "storage_mcm": 19.0,
-        "storage_pct": 40.0,
-        "usable_mcm": 400.0
-      },
-      "srinagarind": {
-        "capacity_mcm": 0.0,
-        "storage_mcm": 21.0,
-        "storage_pct": 40.0,
-        "usable_mcm": 400.0
-      },
-      "vajiralongkorn": {
-        "capacity_mcm": 0.0,
-        "storage_mcm": 22.0,
-        "storage_pct": 40.0,
-        "usable_mcm": 400.0
-      }
-    },
-    "chaophraya_compact": {
-      "text_length": 119,
-      "preview": "ผังลุ่มน้ำ ลุ่มน้ำเจ้าพระยา ข้อมูล ณ วันพฤหัสบดีที่ 8 ตุลาคม พ.ศ. 2569 ดูข้อมูล ตั้งค่า ลุ่มน้ำ จังหวัด เลือก ลุ่มน้ำ ​"
-    },
     "chaophraya_full": {
-      "text_length": 351,
-      "preview": "ติดตามสถานการณ์น้ำในลุ่มน้ำเจ้าพระยา --> &lt;&lt; วันที่ก่อนหน้านี้ วันที่ : วันที่ถัดไป >> ผังเล็ก สีเกณฑ์เตือนภัย. น้ำล้นตลิ่ง น้ำมาก น้ำปกติ น้ำน้อย น้ำน้อยวิกฤต ไม่มีข้อมูล --> เกณฑ์ระดับน้ำ : น้ำล้นตลิ่ง น้ำมาก น้ำปกติ น้ำน้อย น้ำน้อยวิกฤต ไม่มีข้อมูล เกณฑ์ระดับน้ำในเขื่อน : >30-50 น้ำน้อย >50-"
-    },
-    "chaophraya_small": {
-      "text_length": 119,
-      "preview": "ผังลุ่มน้ำ ลุ่มน้ำเจ้าพระยา ข้อมูล ณ วันพฤหัสบดีที่ 8 ตุลาคม พ.ศ. 2569 ดูข้อมูล ตั้งค่า ลุ่มน้ำ จังหวัด เลือก ลุ่มน้ำ ​"
+      "text_length": 254400,
+      "preview": "<!-- itc_water2026-10-23 CACHE HIT | total: 1.9428730010986 ms | mtime: 0.0078678131103516 ms | read: 0.19598007202148 ms | unserialize: 1.6899108886719 ms | size: 138269 bytes --> <!-- d_dam2026-10-2"
     }
   },
   "endpoint_diagnostics": [
@@ -160,7 +25,7 @@
       "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 3.04,
+      "response_time_sec": 2.709,
       "error": null
     },
     {
@@ -169,35 +34,35 @@
       "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/watergate_load",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 3.387,
+      "response_time_sec": 0.76,
       "error": null
     },
     {
       "key": "estuary_tide",
       "name": "Chao Phraya Estuary Sea Level & Tide (Fort Phrachulachomklao)",
       "url": "https://tiwrmdev.hii.or.th/v3/sealevel",
-      "success": true,
-      "status_code": 200,
-      "response_time_sec": 12.581,
-      "error": null
+      "success": false,
+      "status_code": null,
+      "response_time_sec": 0.765,
+      "error": "HTTPSConnectionPool(host='tiwrmdev.hii.or.th', port=443): Max retries exceeded with url: /v3/sealevel (Caused by NewConnectionError(\"HTTPSConnection(host='tiwrmdev.hii.or.th', port=443): Failed to establish a new connection: [Errno 111] Connection refused\"))"
     },
     {
       "key": "dam_storage",
       "name": "Thailand Dam Storage Report (RID/HII)",
       "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en",
-      "success": true,
-      "status_code": 200,
-      "response_time_sec": 1.145,
-      "error": null
+      "success": false,
+      "status_code": null,
+      "response_time_sec": 0.777,
+      "error": "HTTPSConnectionPool(host='tiwrmdev.hii.or.th', port=443): Max retries exceeded with url: /DATA/REPORT/php/rid_dam_1.php?lang=en (Caused by NewConnectionError(\"HTTPSConnection(host='tiwrmdev.hii.or.th', port=443): Failed to establish a new connection: [Errno 111] Connection refused\"))"
     },
     {
       "key": "chaophraya_compact",
       "name": "Chao Phraya Basin Compact Report",
       "url": "https://waterchart.thaiwater.net/basin/chaophraya",
-      "success": true,
-      "status_code": 200,
-      "response_time_sec": 1.329,
-      "error": null
+      "success": false,
+      "status_code": null,
+      "response_time_sec": 0.548,
+      "error": "HTTPSConnectionPool(host='waterchart.thaiwater.net', port=443): Max retries exceeded with url: /basin/chaophraya (Caused by NewConnectionError(\"HTTPSConnection(host='waterchart.thaiwater.net', port=443): Failed to establish a new connection: [Errno 111] Connection refused\"))"
     },
     {
       "key": "chaophraya_full",
@@ -205,70 +70,52 @@
       "url": "https://tiwrm.hii.or.th/DATA/REPORT/php/chart/chaopraya/2013/chaopraya.php",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 3.177,
+      "response_time_sec": 2.994,
       "error": null
     },
     {
       "key": "chaophraya_small",
       "name": "Chao Phraya Basin Small Overview Chart",
       "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/chart/chaopraya/small/chaopraya.php",
-      "success": true,
-      "status_code": 200,
-      "response_time_sec": 2.764,
-      "error": null
+      "success": false,
+      "status_code": null,
+      "response_time_sec": 0.255,
+      "error": "HTTPSConnectionPool(host='tiwrmdev.hii.or.th', port=443): Max retries exceeded with url: /DATA/REPORT/php/chart/chaopraya/small/chaopraya.php (Caused by NewConnectionError(\"HTTPSConnection(host='tiwrmdev.hii.or.th', port=443): Failed to establish a new connection: [Errno 111] Connection refused\"))"
     },
     {
-      "key": "bma_direct_api",
-      "name": "BMA DDS Direct Telemetry API",
-      "url": "https://weather.bangkok.go.th/Klongmap/GetDataForUpdate",
+      "key": "bma_roadside_flood",
+      "name": "BMA DDS Roadside Flood Sensors (PageMap)",
+      "url": "https://weather.bangkok.go.th/Flood/PageMap/GetData?id=0",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.752,
+      "response_time_sec": 0.949,
       "error": "HTTP Error 403: Forbidden"
     },
     {
-      "key": "bma_water_main",
-      "name": "BMA DDS Water Level Monitoring Main",
-      "url": "https://weather.bangkok.go.th/water/",
+      "key": "bma_water_pagemap",
+      "name": "BMA DDS Water Level Sensors (PageMap)",
+      "url": "https://weather.bangkok.go.th/Water/PageMap/GetData",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.077,
+      "response_time_sec": 0.118,
       "error": "HTTP Error 403: Forbidden"
     },
     {
-      "key": "bma_flow_main",
-      "name": "BMA DDS Canal Flow & Velocity Main",
-      "url": "https://weather.bangkok.go.th/flow/",
+      "key": "bma_flow_pagemap",
+      "name": "BMA DDS Canal Flow Metrics (PageMap)",
+      "url": "https://weather.bangkok.go.th/Flow/PageMap/GetData",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.061,
+      "response_time_sec": 0.132,
       "error": "HTTP Error 403: Forbidden"
     },
     {
-      "key": "bma_flood_main",
-      "name": "BMA Roadside Flood Telemetry Main",
-      "url": "https://weather.bangkok.go.th/flood/",
+      "key": "bma_flow_table",
+      "name": "BMA DDS Canal Flow Data Table (PageMap)",
+      "url": "https://weather.bangkok.go.th/Flow/PageMap/GetDataTable",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.06,
-      "error": "HTTP Error 403: Forbidden"
-    },
-    {
-      "key": "bma_station_detail_49",
-      "name": "BMA DDS Individual Station Details (Khlong Bang Na Srinagarindra)",
-      "url": "https://weather.bangkok.go.th/water/StationDetail?id=49",
-      "success": false,
-      "status_code": 403,
-      "response_time_sec": 0.068,
-      "error": "HTTP Error 403: Forbidden"
-    },
-    {
-      "key": "bma_station_detail_237",
-      "name": "BMA DDS Individual Station Details (Khlong Bang Na Sukhumvit)",
-      "url": "https://weather.bangkok.go.th/water/StationDetail?id=237",
-      "success": false,
-      "status_code": 403,
-      "response_time_sec": 0.09,
+      "response_time_sec": 0.119,
       "error": "HTTP Error 403: Forbidden"
     }
   ]
