@@ -1,10 +1,10 @@
 {
-  "timestamp_utc": "2026-10-22T22:21:32.503492+00:00",
+  "timestamp_utc": "2026-10-23T01:33:02.878449+00:00",
   "is_live": true,
   "teleconnections": {
     "enso": 2.84,
     "mjo_phase": 2,
-    "mjo_amp": 1.1046786,
+    "mjo_amp": 1.0331897,
     "iod": 0.146,
     "heat_content": 2.93,
     "status": "SUCCESS"
@@ -56,10 +56,10 @@
   },
   "rainfall_telemetry": {
     "status": "SUCCESS",
-    "total_nationwide_stations": 4776,
-    "max_nationwide_1h_mm": 4,
-    "max_nationwide_24h_mm": 100,
-    "bkk_samut_prakan_count": 147,
+    "total_nationwide_stations": 4775,
+    "max_nationwide_1h_mm": 26,
+    "max_nationwide_24h_mm": 100.5,
+    "bkk_samut_prakan_count": 149,
     "top_bkk_samut_stations": [
       {
         "station_name": "ส.คลองบางซื่อ",
@@ -125,15 +125,6 @@
         "lon": 100.55452
       },
       {
-        "station_name": "ส.คลองบางเขนใหม่",
-        "province": "Bangkok",
-        "district": "Bang Sue District",
-        "rain_1h_mm": 0.0,
-        "rain_24h_mm": 30.5,
-        "lat": 13.81729,
-        "lon": 100.5105
-      },
-      {
         "station_name": "จุดวัด ถ.เทศบาลสงเคราะห์",
         "province": "Bangkok",
         "district": "Chatuchak District",
@@ -141,6 +132,15 @@
         "rain_24h_mm": 30.5,
         "lat": 13.83978,
         "lon": 100.54175
+      },
+      {
+        "station_name": "ส.คลองบางเขนใหม่",
+        "province": "Bangkok",
+        "district": "Bang Sue District",
+        "rain_1h_mm": 0.0,
+        "rain_24h_mm": 30.5,
+        "lat": 13.81729,
+        "lon": 100.5105
       },
       {
         "station_name": "ปากคลองตลาด",
@@ -154,7 +154,7 @@
     ]
   },
   "estuary_tide": {
-    "realtime_msl": 0.216,
+    "realtime_msl": -0.339,
     "predicted_bounds": "Max: 1.16   (11:00:00) | Min: -0.24   (04:00:00)",
     "status": "SUCCESS"
   }
