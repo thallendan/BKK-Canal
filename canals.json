@@ -1,9 +1,0 @@
-{
-  "timestamp_utc": "2026-10-16T01:34:41.064619+00:00",
-  "is_live": false,
-  "status_code": 403,
-  "error": "API returned HTTP 403",
-  "summary": null,
-  "canals": [],
-  "stations": []
-}
