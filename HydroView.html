@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thailand Macro Water System & Basin Hydraulics Telemetry</title>
+    <title>Thailand Macro Water System Telemetry</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -127,7 +127,7 @@
             <div id="tooltip-title" class="font-bold text-white text-sm">Node Title</div>
             <div id="tooltip-subtitle" class="text-cyan-glow text-[11px]">Subtitle</div>
             <div id="tooltip-detail" class="text-slate-300 text-[10px]">Detail text</div>
-            <div class="text-[9px] text-slate-400 italic mt-1">&bull; Click node to open 2D Hydraulic Inspector &bull;</div>
+            <div class="text-[9px] text-slate-400 italic mt-1">&bull; Click node to open Telemetry Inspector &bull;</div>
         </div>
 
         <div class="absolute bottom-6 left-4 z-20 glass-panel p-3 rounded-2xl border border-slate-800/80 text-[11px] font-mono space-y-1.5 hidden md:block">
@@ -143,10 +143,10 @@
     </main>
 
     <!-- ========================================================= -->
-    <!-- INTERACTIVE 2D CANAL & NODE INSPECTOR MODAL               -->
+    <!-- INTERACTIVE NODE TELEMETRY INSPECTOR MODAL                -->
     <!-- ========================================================= -->
     <div id="inspector-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-4xl rounded-3xl border border-slate-800 overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
+        <div class="glass-panel w-full max-w-3xl rounded-3xl border border-slate-800 overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
             <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-navy-900/90">
                 <div class="flex items-center gap-3">
                     <div id="modal-node-icon" class="p-2.5 rounded-xl bg-cyan-glow/10 text-cyan-glow border border-cyan-glow/30">
@@ -163,53 +163,47 @@
             </div>
 
             <div class="p-6 overflow-y-auto space-y-6">
+                <!-- Water Level Stage Profile -->
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
-                            <i data-lucide="move-diagonal-2" class="w-4 h-4 text-cyan-glow"></i>
-                            <span class="text-xs font-bold text-white uppercase tracking-wider font-mono">Interactive 2D Hydraulics Cross-Section</span>
+                            <i data-lucide="activity" class="w-4 h-4 text-cyan-glow"></i>
+                            <span class="text-xs font-bold text-white uppercase tracking-wider font-mono">Telemetry Water Stage Profile</span>
                         </div>
-                        <span id="modal-alert-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                            NORMAL LEVEL
+                        <span id="modal-telemetry-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            TELEMETRY SYNCED
                         </span>
                     </div>
 
-                    <div class="relative w-full h-[300px] rounded-2xl bg-navy-950 border border-slate-800 overflow-hidden shadow-inner">
+                    <div class="relative w-full h-[220px] rounded-2xl bg-navy-950 border border-slate-800 overflow-hidden shadow-inner">
                         <canvas id="cross-section-canvas" class="w-full h-full"></canvas>
 
-                        <div class="absolute top-3 right-3 glass-panel p-3 rounded-xl border border-cyan-glow/30 font-mono text-[11px] space-y-1 text-slate-300 pointer-events-none min-w-[210px]">
-                            <div class="text-[10px] font-sans font-bold text-cyan-glow uppercase tracking-wider mb-1">Station Hydraulics HUD</div>
-                            <div class="flex justify-between"><span>Water Level:</span> <span id="m-hud-level" class="text-white font-bold">+0.00m MSL</span></div>
-                            <div class="flex justify-between"><span>Bed Level:</span> <span id="m-hud-bed" class="text-slate-400">-0.00m MSL</span></div>
-                            <div class="flex justify-between"><span>Bank/Crest:</span> <span id="m-hud-bank" class="text-slate-400">+0.00m MSL</span></div>
-                            <div class="flex justify-between"><span>Freeboard:</span> <span id="m-hud-freeboard" class="text-cyan-glow">0.00m</span></div>
-                            <div class="flex justify-between"><span>Wetted Area:</span> <span id="m-hud-area" class="text-warning">0.0 m²</span></div>
-                            <div class="flex justify-between"><span>Velocity V:</span> <span id="m-hud-velocity" class="text-indigo-300">0.00 m/s</span></div>
-                            <div class="flex justify-between border-t border-slate-800 pt-1 mt-1 text-xs"><span>Discharge Q:</span> <span id="m-hud-discharge" class="text-emerald-400 font-bold">0 m³/s</span></div>
+                        <div class="absolute top-3 right-3 glass-panel p-3 rounded-xl border border-cyan-glow/30 font-mono text-[11px] space-y-1 text-slate-300 pointer-events-none min-w-[200px]">
+                            <div class="text-[10px] font-sans font-bold text-cyan-glow uppercase tracking-wider mb-1">Live Readings</div>
+                            <div class="flex justify-between"><span>Water Stage:</span> <span id="m-hud-level" class="text-white font-bold">N/A</span></div>
+                            <div class="flex justify-between"><span>Discharge Q:</span> <span id="m-hud-discharge" class="text-emerald-400 font-bold">N/A</span></div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Verified Station Telemetry Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
                     <div class="bg-navy-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
-                        <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-cyan-glow">Primary Telemetry</span>
-                        <div class="flex justify-between"><span class="text-slate-300">Flow Rate Q:</span> <span id="modal-stat-q" class="text-white font-bold">1,250 m³/s</span></div>
-                        <div class="flex justify-between"><span class="text-slate-300">Stage Height:</span> <span id="modal-stat-stage" class="text-cyan-glow">+1.45m</span></div>
-                        <div class="flex justify-between"><span class="text-slate-300">Capacity Status:</span> <span id="modal-stat-status" class="text-emerald-400 font-bold">OPTIMAL</span></div>
+                        <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-cyan-glow">Water Stage Level</span>
+                        <div class="text-lg font-bold text-white" id="modal-stat-stage">N/A</div>
+                        <div class="text-[10px] text-slate-400">Observed Elevation (m MSL)</div>
                     </div>
 
                     <div class="bg-navy-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
-                        <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-warning">Infrastructure Control</span>
-                        <div class="flex justify-between"><span class="text-slate-300">Control Type:</span> <span id="modal-stat-type" class="text-white">Motorized Sluice</span></div>
-                        <div class="flex justify-between"><span class="text-slate-300">Operation State:</span> <span id="modal-stat-operation" class="text-amber-300 font-bold">45% Gate Open</span></div>
-                        <div class="flex justify-between"><span class="text-slate-300">Head Loss &Delta;h:</span> <span id="modal-stat-headloss" class="text-slate-200">0.42 m</span></div>
+                        <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-emerald-400">Flow Discharge (Q)</span>
+                        <div class="text-lg font-bold text-white" id="modal-stat-q">N/A</div>
+                        <div class="text-[10px] text-slate-400">Volumetric Rate (m³/s)</div>
                     </div>
 
                     <div class="bg-navy-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
-                        <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-cyan-electric">Catchment & Estuary Impact</span>
-                        <div class="flex justify-between"><span class="text-slate-300">Downstream Basin:</span> <span id="modal-stat-basin" class="text-white">Lower Chao Phraya</span></div>
-                        <div class="flex justify-between"><span class="text-slate-300">Tide Influence:</span> <span id="modal-stat-tide" class="text-blue-300">MODERATE</span></div>
-                        <div class="flex justify-between"><span class="text-slate-300">Flood Risk Index:</span> <span id="modal-stat-risk" class="text-emerald-400 font-bold">LOW (12%)</span></div>
+                        <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-warning">Telemetry Update</span>
+                        <div class="text-xs font-bold text-amber-300" id="modal-stat-time">N/A</div>
+                        <div class="text-[10px] text-slate-400">Last Telemetry Timestamp</div>
                     </div>
                 </div>
             </div>
@@ -222,89 +216,83 @@
     <script>
         const CLOUDFRONT_URL = 'https://d2jyi6rznjny0r.cloudfront.net/klongmap-latest.json';
 
-        // NODE DEFINITIONS WITH ACCURATE INDIVIDUAL GEOMETRIES (Bed, Bank/Crest, Critical Alert Level)
+        // NO HARDCODED VISUAL PLACEHOLDERS OR DEFAULT FAKE METRICS
         const waterNodes = {
             bhumibol: {
                 id: 'bhumibol', type: 'dam', name: 'Bhumibol Dam', subtitle: 'Ping River Basin / Tak Province',
-                worldX: 380, worldY: 140, cap: 13462, basePct: 70.8, stage: 242.50, bedLevel: 160.00, bankLevel: 260.00, alertLevel: 255.00, discharge: 1425,
-                controlType: 'Hydroelectric Dam', operation: '70.8% Reservoir Capacity', headloss: 45.2, basin: 'Ping River Basin', risk: 'LOW (12%)'
+                worldX: 380, worldY: 140, stage: null, discharge: null, lastUpdate: null
             },
             sirikit: {
                 id: 'sirikit', type: 'dam', name: 'Sirikit Dam', subtitle: 'Nan River Basin / Uttaradit Province',
-                worldX: 950, worldY: 120, cap: 9510, basePct: 81.7, stage: 145.20, bedLevel: 90.00, bankLevel: 162.00, alertLevel: 158.00, discharge: 980,
-                controlType: 'Hydroelectric Dam', operation: '81.7% Reservoir Capacity', headloss: 38.6, basin: 'Nan River Basin', risk: 'LOW (8%)'
+                worldX: 950, worldY: 120, stage: null, discharge: null, lastUpdate: null
             },
             kwainoi: {
                 id: 'kwainoi', type: 'dam', name: 'Kwai Noi Dam', subtitle: 'Kwai Noi Basin / Phitsanulok',
-                worldX: 1180, worldY: 260, cap: 939, basePct: 85.5, stage: 112.40, bedLevel: 50.00, bankLevel: 130.00, alertLevel: 125.00, discharge: 310,
-                controlType: 'Multi-purpose Dam', operation: '85.5% Reservoir Capacity', headloss: 18.4, basin: 'Kwai Noi Basin', risk: 'LOW (5%)'
+                worldX: 1180, worldY: 260, stage: null, discharge: null, lastUpdate: null
             },
             pasak: {
                 id: 'pasak', type: 'dam', name: 'Pasak Jolasid Dam', subtitle: 'Pasak River Basin / Lopburi',
-                worldX: 1350, worldY: 680, cap: 872, basePct: 92.4, stage: 39.80, bedLevel: 20.00, bankLevel: 43.00, alertLevel: 41.50, discharge: 520,
-                controlType: 'Earth-fill Dam', operation: '92.4% Reservoir Capacity', headloss: 12.1, basin: 'Pasak River Basin', risk: 'MODERATE (34%)'
+                worldX: 1350, worldY: 680, stage: null, discharge: null, lastUpdate: null
             },
             vajiralongkorn: {
                 id: 'vajiralongkorn', type: 'dam', name: 'Vajiralongkorn Dam', subtitle: 'Mae Klong Basin / Kanchanaburi',
-                worldX: 160, worldY: 480, cap: 8860, basePct: 97.5, stage: 142.10, bedLevel: 80.00, bankLevel: 155.00, alertLevel: 150.00, discharge: 850,
-                controlType: 'Rock-fill Dam', operation: '97.5% Reservoir Capacity', headloss: 52.0, basin: 'Mae Klong Basin', risk: 'MODERATE (28%)'
+                worldX: 160, worldY: 480, stage: null, discharge: null, lastUpdate: null
             },
             srinagarind: {
                 id: 'srinagarind', type: 'dam', name: 'Srinagarind Dam', subtitle: 'Mae Klong Basin / Kanchanaburi',
-                worldX: 280, worldY: 560, cap: 17745, basePct: 98.9, stage: 172.50, bedLevel: 70.00, bankLevel: 180.00, alertLevel: 177.00, discharge: 1650,
-                controlType: 'Embankment Dam', operation: '98.9% Reservoir Capacity', headloss: 68.5, basin: 'Mae Klong Basin', risk: 'LOW (15%)'
+                worldX: 280, worldY: 560, stage: null, discharge: null, lastUpdate: null
             },
             c2_nakhonsawan: {
                 id: 'c2_nakhonsawan', type: 'gauge', name: 'Station C.2 (Nakhon Sawan)', subtitle: 'Ping & Nan Confluence Entry Gauge',
-                worldX: 720, worldY: 680, discharge: 2150, stage: 22.35, bedLevel: 12.00, bankLevel: 28.00, alertLevel: 25.50, controlType: 'River Telemeter', operation: 'Automated Monitoring', headloss: 0.12, basin: 'Upper Chao Phraya', risk: 'LOW (18%)'
+                worldX: 720, worldY: 680, stage: null, discharge: null, lastUpdate: null
             },
             c13_chaophraya_dam: {
                 id: 'c13_chaophraya_dam', type: 'gate', name: 'Chao Phraya Dam (Station C.13)', subtitle: 'Chai Nat Barrage & Western Diversion Gate',
-                worldX: 720, worldY: 860, discharge: 1850, stage: 14.20, bedLevel: 5.00, bankLevel: 17.50, alertLevel: 16.00, controlType: 'Gated Barrage', operation: 'Regulated Diversion', headloss: 1.85, basin: 'Central Chao Phraya', risk: 'MODERATE (42%)'
+                worldX: 720, worldY: 860, stage: null, discharge: null, lastUpdate: null
             },
             rama6_barrage: {
                 id: 'rama6_barrage', type: 'gate', name: 'Rama VI Barrage', subtitle: 'Pasak River Flood Control Gate / Ayutthaya',
-                worldX: 1080, worldY: 960, discharge: 420, stage: 6.15, bedLevel: 1.00, bankLevel: 9.50, alertLevel: 8.00, controlType: 'Sluice Structure', operation: '65% Gate Open', headloss: 0.85, basin: 'Lower Pasak', risk: 'LOW (15%)'
+                worldX: 1080, worldY: 960, stage: null, discharge: null, lastUpdate: null
             },
             ayutthaya_confluence: {
                 id: 'ayutthaya_confluence', type: 'gauge', name: 'Ayutthaya Confluence', subtitle: 'Pasak & Chao Phraya River Merge',
-                worldX: 800, worldY: 1140, discharge: 2270, stage: 3.10, bedLevel: -1.50, bankLevel: 5.20, alertLevel: 4.50, controlType: 'Hydraulic Confluence', operation: 'Free Flowing', headloss: 0.08, basin: 'Lower Chao Phraya', risk: 'MODERATE (38%)'
+                worldX: 800, worldY: 1140, stage: null, discharge: null, lastUpdate: null
             },
             c29a_bangsai: {
                 id: 'c29a_bangsai', type: 'gauge', name: 'Station C.29A (Bang Sai)', subtitle: 'Primary Flood Discharge Gauge to Greater Bangkok',
-                worldX: 760, worldY: 1320, discharge: 2380, stage: 2.15, bedLevel: -2.50, bankLevel: 3.80, alertLevel: 2.80, controlType: 'Key Telemetry Station', operation: 'Continuous Monitoring', headloss: 0.05, basin: 'Greater Bangkok Entry', risk: 'ELEVATED (55%)'
+                worldX: 760, worldY: 1320, stage: null, discharge: null, lastUpdate: null
             },
             khlong_hokwa: {
                 id: 'khlong_hokwa', type: 'gate', name: 'Khlong Hok Wa Water Gate', subtitle: 'Northern Bangkok Canal Protection Gate',
-                worldX: 980, worldY: 1400, discharge: 120, stage: 0.95, bedLevel: -1.80, bankLevel: 2.50, alertLevel: 1.20, controlType: 'Canal Control Sluice', operation: '40% Gate Open', headloss: 0.35, basin: 'North BMA Canal Grid', risk: 'LOW (20%)'
+                worldX: 980, worldY: 1400, stage: null, discharge: null, lastUpdate: null
             },
             khlong_saensaep: {
                 id: 'khlong_saensaep', type: 'canal', name: 'Khlong Saen Saep', subtitle: 'Bangkok Eastern Flood Bypass Drainage Canal',
-                worldX: 1150, worldY: 1560, discharge: 85, stage: 0.65, bedLevel: -2.20, bankLevel: 1.80, alertLevel: 0.80, controlType: 'Urban Drainage Canal', operation: 'Gravity & Pump Bypass', headloss: 0.15, basin: 'East Bangkok Basin', risk: 'LOW (15%)'
+                worldX: 1150, worldY: 1560, stage: null, discharge: null, lastUpdate: null
             },
             khlong_prem: {
                 id: 'khlong_prem', type: 'canal', name: 'Khlong Prem Prachakon', subtitle: 'North-South Bangkok Center Canal',
-                worldX: 760, worldY: 1460, discharge: 65, stage: 0.58, bedLevel: -2.00, bankLevel: 1.90, alertLevel: 0.85, controlType: 'Urban Arterial Canal', operation: 'Regulated Channel', headloss: 0.10, basin: 'Central BMA Grid', risk: 'LOW (18%)'
+                worldX: 760, worldY: 1460, stage: null, discharge: null, lastUpdate: null
             },
             khlong_bangsue: {
                 id: 'khlong_bangsue', type: 'canal', name: 'Khlong Bang Sue', subtitle: 'Central Bangkok Drainage Conduit',
-                worldX: 680, worldY: 1520, discharge: 50, stage: 0.42, bedLevel: -2.50, bankLevel: 1.75, alertLevel: 0.75, controlType: 'Drainage Conduit', operation: 'Tunnel Outfall Active', headloss: 0.12, basin: 'Central BMA Grid', risk: 'LOW (10%)'
+                worldX: 680, worldY: 1520, stage: null, discharge: null, lastUpdate: null
             },
             pump_phraya_ratcha: {
                 id: 'pump_phraya_ratcha', type: 'pump', name: 'Khlong Phraya Ratchamontri Pump Station', subtitle: 'Thonburi Outer Drainage Barrier',
-                worldX: 600, worldY: 1760, capacity: 160, discharge: 140, stage: 0.72, bedLevel: -3.00, bankLevel: 1.80, alertLevel: 0.80, pumpPower: 85, controlType: 'Heavy Pumping Station', operation: '85% Power Active', headloss: 1.20, basin: 'Thonburi Basin', risk: 'LOW (14%)', labelPos: 'top'
+                worldX: 600, worldY: 1760, stage: null, discharge: null, lastUpdate: null, labelPos: 'top'
             },
             pump_sanamchai: {
                 id: 'pump_sanamchai', type: 'pump', name: 'Khlong Sanam Chai Pump Station', subtitle: 'South-West Bangkok Drainage Outfall',
-                worldX: 760, worldY: 1840, capacity: 180, discharge: 165, stage: 0.85, bedLevel: -3.20, bankLevel: 1.95, alertLevel: 0.85, pumpPower: 90, controlType: 'Heavy Pumping Station', operation: '90% Power Active', headloss: 1.45, basin: 'Thonburi Basin', risk: 'LOW (16%)', labelPos: 'bottom'
+                worldX: 760, worldY: 1840, stage: null, discharge: null, lastUpdate: null, labelPos: 'bottom'
             },
             pump_chaengron: {
                 id: 'pump_chaengron', type: 'pump', name: 'Khlong Chaeng Ron Pump Station', subtitle: 'Chao Phraya Estuary High-Capacity Pump',
-                worldX: 920, worldY: 1760, capacity: 150, discharge: 125, stage: 0.68, bedLevel: -3.50, bankLevel: 2.10, alertLevel: 0.90, pumpPower: 75, controlType: 'Coastal Pump Outfall', operation: '75% Power Active', headloss: 1.10, basin: 'Estuary Barrier', risk: 'LOW (12%)', labelPos: 'top'
+                worldX: 920, worldY: 1760, stage: null, discharge: null, lastUpdate: null, labelPos: 'top'
             },
             fort_chula: {
                 id: 'fort_chula', type: 'estuary', name: 'Fort Chula Tide Gauge Station', subtitle: 'Phra Chulachomklao Fort / Samut Prakan',
-                worldX: 860, worldY: 1980, tideLevel: 1.20, stage: 1.20, bedLevel: -6.00, bankLevel: 2.80, alertLevel: 1.80, discharge: 2450, controlType: 'Oceanographic Station', operation: 'High Tide Phase', headloss: 0.00, basin: 'Gulf of Thailand', risk: 'MODERATE (30%)'
+                worldX: 860, worldY: 1980, stage: null, discharge: null, lastUpdate: null
             }
         };
 
@@ -322,16 +310,9 @@
                 {x: 720, y: 680}, {x: 720, y: 860}, {x: 800, y: 1140}
             ]},
             { id: 'chaophraya_lower', stroke: '#00f5d4', width: 10, name: 'Chao Phraya River (Lower BMA Loop)', labelPt: { x: 810, y: 1650 }, points: [
-                {x: 800, y: 1140},
-                {x: 760, y: 1320},
-                {x: 700, y: 1400},
-                {x: 640, y: 1460},
-                {x: 750, y: 1530},
-                {x: 940, y: 1600},
-                {x: 920, y: 1680},
-                {x: 700, y: 1720},
-                {x: 840, y: 1820},
-                {x: 860, y: 1980}
+                {x: 800, y: 1140}, {x: 760, y: 1320}, {x: 700, y: 1400}, {x: 640, y: 1460},
+                {x: 750, y: 1530}, {x: 940, y: 1600}, {x: 920, y: 1680}, {x: 700, y: 1720},
+                {x: 840, y: 1820}, {x: 860, y: 1980}
             ]},
             { id: 'thachin', stroke: '#0284c7', width: 5, name: 'Tha Chin River', labelPt: { x: 500, y: 1300 }, points: [
                 {x: 720, y: 860}, {x: 520, y: 1100}, {x: 500, y: 1500}, {x: 500, y: 1920}
@@ -397,8 +378,13 @@
                 
                 const stations = data.waterStation || data.data?.waterStation || data.data || [];
                 updateNodesFromCloudFront(stations);
+
+                document.getElementById('system-status-text').innerText = 'LIVE TELEMETRY ACTIVE';
+                document.getElementById('system-status-dot').className = 'w-2 h-2 rounded-full bg-emerald-400 animate-ping';
             } catch (err) {
-                console.warn('CloudFront fetch fallback to baseline telemetry:', err.message);
+                console.warn('CloudFront live fetch failed:', err.message);
+                document.getElementById('system-status-text').innerText = 'TELEMETRY OFFLINE';
+                document.getElementById('system-status-dot').className = 'w-2 h-2 rounded-full bg-critical';
             }
         }
 
@@ -412,12 +398,12 @@
                 for (let key in waterNodes) {
                     const node = waterNodes[key];
                     if (node.id.toLowerCase() === shortName || node.name.toLowerCase().includes(shortName)) {
-                        if (wl.wl_in !== undefined && wl.wl_in !== null) {
-                            node.stage = parseFloat(wl.wl_in);
-                        }
-                        if (wl.discharge !== undefined && wl.discharge !== null) {
-                            node.discharge = parseFloat(wl.discharge);
-                        }
+                        const stageVal = wl.wl_in !== undefined && wl.wl_in !== null ? parseFloat(wl.wl_in) : (wl.wl_m !== undefined ? parseFloat(wl.wl_m) : null);
+                        const dischargeVal = wl.discharge !== undefined && wl.discharge !== null ? parseFloat(wl.discharge) : null;
+                        
+                        node.stage = stageVal;
+                        node.discharge = dischargeVal;
+                        node.lastUpdate = wl.time || wl.datetime || st.time || new Date().toISOString();
                     }
                 }
             });
@@ -468,7 +454,7 @@
 
                     document.getElementById('tooltip-title').innerText = node.name;
                     document.getElementById('tooltip-subtitle').innerText = node.subtitle;
-                    document.getElementById('tooltip-detail').innerText = `Type: ${node.type.toUpperCase()} | Click for 2D Cross-Section`;
+                    document.getElementById('tooltip-detail').innerText = `Stage: ${node.stage !== null ? (node.stage >= 0 ? '+' : '') + node.stage.toFixed(2) + 'm' : 'N/A'} | Click for Telemetry Inspector`;
                 } else {
                     simState.hoveredNode = null;
                     tooltip.classList.add('hidden');
@@ -647,22 +633,13 @@
             ctx.fillStyle = 'rgba(0, 180, 216, 0.3)';
             ctx.fill();
 
-            const tideVal = waterNodes.fort_chula ? waterNodes.fort_chula.tideLevel : 1.20;
-            const tideScale = 25;
-            const actTideY = gulfY - (tideVal * tideScale);
-
-            ctx.beginPath();
-            ctx.moveTo(0, actTideY);
-            ctx.lineTo(width, actTideY);
-            ctx.strokeStyle = '#00b4d8';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([8, 4]);
-            ctx.stroke();
-            ctx.setLineDash([]);
+            const tideNode = waterNodes.fort_chula;
+            const hasTideData = tideNode && tideNode.stage !== null;
+            const tideText = hasTideData ? `SEA LEVEL (+MSL): ${tideNode.stage >= 0 ? '+' : ''}${tideNode.stage.toFixed(2)}m` : 'SEA LEVEL (+MSL): AWAITING TELEMETRY';
 
             ctx.fillStyle = '#00b4d8';
             ctx.font = 'bold 12px monospace';
-            ctx.fillText(`SEA LEVEL (+MSL): ${tideVal >= 0 ? '+' : ''}${tideVal.toFixed(2)}m`, 60, actTideY - 8);
+            ctx.fillText(tideText, 60, gulfY + 40);
         }
 
         function drawBangkokCanalBox(ctx) {
@@ -748,10 +725,8 @@
         }
 
         function drawDamNode(ctx, node, isHovered, t) {
-            const curPct = node.basePct || 75.0;
-
             ctx.fillStyle = isHovered ? '#00f5d4' : '#1c2541';
-            ctx.strokeStyle = curPct > 85 ? '#ff0054' : '#00b4d8';
+            ctx.strokeStyle = node.stage !== null ? '#00b4d8' : '#475569';
             ctx.lineWidth = 3;
 
             ctx.beginPath();
@@ -759,34 +734,13 @@
             ctx.fill();
             ctx.stroke();
 
-            const rotSpeed = t * 0.003;
-            ctx.save();
-            ctx.rotate(rotSpeed);
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 2;
-            for (let i = 0; i < 4; i++) {
-                ctx.rotate(Math.PI / 2);
-                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 14); ctx.stroke();
-            }
-            ctx.restore();
-
-            if (curPct > 85) {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                for (let p = 0; p < 6; p++) {
-                    const sx = (Math.random() - 0.5) * 20;
-                    const sy = 20 + Math.random() * 15;
-                    ctx.beginPath();
-                    ctx.arc(sx, sy, 2 + Math.random()*2, 0, Math.PI*2);
-                    ctx.fill();
-                }
-            }
-
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 11px font-sans';
             ctx.fillText(node.name, 28, 0);
-            ctx.fillStyle = curPct > 85 ? '#ff0054' : '#00f5d4';
+            ctx.fillStyle = '#00f5d4';
             ctx.font = 'bold 10px monospace';
-            ctx.fillText(`STORAGE: ${curPct.toFixed(1)}%`, 28, 14);
+            const stageText = node.stage !== null ? `STAGE: ${node.stage >= 0 ? '+' : ''}${node.stage.toFixed(2)}m` : 'STAGE: N/A';
+            ctx.fillText(stageText, 28, 14);
         }
 
         function drawGateNode(ctx, node, isHovered, t) {
@@ -797,17 +751,13 @@
             ctx.fillRect(-14, -14, 28, 28);
             ctx.strokeRect(-14, -14, 28, 28);
 
-            const openPct = node.operation && node.operation.includes('%') ? parseInt(node.operation) : 45;
-            const openH = (openPct / 100) * 20;
-            ctx.fillStyle = '#ffb703';
-            ctx.fillRect(-10, 10 - openH, 20, openH);
-
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 11px font-sans';
             ctx.fillText(node.name, 20, -2);
             ctx.fillStyle = '#ffb703';
             ctx.font = 'bold 10px monospace';
-            ctx.fillText(`GATE: ${openPct}% OPEN`, 20, 12);
+            const stageText = node.stage !== null ? `STAGE: ${node.stage >= 0 ? '+' : ''}${node.stage.toFixed(2)}m` : 'STAGE: N/A';
+            ctx.fillText(stageText, 20, 12);
         }
 
         function drawPumpNode(ctx, node, isHovered, t) {
@@ -820,26 +770,6 @@
             ctx.fill();
             ctx.stroke();
 
-            const pPower = node.pumpPower || 80;
-            const pumpRot = t * 0.01 * (pPower / 50);
-            ctx.save();
-            ctx.rotate(pumpRot);
-            ctx.fillStyle = '#10b981';
-            for (let b = 0; b < 3; b++) {
-                ctx.rotate((Math.PI * 2) / 3);
-                ctx.fillRect(-2, -12, 4, 12);
-            }
-            ctx.restore();
-
-            if (pPower > 0) {
-                ctx.fillStyle = 'rgba(16, 185, 129, 0.7)';
-                for (let j = 0; j < 4; j++) {
-                    ctx.beginPath();
-                    ctx.arc((Math.random() - 0.5) * 12, 18 + Math.random() * 10, 2, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
             const labelPos = node.labelPos || 'bottom';
             ctx.font = 'bold 11px font-sans';
             ctx.textAlign = 'center';
@@ -848,20 +778,22 @@
                 ? [node.name.replace(' Pump Station', ''), 'Pump Station']
                 : [node.name];
 
+            const stageText = node.stage !== null ? `STAGE: ${node.stage >= 0 ? '+' : ''}${node.stage.toFixed(2)}m` : 'STAGE: N/A';
+
             if (labelPos === 'top') {
                 ctx.fillStyle = '#ffffff';
                 ctx.fillText(lines[0], 0, -32);
                 if (lines[1]) ctx.fillText(lines[1], 0, -20);
                 ctx.fillStyle = '#10b981';
                 ctx.font = 'bold 10px monospace';
-                ctx.fillText(`PUMP: ${pPower}% POWER`, 0, -8);
+                ctx.fillText(stageText, 0, -8);
             } else if (labelPos === 'bottom') {
                 ctx.fillStyle = '#ffffff';
                 ctx.fillText(lines[0], 0, 28);
                 if (lines[1]) ctx.fillText(lines[1], 0, 40);
                 ctx.fillStyle = '#10b981';
                 ctx.font = 'bold 10px monospace';
-                ctx.fillText(`PUMP: ${pPower}% POWER`, 0, 52);
+                ctx.fillText(stageText, 0, 52);
             } else {
                 ctx.textAlign = 'left';
                 ctx.fillStyle = '#ffffff';
@@ -869,7 +801,7 @@
                 if (lines[1]) ctx.fillText(lines[1], 22, 6);
                 ctx.fillStyle = '#10b981';
                 ctx.font = 'bold 10px monospace';
-                ctx.fillText(`PUMP: ${pPower}% POWER`, 22, 18);
+                ctx.fillText(stageText, 22, 18);
             }
             ctx.textAlign = 'left';
         }
@@ -897,23 +829,14 @@
             ctx.fillRect(-18, -18, 36, 36);
             ctx.strokeRect(-18, -18, 36, 36);
 
-            ctx.beginPath();
-            ctx.moveTo(-12, 0);
-            for (let x = -12; x <= 12; x += 4) {
-                ctx.lineTo(x, Math.sin(x * 0.3 + t * 0.005) * 4);
-            }
-            ctx.strokeStyle = '#38bdf8';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            const tLvl = node.tideLevel !== undefined ? node.tideLevel : 1.20;
+            const stageText = node.stage !== null ? `STAGE: ${node.stage >= 0 ? '+' : ''}${node.stage.toFixed(2)}m` : 'STAGE: N/A';
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 11px font-sans';
             ctx.fillText(node.name, 24, -2);
             ctx.fillStyle = '#38bdf8';
             ctx.font = 'bold 10px monospace';
-            ctx.fillText(`FORT CHULA: ${tLvl >= 0 ? '+' : ''}${tLvl.toFixed(2)}m`, 24, 12);
+            ctx.fillText(stageText, 24, 12);
         }
 
         function openInspectorModal(node) {
@@ -923,21 +846,13 @@
             document.getElementById('modal-node-subtitle').innerText = node.subtitle;
             document.getElementById('inspector-modal').classList.remove('hidden');
 
-            const qVal = node.discharge ? `${node.discharge.toLocaleString()} m³/s` : '1,250 m³/s';
-            const stageVal = node.stage !== undefined ? `${node.stage >= 0 ? '+' : ''}${node.stage.toFixed(2)}m MSL` : '+1.45m MSL';
+            const qVal = node.discharge !== null && node.discharge !== undefined ? `${node.discharge.toLocaleString()} m³/s` : 'N/A';
+            const stageVal = node.stage !== null && node.stage !== undefined ? `${node.stage >= 0 ? '+' : ''}${node.stage.toFixed(2)} m MSL` : 'N/A';
+            const timeVal = node.lastUpdate ? new Date(node.lastUpdate).toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }) : 'N/A';
             
             document.getElementById('modal-stat-q').innerText = qVal;
             document.getElementById('modal-stat-stage').innerText = stageVal;
-            document.getElementById('modal-stat-type').innerText = node.controlType || node.type.toUpperCase();
-            document.getElementById('modal-stat-operation').innerText = node.operation || (node.basePct ? `${node.basePct}% Storage` : 'Active Telemetry');
-            document.getElementById('modal-stat-basin').innerText = node.basin || node.subtitle.split('/')[0] || 'Lower Chao Phraya';
-            
-            if (node.headloss !== undefined) {
-                document.getElementById('modal-stat-headloss').innerText = `${node.headloss} m`;
-            }
-            if (node.risk) {
-                document.getElementById('modal-stat-risk').innerText = node.risk;
-            }
+            document.getElementById('modal-stat-time').innerText = timeVal;
 
             render2DCrossSection();
         }
@@ -960,119 +875,57 @@
 
             crossCtx.clearRect(0, 0, w, h);
 
-            // DYNAMICALLY FETCH NODE-SPECIFIC PHYSICAL GEOMETRIC PARAMETERS
-            const bedLevel = node.bedLevel !== undefined ? node.bedLevel : -2.00;
-            const bankLevel = node.bankLevel !== undefined ? node.bankLevel : 1.98;
-            const alertLevel = node.alertLevel !== undefined ? node.alertLevel : 0.80;
-            const waterLevel = node.stage !== undefined ? node.stage : (node.tideLevel !== undefined ? node.tideLevel : 0.85);
+            const stageVal = node.stage;
+            const dischargeVal = node.discharge;
 
-            const depthMeters = Math.max(0.1, waterLevel - bedLevel);
-            const totalSpan = Math.max(1.0, bankLevel - bedLevel);
-            const waterRatio = Math.max(0, Math.min(1.0, depthMeters / totalSpan));
-
-            const y_bed = h - 40;
-            const y_bank = 50;
-            const y_water = y_bed - (y_bed - y_bank) * waterRatio;
-
-            const x_center = w / 2;
-            const w_bottom = w * 0.45;
-            const w_top = w * 0.85;
-            const w_water_surface = w_bottom + (w_top - w_bottom) * waterRatio;
-
+            // Render background
             crossCtx.fillStyle = '#0b132b';
             crossCtx.fillRect(0, 0, w, h);
 
-            crossCtx.beginPath();
-            crossCtx.moveTo(x_center - w_top/2 - 20, y_bank);
-            crossCtx.lineTo(x_center - w_top/2, y_bank);
-            crossCtx.lineTo(x_center - w_bottom/2, y_bed);
-            crossCtx.lineTo(x_center + w_bottom/2, y_bed);
-            crossCtx.lineTo(x_center + w_top/2, y_bank);
-            crossCtx.lineTo(x_center + w_top/2 + 20, y_bank);
-            crossCtx.lineTo(x_center + w_top/2 + 20, h);
-            crossCtx.lineTo(x_center - w_top/2 - 20, h);
-            crossCtx.closePath();
+            if (stageVal === null || stageVal === undefined) {
+                crossCtx.fillStyle = '#94a3b8';
+                crossCtx.font = 'bold 12px font-mono';
+                ctx.textAlign = 'center';
+                crossCtx.fillText('NO STAGE TELEMETRY AVAILABLE FOR THIS STATION', w / 2, h / 2);
+            } else {
+                // Plot Water Level Line relative to zero datum
+                const y_zero = h / 2;
+                const waterScale = 15; // 15px per meter
+                const y_water = Math.max(30, Math.min(h - 30, y_zero - (stageVal * waterScale)));
 
-            const concreteGrad = crossCtx.createLinearGradient(0, y_bank, 0, y_bed);
-            concreteGrad.addColorStop(0, '#1c2541');
-            concreteGrad.addColorStop(1, '#0b132b');
-            crossCtx.fillStyle = concreteGrad;
-            crossCtx.fill();
-            crossCtx.strokeStyle = '#334155';
-            crossCtx.lineWidth = 2;
-            crossCtx.stroke();
-
-            if (depthMeters > 0) {
                 crossCtx.beginPath();
-                crossCtx.moveTo(x_center - w_bottom/2, y_bed);
-                crossCtx.lineTo(x_center - w_water_surface/2, y_water);
-
-                for (let x = x_center - w_water_surface/2; x <= x_center + w_water_surface/2; x += 10) {
-                    const wy = y_water + Math.sin(x * 0.05 + simState.time * 0.005) * 2.5;
-                    crossCtx.lineTo(x, wy);
-                }
-
-                crossCtx.lineTo(x_center + w_bottom/2, y_bed);
+                crossCtx.moveTo(40, h - 30);
+                crossCtx.lineTo(40, y_water);
+                crossCtx.lineTo(w - 40, y_water);
+                crossCtx.lineTo(w - 40, h - 30);
                 crossCtx.closePath();
 
-                const waterGrad = crossCtx.createLinearGradient(0, y_water, 0, y_bed);
+                const waterGrad = crossCtx.createLinearGradient(0, y_water, 0, h - 30);
                 waterGrad.addColorStop(0, 'rgba(0, 245, 212, 0.8)');
                 waterGrad.addColorStop(1, 'rgba(0, 180, 216, 0.95)');
                 crossCtx.fillStyle = waterGrad;
                 crossCtx.fill();
 
-                crossCtx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                crossCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-                crossCtx.lineWidth = 1.5;
-
-                for (let r = 1; r <= 3; r++) {
-                    const rowY = y_bed - (y_bed - y_water) * (r / 4);
-                    const rowWidth = w_bottom + (w_water_surface - w_bottom) * (r / 4);
-
-                    for (let c = 1; c <= 4; c++) {
-                        const arrowX = (x_center - rowWidth/2) + rowWidth * (c / 5);
-                        crossCtx.beginPath();
-                        crossCtx.moveTo(arrowX - 8, rowY);
-                        crossCtx.lineTo(arrowX + 8, rowY);
-                        crossCtx.stroke();
-                    }
-                }
+                // Surface Wave Line
+                crossCtx.beginPath();
+                crossCtx.moveTo(40, y_water);
+                crossCtx.lineTo(w - 40, y_water);
+                crossCtx.strokeStyle = '#00f5d4';
+                crossCtx.lineWidth = 2;
+                crossCtx.stroke();
             }
 
-            const y_alert = y_bed - (y_bed - y_bank) * ((alertLevel - bedLevel) / totalSpan);
-            crossCtx.beginPath();
-            crossCtx.setLineDash([6, 4]);
-            crossCtx.moveTo(20, y_alert);
-            crossCtx.lineTo(w - 20, y_alert);
-            crossCtx.strokeStyle = '#ff0054';
-            crossCtx.lineWidth = 2;
-            crossCtx.stroke();
-            crossCtx.setLineDash([]);
+            // Update Modal HUD Text (Strictly Data Driven)
+            document.getElementById('m-hud-level').innerText = stageVal !== null && stageVal !== undefined ? `${stageVal >= 0 ? '+' : ''}${stageVal.toFixed(2)}m MSL` : 'N/A';
+            document.getElementById('m-hud-discharge').innerText = dischargeVal !== null && dischargeVal !== undefined ? `${dischargeVal.toLocaleString()} m³/s` : 'N/A';
 
-            crossCtx.fillStyle = '#ff0054';
-            crossCtx.font = 'bold 10px monospace';
-            crossCtx.fillText(`CRITICAL ALERT LINE (${alertLevel >= 0 ? '+' : ''}${alertLevel.toFixed(2)}m MSL)`, 25, y_alert - 6);
-
-            const wettedArea = (10 + 1.25 * depthMeters) * depthMeters;
-            const discharge = node.discharge ? node.discharge : Math.round(wettedArea * 1.2);
-            const velocity = (discharge / Math.max(1, wettedArea)).toFixed(2);
-            const freeboard = Math.max(0, bankLevel - waterLevel);
-
-            document.getElementById('m-hud-level').innerText = `${waterLevel >= 0 ? '+' : ''}${waterLevel.toFixed(2)}m MSL`;
-            document.getElementById('m-hud-bed').innerText = `${bedLevel >= 0 ? '+' : ''}${bedLevel.toFixed(2)}m MSL`;
-            document.getElementById('m-hud-bank').innerText = `${bankLevel >= 0 ? '+' : ''}${bankLevel.toFixed(2)}m MSL`;
-            document.getElementById('m-hud-freeboard').innerText = `${freeboard.toFixed(2)}m`;
-            document.getElementById('m-hud-area').innerText = `${wettedArea.toFixed(1)} m²`;
-            document.getElementById('m-hud-velocity').innerText = `${velocity} m/s`;
-            document.getElementById('m-hud-discharge').innerText = `${discharge.toLocaleString()} m³/s`;
-
-            const alertBadge = document.getElementById('modal-alert-badge');
-            if (waterLevel >= alertLevel) {
-                alertBadge.innerText = `CRITICAL ALERT (${alertLevel >= 0 ? '+' : ''}${alertLevel.toFixed(2)}m EXCEEDED)`;
-                alertBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-critical/20 text-critical border border-critical/40 animate-pulse';
-            } else {
-                alertBadge.innerText = 'NORMAL LEVEL';
+            const alertBadge = document.getElementById('modal-telemetry-badge');
+            if (stageVal !== null) {
+                alertBadge.innerText = 'TELEMETRY SYNCED';
                 alertBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+            } else {
+                alertBadge.innerText = 'TELEMETRY AWAITING DATA';
+                alertBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
             }
         }
     </script>
