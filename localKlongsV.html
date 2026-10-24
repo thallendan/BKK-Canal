@@ -718,14 +718,30 @@
             document.getElementById('statGates').textContent = `${totalWG} Gates`;
         }
 
+        /**
+         * Calculates accurate water gauge level percentage without visual scale clamping distortion.
+         */
         function calcGaugePct(item) {
             if (item.wlIn === null || isNaN(item.wlIn)) return 0;
-            const minH = item.bedBank !== null ? item.bedBank : (item.waterMin !== null ? item.waterMin : 0);
-            const maxH = item.waterMax !== null ? item.waterMax : (item.critical !== null ? item.critical + 1.0 : (minH + 3.0));
+
+            const minH = (item.bedBank !== null && !isNaN(item.bedBank)) 
+                ? item.bedBank 
+                : ((item.waterMin !== null && !isNaN(item.waterMin)) ? item.waterMin : 0);
+
+            // Determine top bound from explicit bank levels or critical thresholds
+            let maxH = null;
+            if (item.leftBank !== null && !isNaN(item.leftBank)) maxH = item.leftBank;
+            if (item.rightBank !== null && !isNaN(item.rightBank) && (maxH === null || item.rightBank > maxH)) maxH = item.rightBank;
+            if (maxH === null && item.critical !== null && !isNaN(item.critical)) maxH = item.critical + 0.5;
+            if (maxH === null && item.waterMax !== null && !isNaN(item.waterMax)) maxH = item.waterMax;
+            if (maxH === null) maxH = minH + 3.0;
+
             const span = maxH - minH;
-            if (span <= 0) return 50;
+            if (span <= 0) return 0;
+
+            // Linear percentage un-clamped floor (allows 0% when water drops to/below canal bed)
             const pct = ((item.wlIn - minH) / span) * 100;
-            return Math.min(Math.max(pct, 10), 100);
+            return Math.min(Math.max(pct, 0), 100);
         }
 
         // Helper: Euclidean distance to segment for matching stations to canal lines
@@ -859,7 +875,7 @@
                     [13.669156292237544, 100.6520794619012],
                     [13.66910422530577, 100.65316999285967],
                     [13.666485285270511, 100.65223123883123],
-                    [13.666692479480895, 100.6515844190798]
+                    [13.66692479480895, 100.6515844190798]
                 ],
                 color: "#ec4899",
                 fillColor: "#f472b6"
@@ -970,27 +986,29 @@
             });
         }
 
-        // SVG Dynamic 2D Canal Cross-Section Generator
+        /**
+         * Renders SVG Canal Cross-Section with label collision prevention 
+         * and strict handling of missing bank elevation data.
+         */
         function renderCanalCrossSectionSVG(st) {
             const wl = (st.wlIn !== null && !isNaN(st.wlIn)) ? st.wlIn : null;
-            const bed = (st.bedBank !== null && !isNaN(st.bedBank)) ? st.bedBank : (st.waterMin !== null ? st.waterMin : (wl !== null ? wl - 2.0 : 0.0));
+            const bed = (st.bedBank !== null && !isNaN(st.bedBank)) 
+                ? st.bedBank 
+                : ((st.waterMin !== null && !isNaN(st.waterMin)) ? st.waterMin : (wl !== null ? wl - 2.0 : 0.0));
             
-            let lb = (st.leftBank !== null && !isNaN(st.leftBank)) ? st.leftBank : null;
-            let rb = (st.rightBank !== null && !isNaN(st.rightBank)) ? st.rightBank : null;
-            if (lb === null && rb === null) {
-                const defaultBank = (st.critical !== null) ? st.critical + 0.3 : (st.warning !== null ? st.warning + 0.5 : bed + 3.0);
-                lb = defaultBank;
-                rb = defaultBank;
-            } else if (lb === null) {
-                lb = rb;
-            } else if (rb === null) {
-                rb = lb;
-            }
+            // Explicit Bank Elevation Checks (No made up values)
+            const hasLeftBank = (st.leftBank !== null && !isNaN(st.leftBank));
+            const hasRightBank = (st.rightBank !== null && !isNaN(st.rightBank));
+            const lb = hasLeftBank ? st.leftBank : bed + 2.0; // Render height reference for canal wall if present
+            const rb = hasRightBank ? st.rightBank : bed + 2.0;
 
             const warn = (st.warning !== null && !isNaN(st.warning)) ? st.warning : null;
             const crit = (st.critical !== null && !isNaN(st.critical)) ? st.critical : null;
 
-            const vals = [bed, lb, rb];
+            // Determine coordinate scale bounds
+            const vals = [bed];
+            if (hasLeftBank) vals.push(lb);
+            if (hasRightBank) vals.push(rb);
             if (wl !== null) vals.push(wl);
             if (warn !== null) vals.push(warn);
             if (crit !== null) vals.push(crit);
@@ -1016,9 +1034,16 @@
             const xRbBot = 330;
             const xRbTop = 400;
 
-            const groundPath = `M 0,${yLb.toFixed(1)} L ${xLbTop},${yLb.toFixed(1)} L ${xLbBot},${yBed.toFixed(1)} L ${xRbBot},${yBed.toFixed(1)} L ${xRbTop},${yRb.toFixed(1)} L ${svgW},${yRb.toFixed(1)} L ${svgW},${svgH} L 0,${svgH} Z`;
+            // Build Ground Path based on presence of authentic Bank data
+            let groundPath = '';
+            if (hasLeftBank && hasRightBank) {
+                groundPath = `M 0,${yLb.toFixed(1)} L ${xLbTop},${yLb.toFixed(1)} L ${xLbBot},${yBed.toFixed(1)} L ${xRbBot},${yBed.toFixed(1)} L ${xRbTop},${yRb.toFixed(1)} L ${svgW},${yRb.toFixed(1)} L ${svgW},${svgH} L 0,${svgH} Z`;
+            } else {
+                // Open canal bed profile when bank elevations are missing
+                groundPath = `M 0,${yTop} L ${xLbBot},${yBed.toFixed(1)} L ${xRbBot},${yBed.toFixed(1)} L ${svgW},${yTop} L ${svgW},${svgH} L 0,${svgH} Z`;
+            }
 
-            let waterPathHtml = '';
+            // Colors according to station warning category
             let waterColor = '#2563eb';
             let waterOpacity = '0.65';
             let waterLabelColor = '#1e40af';
@@ -1033,6 +1058,24 @@
                 waterLabelColor = '#92400e';
             }
 
+            // Label collision tracking array
+            const labelPositions = []; // Objects: { y: number, height: number, type: string }
+
+            function getDeconflictedY(rawY, badgeHeight = 18, minGap = 14) {
+                let adjustedY = rawY;
+                labelPositions.sort((a, b) => a.y - b.y);
+                for (let pos of labelPositions) {
+                    if (Math.abs(adjustedY - pos.y) < minGap) {
+                        // Shift upwards or downwards depending on position relative to canvas
+                        adjustedY = (adjustedY <= pos.y) ? pos.y - minGap : pos.y + minGap;
+                    }
+                }
+                labelPositions.push({ y: adjustedY, height: badgeHeight });
+                return adjustedY;
+            }
+
+            // Water level path rendering
+            let waterPathHtml = '';
             if (wl !== null) {
                 const yWl = toY(wl);
 
@@ -1052,56 +1095,52 @@
                     xWRight = svgW;
                 }
 
-                const wPts = [];
-                if (wl > lb) {
-                    wPts.push(`0,${yWl.toFixed(1)}`);
-                    wPts.push(`${xLbTop},${yLb.toFixed(1)}`);
-                } else {
-                    wPts.push(`${xWLeft.toFixed(1)},${yWl.toFixed(1)}`);
-                }
+                const wPts = [`${xWLeft.toFixed(1)},${yWl.toFixed(1)}`, `${xWRight.toFixed(1)},${yWl.toFixed(1)}`, `${xRbBot},${yBed.toFixed(1)}`, `${xLbBot},${yBed.toFixed(1)}`];
+                const dWater = `M ${wPts[0]} L ${wPts[1]} L ${wPts[2]} L ${wPts[3]} Z`;
 
-                if (wl > rb) {
-                    wPts.push(`${xWRight.toFixed(1)},${yWl.toFixed(1)}`);
-                    wPts.push(`${svgW},${yRb.toFixed(1)}`);
-                    wPts.push(`${xRbTop},${yRb.toFixed(1)}`);
-                } else {
-                    wPts.push(`${xWRight.toFixed(1)},${yWl.toFixed(1)}`);
-                }
-
-                wPts.push(`${xRbBot},${yBed.toFixed(1)}`);
-                wPts.push(`${xLbBot},${yBed.toFixed(1)}`);
-
-                const dWater = `M ${wPts[0]} ` + wPts.slice(1).map(p => `L ${p}`).join(' ') + ' Z';
+                const yWlBadge = getDeconflictedY(yWl - 12);
                 
                 waterPathHtml = `
                     <path d="${dWater}" fill="${waterColor}" fill-opacity="${waterOpacity}" stroke="${waterColor}" stroke-width="1.5" />
                     <line x1="${xWLeft.toFixed(1)}" y1="${yWl.toFixed(1)}" x2="${xWRight.toFixed(1)}" y2="${yWl.toFixed(1)}" stroke="${waterColor}" stroke-width="2.5" />
-                    <g transform="translate(230, ${yWl.toFixed(1) - 12})">
+                    <g transform="translate(230, ${yWlBadge.toFixed(1)})">
                         <rect x="-55" y="-10" width="110" height="20" rx="4" fill="#ffffff" stroke="${waterColor}" stroke-width="1.5" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.15))"/>
                         <text x="0" y="3" text-anchor="middle" font-size="10" font-weight="bold" fill="${waterLabelColor}">WL In: ${wl.toFixed(2)}m</text>
                     </g>
                 `;
             }
 
+            // Warning Line & Badge
             let warnLineHtml = '';
             if (warn !== null) {
                 const yWarn = toY(warn);
+                const yWarnBadge = getDeconflictedY(yWarn);
                 warnLineHtml = `
                     <line x1="20" y1="${yWarn.toFixed(1)}" x2="${svgW - 20}" y2="${yWarn.toFixed(1)}" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3" />
-                    <rect x="${svgW - 105}" y="${yWarn.toFixed(1) - 9}" width="85" height="16" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
-                    <text x="${svgW - 62.5}" y="${yWarn.toFixed(1) + 3}" text-anchor="middle" font-size="9" font-weight="bold" fill="#92400e">WARN ${warn.toFixed(2)}m</text>
+                    <rect x="${svgW - 105}" y="${(yWarnBadge - 9).toFixed(1)}" width="85" height="16" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+                    <text x="${svgW - 62.5}" y="${(yWarnBadge + 3).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="bold" fill="#92400e">WARN ${warn.toFixed(2)}m</text>
                 `;
             }
 
+            // Critical Line & Badge
             let critLineHtml = '';
             if (crit !== null) {
                 const yCrit = toY(crit);
+                const yCritBadge = getDeconflictedY(yCrit);
                 critLineHtml = `
                     <line x1="20" y1="${yCrit.toFixed(1)}" x2="${svgW - 20}" y2="${yCrit.toFixed(1)}" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3" />
-                    <rect x="${svgW - 105}" y="${yCrit.toFixed(1) - 9}" width="85" height="16" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
-                    <text x="${svgW - 62.5}" y="${yCrit.toFixed(1) + 3}" text-anchor="middle" font-size="9" font-weight="bold" fill="#991b1b">CRIT ${crit.toFixed(2)}m</text>
+                    <rect x="${svgW - 105}" y="${(yCritBadge - 9).toFixed(1)}" width="85" height="16" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+                    <text x="${svgW - 62.5}" y="${(yCritBadge + 3).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="bold" fill="#991b1b">CRIT ${crit.toFixed(2)}m</text>
                 `;
             }
+
+            // Bank Elevation Text Displays
+            const leftBankLabel = hasLeftBank 
+                ? `Left Bank: ${st.leftBank.toFixed(2)}m` 
+                : `Left Bank: Data Missing`;
+            const rightBankLabel = hasRightBank 
+                ? `Right Bank: ${st.rightBank.toFixed(2)}m` 
+                : `Right Bank: Data Missing`;
 
             return `
                 <svg viewBox="0 0 ${svgW} ${svgH}" class="w-full h-auto rounded-lg bg-slate-50 border border-slate-200">
@@ -1110,7 +1149,7 @@
                     <!-- Water Body -->
                     ${waterPathHtml}
 
-                    <!-- Earth & Levees -->
+                    <!-- Ground & Canal Bed -->
                     <path d="${groundPath}" fill="#cbd5e1" stroke="#475569" stroke-width="2.5" />
                     <line x1="0" y1="${yBed.toFixed(1)}" x2="${svgW}" y2="${yBed.toFixed(1)}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2,4"/>
 
@@ -1118,12 +1157,12 @@
                     ${warnLineHtml}
                     ${critLineHtml}
 
-                    <!-- Levee & Bed Height Annotations -->
-                    <circle cx="${xLbTop}" cy="${yLb.toFixed(1)}" r="3" fill="#475569" />
-                    <text x="15" y="${Math.max(16, yLb - 8).toFixed(1)}" font-size="9" font-weight="bold" fill="#475569">Left Bank: ${lb.toFixed(2)}m</text>
+                    <!-- Bank & Bed Height Annotations -->
+                    ${hasLeftBank ? `<circle cx="${xLbTop}" cy="${yLb.toFixed(1)}" r="3" fill="#475569" />` : ''}
+                    <text x="15" y="20" font-size="9" font-weight="bold" fill="${hasLeftBank ? '#475569' : '#94a3b8'}">${leftBankLabel}</text>
 
-                    <circle cx="${xRbTop}" cy="${yRb.toFixed(1)}" r="3" fill="#475569" />
-                    <text x="${svgW - 15}" y="${Math.max(16, yRb - 8).toFixed(1)}" text-anchor="end" font-size="9" font-weight="bold" fill="#475569">Right Bank: ${rb.toFixed(2)}m</text>
+                    ${hasRightBank ? `<circle cx="${xRbTop}" cy="${yRb.toFixed(1)}" r="3" fill="#475569" />` : ''}
+                    <text x="${svgW - 15}" y="20" text-anchor="end" font-size="9" font-weight="bold" fill="${hasRightBank ? '#475569' : '#94a3b8'}">${rightBankLabel}</text>
 
                     <text x="230" y="${Math.min(svgH - 8, yBed + 15).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="bold" fill="#64748b">Bed Level: ${bed.toFixed(2)}m</text>
                 </svg>
