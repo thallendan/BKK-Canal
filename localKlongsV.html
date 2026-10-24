@@ -76,7 +76,7 @@
             </div>
             <div class="flex items-center gap-3 text-xs bg-indigo-900/80 px-4 py-2 rounded-lg border border-indigo-700/50">
                 <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>S3 Live Telemetry Active</span>
+                <span>CloudFront Telemetry Active</span>
             </div>
         </div>
     </header>
@@ -208,7 +208,7 @@
     </main>
 
     <script>
-        const S3_URL = 'https://bkkcanals-704017858243-ap-southeast-7-an.s3.ap-southeast-7.amazonaws.com/klongmap-latest.json';
+        const S3_URL = 'https://d2jyi6rznjny0r.cloudfront.net/klongmap-latest.json';
 
         const MAP_BOUNDS = {
             local: [[13.5883, 100.5170], [13.7217, 100.7230]]
@@ -542,7 +542,7 @@
                 rawStations = normalizeS3Data(stationsArray);
                 processAndRender();
             } catch (err) {
-                console.error('Failed to load JSON from S3:', err);
+                console.error('Failed to load JSON from CloudFront:', err);
             }
         }
 
