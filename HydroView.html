@@ -3,412 +3,429 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AQUA-FLOW // BKK Water Monitoring System</title>
-  <!-- Google Fonts -->
+  <title>Chao Phraya & BKK Basin Spatial Telemetry Visualizer</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      /* Aqua-Flow Design Tokens */
-      --bg-abyss: #0B132B;
-      --card-surface: #1C2541;
-      --card-border: rgba(0, 245, 212, 0.25);
+      --bg-abyss: #070D1E;
+      --card-bg: #121C38;
+      --card-border: rgba(0, 245, 212, 0.2);
       
-      --water-flow-normal: #00F5D4;
-      --water-flow-steady: #00BBF9;
+      --water-cyan: #00F5D4;
+      --water-blue: #00BBF9;
       --water-alert: #FEE440;
       --water-critical: #FF0054;
       
-      --text-primary: #F8FAFC;
-      --text-secondary: #94A3B8;
+      --text-main: #F8FAFC;
+      --text-sub: #94A3B8;
       
-      --font-display: 'Fredoka', cursive, sans-serif;
+      --font-display: 'Fredoka', sans-serif;
       --font-data: 'JetBrains Mono', monospace;
-      --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background-color: var(--bg-abyss);
-      color: var(--text-primary);
+      color: var(--text-main);
       font-family: var(--font-body);
-      min-height: 100vh;
-      padding: 2rem;
+      padding: 1.5rem;
       overflow-x: hidden;
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(0, 245, 212, 0.05) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(0, 187, 249, 0.05) 0%, transparent 40%);
     }
 
-    /* Top Navigation Banner */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(28, 37, 65, 0.6);
-      backdrop-filter: blur(16px);
+      background: var(--card-bg);
       border: 1px solid var(--card-border);
       padding: 1rem 2rem;
-      border-radius: 9999px;
+      border-radius: 20px;
       margin-bottom: 2rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .brand-icon {
-      width: 24px;
-      height: 24px;
-      background: var(--water-flow-normal);
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      box-shadow: 0 0 12px var(--water-flow-normal);
-    }
-
-    .brand-title {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    .controls {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-
-    /* Interactive Hydro Pill Button */
-    .btn-hydro {
-      background: linear-gradient(135deg, var(--water-flow-normal), var(--water-flow-steady));
+    .brand { font-family: var(--font-display); font-size: 1.5rem; color: var(--water-cyan); display: flex; align-items: center; gap: 0.5rem; }
+    
+    .scenario-btn {
+      background: linear-gradient(135deg, var(--water-cyan), var(--water-blue));
       color: var(--bg-abyss);
       font-family: var(--font-display);
       font-weight: 600;
-      padding: 0.6rem 1.4rem;
-      border-radius: 9999px;
       border: none;
-      box-shadow: 0 6px 16px rgba(0, 245, 212, 0.3);
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      transition: transform 0.2s ease;
     }
+    .scenario-btn:hover { transform: scale(1.05); }
 
-    .btn-hydro:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 10px 24px rgba(0, 245, 212, 0.5);
-    }
-
-    /* Spatial Canvas Map Architecture */
-    .spatial-canvas {
+    /* Spatial Map Grid Layout */
+    .spatial-grid {
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
-      max-width: 1200px;
+      max-width: 1300px;
       margin: 0 auto;
-      position: relative;
     }
 
-    /* Upstream River Vessel Container */
-    .river-vessel {
-      background: rgba(28, 37, 65, 0.8);
+    .row { display: flex; gap: 1.5rem; width: 100%; }
+
+    /* Hydraulic Containers / Vessels */
+    .vessel-card {
+      background: var(--card-bg);
       border: 2px solid var(--card-border);
-      border-radius: 28px;
-      padding: 2rem;
+      border-radius: 20px;
+      padding: 1.25rem;
+      flex: 1;
       position: relative;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 180px;
     }
 
-    .river-vessel::before {
-      content: '';
+    /* Water Level Simulation Inside Cards */
+    .tank-water-fill {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(90deg, rgba(0,245,212,0.08), rgba(0,187,249,0.12));
+      bottom: 0; left: 0; right: 0;
+      height: var(--fill-level, 50%);
+      background: linear-gradient(0deg, rgba(0, 245, 212, 0.25) 0%, rgba(0, 245, 212, 0) 100%);
+      border-top: 2px solid var(--water-cyan);
+      transition: height 1s ease-in-out, background 0.5s ease;
+      z-index: 1;
       pointer-events: none;
     }
 
-    .vessel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-      position: relative;
-      z-index: 2;
-    }
+    .vessel-info { position: relative; z-index: 2; }
+    .vessel-title { font-family: var(--font-display); font-size: 1.1rem; }
+    .vessel-sub { font-size: 0.8rem; color: var(--text-sub); }
 
-    .vessel-title {
-      font-family: var(--font-display);
-      font-size: 1.25rem;
-      color: var(--text-primary);
-    }
-
-    .vessel-subtitle {
-      font-size: 0.875rem;
-      color: var(--text-secondary);
-    }
-
-    .data-readout {
+    .data-value {
       font-family: var(--font-data);
-      font-size: 2.5rem;
+      font-size: 1.8rem;
       font-weight: 700;
-      color: var(--water-flow-normal);
-      text-shadow: 0 0 15px rgba(0, 245, 212, 0.4);
+      color: var(--water-cyan);
+      margin-top: 0.5rem;
       position: relative;
       z-index: 2;
     }
 
-    /* Dynamic SVG Flow Channels */
-    .flow-connector {
+    /* SVG Flow Channels */
+    .channel-container {
       width: 100%;
-      height: 60px;
-      margin: -0.5rem 0;
+      height: 50px;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
     }
 
-    .animated-stream {
-      animation: hydroFlow var(--stream-speed, 1.2s) linear infinite;
+    .animated-water-pipe {
+      animation: pipeFlow var(--flow-speed, 1s) linear infinite;
     }
 
-    @keyframes hydroFlow {
-      0%   { stroke-dashoffset: 40; }
+    @keyframes pipeFlow {
+      0% { stroke-dashoffset: 40; }
       100% { stroke-dashoffset: 0; }
     }
 
-    /* Midstream Station Grid */
-    .station-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.5rem;
-    }
-
-    /* Vessel Station Card */
-    .card-vessel {
-      background: rgba(28, 37, 65, 0.7);
-      backdrop-filter: blur(12px);
-      border: 2px solid var(--card-border);
-      border-radius: 24px;
-      position: relative;
-      overflow: hidden;
-      padding: 1.75rem;
+    /* Water Gate Graphic Component */
+    .gate-node {
       display: flex;
-      flex-direction: column;
+      align-items: center;
       justify-content: space-between;
-      min-height: 220px;
-      transition: border-color 0.3s ease;
-    }
-
-    .card-vessel:hover {
-      border-color: var(--water-flow-normal);
-    }
-
-    /* Fluid Fill Level Background Simulation */
-    .fluid-fill {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: var(--fill-percent, 40%);
-      background: linear-gradient(0deg, rgba(0, 245, 212, 0.2) 0%, rgba(0, 245, 212, 0) 100%);
-      transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .card-content {
+      background: rgba(7, 13, 30, 0.6);
+      border: 1px dashed var(--water-blue);
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      margin-top: 0.5rem;
       position: relative;
       z-index: 2;
     }
 
-    .status-badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      font-family: var(--font-display);
-      text-transform: uppercase;
-      margin-top: 0.5rem;
-      background: rgba(0, 245, 212, 0.15);
-      color: var(--water-flow-normal);
-      border: 1px solid var(--water-flow-normal);
+    .gate-blade {
+      width: 12px;
+      height: 36px;
+      background: #475569;
+      border-radius: 3px;
+      position: relative;
+      overflow: hidden;
+    }
+    .gate-blade-inner {
+      width: 100%;
+      background: var(--water-alert);
+      position: absolute;
+      bottom: 0;
+      height: var(--gate-open, 60%);
+      transition: height 0.5s ease;
     }
 
-    /* Everyday Unit Mode Bubble */
-    .friendly-note {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-top: 0.5rem;
-      background: rgba(11, 19, 43, 0.6);
-      padding: 0.5rem 0.75rem;
-      border-radius: 12px;
-      border-left: 3px solid var(--water-flow-steady);
+    /* Estuary Ocean Wave Tank */
+    .ocean-tank {
+      background: linear-gradient(180deg, var(--card-bg) 0%, rgba(0, 187, 249, 0.3) 100%);
+      border: 2px solid var(--water-blue);
+      border-radius: 20px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      min-height: 200px;
+    }
+
+    .tide-wave {
+      position: absolute;
+      bottom: 0; left: -100%; width: 300%;
+      height: var(--tide-height, 45%);
+      background: rgba(0, 187, 249, 0.3);
+      border-top: 3px solid var(--water-blue);
+      border-radius: 40%;
+      animation: waveMotion 6s infinite linear;
+      pointer-events: none;
+    }
+
+    @keyframes waveMotion {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
 
-  <!-- Header Section -->
   <header>
     <div class="brand">
-      <div class="brand-icon"></div>
-      <div class="brand-title">AQUA-FLOW</div>
+      <span>🌊</span> Chao Phraya & BKK Dynamic Spatial Visualizer
     </div>
-    <div class="controls">
-      <button class="btn-hydro" id="unitToggleBtn" onclick="toggleUnitMode()">
-        <span>🌊 Mode: <strong id="modeLabel">Beginner Friendly</strong></span>
-      </button>
-    </div>
+    <button class="scenario-btn" onclick="toggleScenario()">Simulate: Peak Monsoon Surge</button>
   </header>
 
-  <!-- Main Spatial Layout -->
-  <main class="spatial-canvas">
+  <main class="spatial-grid">
 
-    <!-- Main Upstream Flow Vessel (Chao Phraya River) -->
-    <section class="river-vessel">
-      <div class="vessel-header">
-        <div>
-          <h2 class="vessel-title">Chao Phraya Mainstem (Rama VIII)</h2>
-          <p class="vessel-subtitle">Primary Regional Runoff Pressure</p>
+    <!-- LEVEL 1: UPSTREAM DAMS & RESERVOIRS -->
+    <div class="row">
+      <!-- Bhumibol Dam -->
+      <article class="vessel-card">
+        <div class="tank-water-fill" id="bhumibolFill" style="--fill-level: 72%;"></div>
+        <div class="vessel-info">
+          <h3 class="vessel-title">Bhumibol Dam Reservoir</h3>
+          <p class="vessel-sub">Ping River Upper Catchment</p>
+          <div class="data-value" id="bhumibolVal">9,680 MCM (72%)</div>
         </div>
-        <span class="status-badge">Flow Normal</span>
-      </div>
-      <div class="data-readout" id="mainstemReadout">2,637.84 m³/s</div>
-      <div class="friendly-note" id="mainstemFriendly">
-        💡 Equal to roughly 1,055 Olympic swimming pools emptying every minute!
-      </div>
-    </section>
+        <div class="vessel-info">
+          <p class="vessel-sub">Discharge: <strong id="bhumibolOut">120 m³/s</strong></p>
+        </div>
+      </article>
 
-    <!-- Animated Flow Pipeline Visualizer -->
-    <div class="flow-connector">
-      <svg width="100%" height="40" viewBox="0 0 800 40">
-        <!-- Background Channel Pipe -->
-        <path d="M 50 20 L 750 20" stroke="#1C2541" stroke-width="16" stroke-linecap="round"/>
-        <!-- Dynamic Fluid Stream -->
-        <path id="mainStreamPath" d="M 50 20 L 750 20" 
-              stroke="var(--water-flow-normal)" 
-              stroke-width="10" 
-              stroke-dasharray="16 12" 
-              stroke-linecap="round" 
-              class="animated-stream" 
-              style="--stream-speed: 0.8s;"/>
+      <!-- Sirikit Dam -->
+      <article class="vessel-card">
+        <div class="tank-water-fill" id="sirikitFill" style="--fill-level: 65%;"></div>
+        <div class="vessel-info">
+          <h3 class="vessel-title">Sirikit Dam Reservoir</h3>
+          <p class="vessel-sub">Nan River Upper Catchment</p>
+          <div class="data-value" id="sirikitVal">6,180 MCM (65%)</div>
+        </div>
+        <div class="vessel-info">
+          <p class="vessel-sub">Discharge: <strong id="sirikitOut">95 m³/s</strong></p>
+        </div>
+      </article>
+
+      <!-- Pasak Jolasid Dam -->
+      <article class="vessel-card">
+        <div class="tank-water-fill" id="pasakFill" style="--fill-level: 85%;"></div>
+        <div class="vessel-info">
+          <h3 class="vessel-title">Pasak Jolasid Dam</h3>
+          <p class="vessel-sub">Pasak River Feeder</p>
+          <div class="data-value" id="pasakVal">815 MCM (85%)</div>
+        </div>
+        <div class="vessel-info">
+          <p class="vessel-sub">Discharge: <strong id="pasakOut">180 m³/s</strong></p>
+        </div>
+      </article>
+    </div>
+
+    <!-- RIVER CONFLUENCE FLOW CHANNEL -->
+    <div class="channel-container">
+      <svg width="100%" height="40" viewBox="0 0 1000 40">
+        <!-- Converging Tributaries Pipe Network -->
+        <path d="M 150 5 L 500 35 M 500 5 L 500 35 M 850 5 L 500 35" stroke="#121C38" stroke-width="12" fill="none"/>
+        <path id="confluenceStream" d="M 150 5 L 500 35 M 500 5 L 500 35 M 850 5 L 500 35" 
+              stroke="var(--water-cyan)" stroke-width="8" stroke-dasharray="12 8" fill="none"
+              class="animated-water-pipe" style="--flow-speed: 1.2s;"/>
       </svg>
     </div>
 
-    <!-- Inland Drainage Sub-Systems -->
-    <section class="station-grid">
-
-      <!-- Station 1: Phra Khanong -->
-      <article class="card-vessel" style="--fill-percent: 55%;">
-        <div class="fluid-fill"></div>
-        <div class="card-content">
-          <h3 class="vessel-title">Phra Khanong Station</h3>
-          <p class="vessel-subtitle">Main Outflow Discharge</p>
-          <div class="data-readout" id="pkReadout" style="font-size: 1.8rem; margin-top: 0.5rem;">34.46 m³/s</div>
-          <div class="friendly-note" id="pkFriendly">Water level is 0.76m below safety bank threshold.</div>
+    <!-- LEVEL 2: MAINSTEM RIVER DETECTORS & CHAO PHRAYA DAM GATE -->
+    <div class="row">
+      <!-- C.2 Nakhon Sawan -->
+      <article class="vessel-card">
+        <div class="tank-water-fill" id="c2Fill" style="--fill-level: 50%;"></div>
+        <div class="vessel-info">
+          <h3 class="vessel-title">Nakhon Sawan (Station C.2)</h3>
+          <p class="vessel-sub">Ping + Nan Confluence Point</p>
+          <div class="data-value" id="c2Val">1,850 m³/s</div>
         </div>
-        <div class="card-content">
-          <span class="status-badge">Pumps Active</span>
+        <div class="vessel-info">
+          <p class="vessel-sub">Velocity: <strong id="c2Vel">0.92 m/s</strong></p>
         </div>
       </article>
 
-      <!-- Station 2: Prawet Burirom -->
-      <article class="card-vessel" style="--fill-percent: 38%;">
-        <div class="fluid-fill"></div>
-        <div class="card-content">
-          <h3 class="vessel-title">Prawet Burirom Canal</h3>
-          <p class="vessel-subtitle">Eastern Canal Feeder</p>
-          <div class="data-readout" id="pbReadout" style="font-size: 1.8rem; margin-top: 0.5rem;">32.07 m³/s</div>
-          <div class="friendly-note" id="pbFriendly">Flowing steadily toward river mouth.</div>
+      <!-- Chao Phraya Dam Sluice Gate C.13 -->
+      <article class="vessel-card">
+        <div class="vessel-info">
+          <h3 class="vessel-title">Chao Phraya Dam (C.13)</h3>
+          <p class="vessel-sub">Chai Nat Barrage Gate</p>
+          <div class="data-value" id="c13Val">1,420 m³/s</div>
         </div>
-        <div class="card-content">
-          <span class="status-badge">Pumps Active</span>
-        </div>
-      </article>
-
-      <!-- Station 3: Bang Na Roadside -->
-      <article class="card-vessel" style="--fill-percent: 15%;">
-        <div class="fluid-fill"></div>
-        <div class="card-content">
-          <h3 class="vessel-title">Bang Na Canal & Roads</h3>
-          <p class="vessel-subtitle">Surface Water Level</p>
-          <div class="data-readout" id="bnReadout" style="font-size: 1.8rem; margin-top: 0.5rem;">0.0 cm</div>
-          <div class="friendly-note" id="bnFriendly">Roads are completely clear of flash flood water.</div>
-        </div>
-        <div class="card-content">
-          <span class="status-badge">Clear</span>
+        <!-- Animated Gate Component -->
+        <div class="gate-node">
+          <div>
+            <p class="vessel-sub">Gate Position</p>
+            <strong id="gateStatus">55% Raised</strong>
+          </div>
+          <div class="gate-blade">
+            <div class="gate-blade-inner" id="gateBlade" style="--gate-open: 55%;"></div>
+          </div>
         </div>
       </article>
 
-    </section>
+      <!-- Bang Sai C.29A -->
+      <article class="vessel-card">
+        <div class="tank-water-fill" id="bangSaiFill" style="--fill-level: 58%;"></div>
+        <div class="vessel-info">
+          <h3 class="vessel-title">Bang Sai (Station C.29A)</h3>
+          <p class="vessel-sub">Ayutthaya Inflow Monitor</p>
+          <div class="data-value" id="bangSaiVal">2,100 m³/s</div>
+        </div>
+        <div class="vessel-info">
+          <p class="vessel-sub">Water Level: <strong>+1.85 m MSL</strong></p>
+        </div>
+      </article>
+    </div>
+
+    <!-- MAINSTEM TO CANAL & ESTUARY PIPELINE -->
+    <div class="channel-container">
+      <svg width="100%" height="40" viewBox="0 0 1000 40">
+        <path d="M 500 0 L 500 40" stroke="#121C38" stroke-width="20"/>
+        <path id="mainStemStream" d="M 500 0 L 500 40" 
+              stroke="var(--water-cyan)" stroke-width="14" stroke-dasharray="16 10" 
+              class="animated-water-pipe" style="--flow-speed: 0.8s;"/>
+      </svg>
+    </div>
+
+    <!-- LEVEL 3: BANGKOK CANALS & GULF OF THAILAND TIDE -->
+    <div class="row">
+      <!-- Phra Khanong Gate & Pumping Station -->
+      <article class="vessel-card">
+        <div class="tank-water-fill" id="pkFill" style="--fill-level: 42%;"></div>
+        <div class="vessel-info">
+          <h3 class="vessel-title">Phra Khanong Pumping Hub</h3>
+          <p class="vessel-sub">Bang Na & Sukhumvit Drainage</p>
+          <div class="data-value" id="pkVal">34.46 m³/s</div>
+        </div>
+        <div class="gate-node">
+          <div>
+            <p class="vessel-sub">Pumps Running</p>
+            <strong id="pumpVal">4 of 6 Active</strong>
+          </div>
+          <span style="font-size: 1.5rem;">⚙️</span>
+        </div>
+      </article>
+
+      <!-- Gulf of Thailand Estuary Node -->
+      <article class="ocean-tank" style="flex: 2;">
+        <div class="tide-wave" id="tideWave" style="--tide-height: 48%;"></div>
+        <div class="vessel-info">
+          <h3 class="vessel-title" style="color: var(--water-blue);">Gulf of Thailand Estuary (Pak Nam)</h3>
+          <p class="vessel-sub">Tidal Sea Level Interface</p>
+          <div class="data-value" id="tideVal" style="color: var(--water-blue);">+1.42 m MSL</div>
+        </div>
+        <div class="vessel-info" style="margin-top: 1rem; position: relative; z-index: 2;">
+          <p class="vessel-sub">Astronomical High Tide Peak: <strong>+1.80 m MSL (Expected at 18:30)</strong></p>
+          <p class="vessel-sub">Salinity Boundary: <strong style="color: var(--water-cyan);">1.2 g/L (Normal)</strong></p>
+        </div>
+      </article>
+    </div>
+
   </main>
 
   <script>
-    let isBeginnerMode = true;
+    let isMonsoon = false;
 
-    // Real-time telemetry values
-    const telemetry = {
-      mainstemFlow: 2637.84, // m3/s
-      phraKhanongFlow: 34.46,
-      prawetFlow: 32.07,
-      bangNaFloodingCm: 0.0
-    };
+    function toggleScenario() {
+      isMonsoon = !isMonsoon;
+      const btn = document.querySelector('.scenario-btn');
 
-    function toggleUnitMode() {
-      isBeginnerMode = !isBeginnerMode;
-      const label = document.getElementById('modeLabel');
-      
-      if (isBeginnerMode) {
-        label.innerText = "Beginner Friendly";
-        updateToBeginnerUnits();
+      if (isMonsoon) {
+        btn.innerText = "Simulate: Normal Dry Season Flow";
+        btn.style.background = "linear-gradient(135deg, var(--water-alert), var(--water-critical))";
+
+        // Upstream Dams Fill & Outflow
+        document.getElementById('bhumibolFill').style.setProperty('--fill-level', '94%');
+        document.getElementById('bhumibolVal').innerText = "12,630 MCM (94%)";
+        document.getElementById('bhumibolOut').innerText = "450 m³/s";
+
+        document.getElementById('sirikitFill').style.setProperty('--fill-level', '91%');
+        document.getElementById('sirikitVal').innerText = "8,650 MCM (91%)";
+        document.getElementById('sirikitOut').innerText = "380 m³/s";
+
+        document.getElementById('pasakFill').style.setProperty('--fill-level', '98%');
+        document.getElementById('pasakVal').innerText = "940 MCM (98%)";
+        document.getElementById('pasakOut').innerText = "420 m³/s";
+
+        // Rivers & Gate
+        document.getElementById('c2Val').innerText = "3,250 m³/s";
+        document.getElementById('c2Vel').innerText = "1.65 m/s";
+        document.getElementById('c13Val').innerText = "2,800 m³/s";
+        document.getElementById('gateStatus').innerText = "90% Raised (Fully Open)";
+        document.getElementById('gateBlade').style.setProperty('--gate-open', '90%');
+
+        document.getElementById('bangSaiVal').innerText = "3,450 m³/s";
+
+        // Canals & Gulf Surge
+        document.getElementById('pkVal').innerText = "155.00 m³/s";
+        document.getElementById('pumpVal').innerText = "6 of 6 Active (MAX)";
+        document.getElementById('tideVal').innerText = "+2.35 m MSL (High Surge)";
+        document.getElementById('tideWave').style.setProperty('--tide-height', '75%');
+
+        // Flow Animations Speed Acceleration
+        document.getElementById('confluenceStream').style.setProperty('--flow-speed', '0.4s');
+        document.getElementById('mainStemStream').style.setProperty('--flow-speed', '0.3s');
       } else {
-        label.innerText = "Engineering Data";
-        updateToEngineeringUnits();
+        btn.innerText = "Simulate: Peak Monsoon Surge";
+        btn.style.background = "linear-gradient(135deg, var(--water-cyan), var(--water-blue))";
+
+        // Reset to normal values
+        document.getElementById('bhumibolFill').style.setProperty('--fill-level', '72%');
+        document.getElementById('bhumibolVal').innerText = "9,680 MCM (72%)";
+        document.getElementById('bhumibolOut').innerText = "120 m³/s";
+
+        document.getElementById('sirikitFill').style.setProperty('--fill-level', '65%');
+        document.getElementById('sirikitVal').innerText = "6,180 MCM (65%)";
+        document.getElementById('sirikitOut').innerText = "95 m³/s";
+
+        document.getElementById('pasakFill').style.setProperty('--fill-level', '85%');
+        document.getElementById('pasakVal').innerText = "815 MCM (85%)";
+        document.getElementById('pasakOut').innerText = "180 m³/s";
+
+        document.getElementById('c2Val').innerText = "1,850 m³/s";
+        document.getElementById('c2Vel').innerText = "0.92 m/s";
+        document.getElementById('c13Val').innerText = "1,420 m³/s";
+        document.getElementById('gateStatus').innerText = "55% Raised";
+        document.getElementById('gateBlade').style.setProperty('--gate-open', '55%');
+
+        document.getElementById('bangSaiVal').innerText = "2,100 m³/s";
+
+        document.getElementById('pkVal').innerText = "34.46 m³/s";
+        document.getElementById('pumpVal').innerText = "4 of 6 Active";
+        document.getElementById('tideVal').innerText = "+1.42 m MSL";
+        document.getElementById('tideWave').style.setProperty('--tide-height', '48%');
+
+        document.getElementById('confluenceStream').style.setProperty('--flow-speed', '1.2s');
+        document.getElementById('mainStemStream').style.setProperty('--flow-speed', '0.8s');
       }
     }
-
-    function updateToBeginnerUnits() {
-      const poolsPerMin = Math.round((telemetry.mainstemFlow * 60) / 2500);
-      document.getElementById('mainstemReadout').innerText = `${poolsPerMin} Pools / min`;
-      document.getElementById('mainstemFriendly').innerText = '💡 Expressed in Olympic swimming pools emptying every minute!';
-
-      document.getElementById('pkReadout').innerText = 'Normal Discharge';
-      document.getElementById('pkFriendly').innerText = 'Pumps draining water safely into the main river.';
-
-      document.getElementById('pbReadout').innerText = 'Smooth Flow';
-      document.getElementById('pbFriendly').innerText = 'Canal capacity is currently at a healthy 38%.';
-
-      document.getElementById('bnReadout').innerText = 'Dry Roads';
-      document.getElementById('bnFriendly').innerText = 'Sukhumvit & Bang Na roads are 100% dry.';
-    }
-
-    function updateToEngineeringUnits() {
-      document.getElementById('mainstemReadout').innerText = `${telemetry.mainstemFlow.toFixed(2)} m³/s`;
-      document.getElementById('mainstemFriendly').innerText = 'Velocity: 0.88 m/s | Station: Rama VIII';
-
-      document.getElementById('pkReadout').innerText = `${telemetry.phraKhanongFlow.toFixed(2)} m³/s`;
-      document.getElementById('pkFriendly').innerText = 'Water Level Elevation: -0.76 m MSL';
-
-      document.getElementById('pbReadout').innerText = `${telemetry.prawetFlow.toFixed(2)} m³/s`;
-      document.getElementById('pbFriendly').innerText = 'Wat Krathum Suea Pla Sensor Node';
-
-      document.getElementById('bnReadout').innerText = `${telemetry.bangNaFloodingCm.toFixed(1)} cm`;
-      document.getElementById('bnFriendly').innerText = 'Localized Surface Sensor Array';
-    }
-
-    // Initialize initial state
-    updateToBeginnerUnits();
   </script>
 </body>
 </html>
