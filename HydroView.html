@@ -399,7 +399,7 @@
                 worldX: 760, worldY: 1320, discharge: 2380
             },
 
-            // BANGKOK CANALS & PUMPS
+            // BANGKOK CANALS & PUMPS (Coordinates spread out & labelPos set to prevent overlap)
             khlong_hokwa: {
                 id: 'khlong_hokwa', type: 'gate', name: 'Khlong Hok Wa Water Gate', subtitle: 'Northern Bangkok Canal Protection Gate',
                 worldX: 980, worldY: 1400, discharge: 120
@@ -416,17 +416,17 @@
                 id: 'khlong_bangsue', type: 'canal', name: 'Khlong Bang Sue', subtitle: 'Central Bangkok Drainage Conduit',
                 worldX: 680, worldY: 1520, discharge: 50
             },
-            pump_chaengron: {
-                id: 'pump_chaengron', type: 'pump', name: 'Khlong Chaeng Ron Pump Station', subtitle: 'Chao Phraya Estuary High-Capacity Pump',
-                worldX: 760, worldY: 1820, capacity: 150
+            pump_phraya_ratcha: {
+                id: 'pump_phraya_ratcha', type: 'pump', name: 'Khlong Phraya Ratchamontri Pump Station', subtitle: 'Thonburi Outer Drainage Barrier',
+                worldX: 600, worldY: 1760, capacity: 160, labelPos: 'top'
             },
             pump_sanamchai: {
                 id: 'pump_sanamchai', type: 'pump', name: 'Khlong Sanam Chai Pump Station', subtitle: 'South-West Bangkok Drainage Outfall',
-                worldX: 680, worldY: 1820, capacity: 180
+                worldX: 760, worldY: 1840, capacity: 180, labelPos: 'bottom'
             },
-            pump_phraya_ratcha: {
-                id: 'pump_phraya_ratcha', type: 'pump', name: 'Khlong Phraya Ratchamontri Pump Station', subtitle: 'Thonburi Outer Drainage Barrier',
-                worldX: 600, worldY: 1820, capacity: 160
+            pump_chaengron: {
+                id: 'pump_chaengron', type: 'pump', name: 'Khlong Chaeng Ron Pump Station', subtitle: 'Chao Phraya Estuary High-Capacity Pump',
+                worldX: 920, worldY: 1760, capacity: 150, labelPos: 'top'
             },
 
             // ESTUARY & GULF TIDE GAUGE
@@ -1098,13 +1098,39 @@
                 }
             }
 
-            // Label
-            ctx.fillStyle = '#ffffff';
+            // Multi-line / Staggered Label Rendering (Fixes Overlap)
+            const labelPos = node.labelPos || 'bottom';
             ctx.font = 'bold 11px font-sans';
-            ctx.fillText(node.name, 22, -2);
-            ctx.fillStyle = '#10b981';
-            ctx.font = 'bold 10px monospace';
-            ctx.fillText(`PUMP: ${simState.pumpPowerPct}% POWER`, 22, 12);
+            ctx.textAlign = 'center';
+
+            const lines = node.name.includes(' Pump Station') 
+                ? [node.name.replace(' Pump Station', ''), 'Pump Station']
+                : [node.name];
+
+            if (labelPos === 'top') {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(lines[0], 0, -32);
+                if (lines[1]) ctx.fillText(lines[1], 0, -20);
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 10px monospace';
+                ctx.fillText(`PUMP: ${simState.pumpPowerPct}% POWER`, 0, -8);
+            } else if (labelPos === 'bottom') {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(lines[0], 0, 28);
+                if (lines[1]) ctx.fillText(lines[1], 0, 40);
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 10px monospace';
+                ctx.fillText(`PUMP: ${simState.pumpPowerPct}% POWER`, 0, 52);
+            } else {
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(lines[0], 22, -6);
+                if (lines[1]) ctx.fillText(lines[1], 22, 6);
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 10px monospace';
+                ctx.fillText(`PUMP: ${simState.pumpPowerPct}% POWER`, 22, 18);
+            }
+            ctx.textAlign = 'left'; // Reset default alignment
         }
 
         function drawGaugeNode(ctx, node, isHovered, t) {
