@@ -200,32 +200,32 @@
         const waterNodes = {
             bhumibol: {
                 id: 'bhumibol', type: 'dam', name: 'Bhumibol Dam', subtitle: 'Ping River Basin / Tak Province',
-                worldX: 380, worldY: 140, capMcm: 13462.0, storageMcm: 9534.0, basePct: 70.8, stage: 246.43, discharge: 0.03,
+                worldX: 380, worldY: 140, capMcm: 13462.0, storageMcm: 9534.0, basePct: 70.8, stage: 246.43, inflowMcm: 0.03,
                 operation: '70.8% Filled (9,534 MCM)', basin: 'Ping River Basin (EGAT)'
             },
             sirikit: {
                 id: 'sirikit', type: 'dam', name: 'Sirikit Dam', subtitle: 'Nan River Basin / Uttaradit Province',
-                worldX: 950, worldY: 120, capMcm: 9510.0, storageMcm: 7770.0, basePct: 81.7, stage: 145.20, discharge: null,
+                worldX: 950, worldY: 120, capMcm: 9510.0, storageMcm: 7770.0, basePct: 81.7, stage: 145.20, inflowMcm: null,
                 operation: '81.7% Filled (7,770 MCM)', basin: 'Nan River Basin (EGAT)'
             },
             kwainoi: {
                 id: 'kwainoi', type: 'dam', name: 'Kwai Noi Bamrung Dan Dam', subtitle: 'Kwai Noi Basin / Phitsanulok',
-                worldX: 1180, worldY: 260, capMcm: 939.0, storageMcm: 802.8, basePct: 85.5, stage: 112.40, discharge: null,
+                worldX: 1180, worldY: 260, capMcm: 939.0, storageMcm: 802.8, basePct: 85.5, stage: 112.40, inflowMcm: null,
                 operation: '85.5% Filled (802.8 MCM)', basin: 'Kwai Noi Basin (RID)'
             },
             pasak: {
                 id: 'pasak', type: 'dam', name: 'Pasak Jolasid Dam', subtitle: 'Pasak River Basin / Lopburi',
-                worldX: 1350, worldY: 680, capMcm: 872.0, storageMcm: 805.7, basePct: 92.4, stage: 39.80, discharge: null,
+                worldX: 1350, worldY: 680, capMcm: 872.0, storageMcm: 805.7, basePct: 92.4, stage: 39.80, inflowMcm: null,
                 operation: '92.4% Filled (805.7 MCM)', basin: 'Pasak River Basin (RID)'
             },
             vajiralongkorn: {
                 id: 'vajiralongkorn', type: 'dam', name: 'Vajiralongkorn Dam', subtitle: 'Mae Klong Basin / Kanchanaburi',
-                worldX: 160, worldY: 480, capMcm: 8860.0, storageMcm: 8638.5, basePct: 97.5, stage: 142.10, discharge: null,
+                worldX: 160, worldY: 480, capMcm: 8860.0, storageMcm: 8638.5, basePct: 97.5, stage: 142.10, inflowMcm: null,
                 operation: '97.5% Filled (8,638.5 MCM)', basin: 'Mae Klong Basin (EGAT)'
             },
             srinagarind: {
                 id: 'srinagarind', type: 'dam', name: 'Srinagarind Dam', subtitle: 'Mae Klong Basin / Kanchanaburi',
-                worldX: 280, worldY: 560, capMcm: 17745.0, storageMcm: 17549.8, basePct: 98.9, stage: 172.50, discharge: null,
+                worldX: 280, worldY: 560, capMcm: 17745.0, storageMcm: 17549.8, basePct: 98.9, stage: 172.50, inflowMcm: null,
                 operation: '98.9% Filled (17,549.8 MCM)', basin: 'Mae Klong Basin (EGAT)'
             },
             c2_nakhonsawan: {
@@ -864,13 +864,14 @@
             const stageStr = (node.stage !== undefined && node.stage !== null) ? `${node.stage >= 0 ? '+' : ''}${node.stage.toFixed(2)}m MSL` : 'N/A';
             const tideStr = (node.tideLevel !== undefined && node.tideLevel !== null) ? `${node.tideLevel >= 0 ? '+' : ''}${node.tideLevel.toFixed(2)}m MSL` : 'N/A';
             const qStr = (node.discharge !== undefined && node.discharge !== null) ? `${node.discharge.toLocaleString()} m³/s` : 'N/A';
+            const inflowStr = (node.inflowMcm !== undefined && node.inflowMcm !== null) ? `${node.inflowMcm.toLocaleString()} MCM` : 'N/A';
 
             if (type === 'dam') {
                 card1Html = `
                     <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-cyan-glow">Reservoir Telemetry</span>
                     <div class="flex justify-between"><span class="text-slate-300">Storage Volume:</span> <span class="text-white font-bold">${node.storageMcm ? node.storageMcm.toLocaleString() + ' MCM' : 'N/A'}</span></div>
                     <div class="flex justify-between"><span class="text-slate-300">Storage Capacity:</span> <span class="text-cyan-glow">${node.basePct ? node.basePct + '%' : 'N/A'}</span></div>
-                    <div class="flex justify-between"><span class="text-slate-300">Stage Elevation:</span> <span class="text-white font-bold">${stageStr}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Reservoir Height:</span> <span class="text-white font-bold">${stageStr}</span></div>
                 `;
                 card2Html = `
                     <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-warning">Structure Operations</span>
@@ -879,7 +880,7 @@
                 card3Html = `
                     <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-cyan-electric">Basin Metadata</span>
                     <div class="flex justify-between"><span class="text-slate-300">Catchment Agency:</span> <span class="text-white">${node.basin || 'N/A'}</span></div>
-                    <div class="flex justify-between"><span class="text-slate-300">Discharge Flow Q:</span> <span class="text-emerald-400 font-bold">${qStr}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Dam Inflow:</span> <span class="text-emerald-400 font-bold">${inflowStr}</span></div>
                 `;
             } else if (type === 'gauge') {
                 card1Html = `
@@ -970,8 +971,8 @@
             let rowsHtml = '';
 
             if (type === 'dam') {
-                rowsHtml += `<div class="flex justify-between gap-4"><span>Water Level:</span> <span class="text-white font-bold">${waterLevel !== null ? '+' + waterLevel.toFixed(2) + 'm MSL' : 'N/A'}</span></div>`;
-                rowsHtml += `<div class="flex justify-between gap-4 border-t border-slate-800 pt-1 mt-1 text-xs"><span>Discharge Q:</span> <span class="text-emerald-400 font-bold">${node.discharge !== undefined && node.discharge !== null ? node.discharge.toLocaleString() + ' m³/s' : 'N/A'}</span></div>`;
+                rowsHtml += `<div class="flex justify-between gap-4"><span>Reservoir Height:</span> <span class="text-white font-bold">${waterLevel !== null ? '+' + waterLevel.toFixed(2) + 'm MSL' : 'N/A'}</span></div>`;
+                rowsHtml += `<div class="flex justify-between gap-4 border-t border-slate-800 pt-1 mt-1 text-xs"><span>Dam Inflow:</span> <span class="text-emerald-400 font-bold">${node.inflowMcm !== undefined && node.inflowMcm !== null ? node.inflowMcm.toLocaleString() + ' MCM' : 'N/A'}</span></div>`;
             } else if (type === 'gauge') {
                 rowsHtml += `<div class="flex justify-between gap-4"><span>Water Level:</span> <span class="text-white font-bold">${waterLevel !== null ? '+' + waterLevel.toFixed(2) + 'm MSL' : 'N/A'}</span></div>`;
                 rowsHtml += `<div class="flex justify-between gap-4"><span>Warning Level:</span> <span class="text-warning">${warningLvl !== null && warningLvl !== undefined ? warningLvl.toFixed(2) + 'm MSL' : 'N/A'}</span></div>`;
