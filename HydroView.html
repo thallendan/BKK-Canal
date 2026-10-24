@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AQUA-FLOW // BKK Water Monitoring System</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      /* Aqua-Flow Design Tokens */
+      --bg-abyss: #0B132B;
+      --card-surface: #1C2541;
+      --card-border: rgba(0, 245, 212, 0.25);
+      
+      --water-flow-normal: #00F5D4;
+      --water-flow-steady: #00BBF9;
+      --water-alert: #FEE440;
+      --water-critical: #FF0054;
+      
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      
+      --font-display: 'Fredoka', cursive, sans-serif;
+      --font-data: 'JetBrains Mono', monospace;
+      --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-abyss);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      padding: 2rem;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 245, 212, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(0, 187, 249, 0.05) 0%, transparent 40%);
+    }
+
+    /* Top Navigation Banner */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(28, 37, 65, 0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      padding: 1rem 2rem;
+      border-radius: 9999px;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--water-flow-normal);
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      box-shadow: 0 0 12px var(--water-flow-normal);
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    /* Interactive Hydro Pill Button */
+    .btn-hydro {
+      background: linear-gradient(135deg, var(--water-flow-normal), var(--water-flow-steady));
+      color: var(--bg-abyss);
+      font-family: var(--font-display);
+      font-weight: 600;
+      padding: 0.6rem 1.4rem;
+      border-radius: 9999px;
+      border: none;
+      box-shadow: 0 6px 16px rgba(0, 245, 212, 0.3);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-hydro:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 10px 24px rgba(0, 245, 212, 0.5);
+    }
+
+    /* Spatial Canvas Map Architecture */
+    .spatial-canvas {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* Upstream River Vessel Container */
+    .river-vessel {
+      background: rgba(28, 37, 65, 0.8);
+      border: 2px solid var(--card-border);
+      border-radius: 28px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .river-vessel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, rgba(0,245,212,0.08), rgba(0,187,249,0.12));
+      pointer-events: none;
+    }
+
+    .vessel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .vessel-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      color: var(--text-primary);
+    }
+
+    .vessel-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .data-readout {
+      font-family: var(--font-data);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--water-flow-normal);
+      text-shadow: 0 0 15px rgba(0, 245, 212, 0.4);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Dynamic SVG Flow Channels */
+    .flow-connector {
+      width: 100%;
+      height: 60px;
+      margin: -0.5rem 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .animated-stream {
+      animation: hydroFlow var(--stream-speed, 1.2s) linear infinite;
+    }
+
+    @keyframes hydroFlow {
+      0%   { stroke-dashoffset: 40; }
+      100% { stroke-dashoffset: 0; }
+    }
+
+    /* Midstream Station Grid */
+    .station-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Vessel Station Card */
+    .card-vessel {
+      background: rgba(28, 37, 65, 0.7);
+      backdrop-filter: blur(12px);
+      border: 2px solid var(--card-border);
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 220px;
+      transition: border-color 0.3s ease;
+    }
+
+    .card-vessel:hover {
+      border-color: var(--water-flow-normal);
+    }
+
+    /* Fluid Fill Level Background Simulation */
+    .fluid-fill {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: var(--fill-percent, 40%);
+      background: linear-gradient(0deg, rgba(0, 245, 212, 0.2) 0%, rgba(0, 245, 212, 0) 100%);
+      transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: var(--font-display);
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+      background: rgba(0, 245, 212, 0.15);
+      color: var(--water-flow-normal);
+      border: 1px solid var(--water-flow-normal);
+    }
+
+    /* Everyday Unit Mode Bubble */
+    .friendly-note {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+      background: rgba(11, 19, 43, 0.6);
+      padding: 0.5rem 0.75rem;
+      border-radius: 12px;
+      border-left: 3px solid var(--water-flow-steady);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon"></div>
+      <div class="brand-title">AQUA-FLOW</div>
+    </div>
+    <div class="controls">
+      <button class="btn-hydro" id="unitToggleBtn" onclick="toggleUnitMode()">
+        <span>🌊 Mode: <strong id="modeLabel">Beginner Friendly</strong></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Spatial Layout -->
+  <main class="spatial-canvas">
+
+    <!-- Main Upstream Flow Vessel (Chao Phraya River) -->
+    <section class="river-vessel">
+      <div class="vessel-header">
+        <div>
+          <h2 class="vessel-title">Chao Phraya Mainstem (Rama VIII)</h2>
+          <p class="vessel-subtitle">Primary Regional Runoff Pressure</p>
+        </div>
+        <span class="status-badge">Flow Normal</span>
+      </div>
+      <div class="data-readout" id="mainstemReadout">2,637.84 m³/s</div>
+      <div class="friendly-note" id="mainstemFriendly">
+        💡 Equal to roughly 1,055 Olympic swimming pools emptying every minute!
+      </div>
+    </section>
+
+    <!-- Animated Flow Pipeline Visualizer -->
+    <div class="flow-connector">
+      <svg width="100%" height="40" viewBox="0 0 800 40">
+        <!-- Background Channel Pipe -->
+        <path d="M 50 20 L 750 20" stroke="#1C2541" stroke-width="16" stroke-linecap="round"/>
+        <!-- Dynamic Fluid Stream -->
+        <path id="mainStreamPath" d="M 50 20 L 750 20" 
+              stroke="var(--water-flow-normal)" 
+              stroke-width="10" 
+              stroke-dasharray="16 12" 
+              stroke-linecap="round" 
+              class="animated-stream" 
+              style="--stream-speed: 0.8s;"/>
+      </svg>
+    </div>
+
+    <!-- Inland Drainage Sub-Systems -->
+    <section class="station-grid">
+
+      <!-- Station 1: Phra Khanong -->
+      <article class="card-vessel" style="--fill-percent: 55%;">
+        <div class="fluid-fill"></div>
+        <div class="card-content">
+          <h3 class="vessel-title">Phra Khanong Station</h3>
+          <p class="vessel-subtitle">Main Outflow Discharge</p>
+          <div class="data-readout" id="pkReadout" style="font-size: 1.8rem; margin-top: 0.5rem;">34.46 m³/s</div>
+          <div class="friendly-note" id="pkFriendly">Water level is 0.76m below safety bank threshold.</div>
+        </div>
+        <div class="card-content">
+          <span class="status-badge">Pumps Active</span>
+        </div>
+      </article>
+
+      <!-- Station 2: Prawet Burirom -->
+      <article class="card-vessel" style="--fill-percent: 38%;">
+        <div class="fluid-fill"></div>
+        <div class="card-content">
+          <h3 class="vessel-title">Prawet Burirom Canal</h3>
+          <p class="vessel-subtitle">Eastern Canal Feeder</p>
+          <div class="data-readout" id="pbReadout" style="font-size: 1.8rem; margin-top: 0.5rem;">32.07 m³/s</div>
+          <div class="friendly-note" id="pbFriendly">Flowing steadily toward river mouth.</div>
+        </div>
+        <div class="card-content">
+          <span class="status-badge">Pumps Active</span>
+        </div>
+      </article>
+
+      <!-- Station 3: Bang Na Roadside -->
+      <article class="card-vessel" style="--fill-percent: 15%;">
+        <div class="fluid-fill"></div>
+        <div class="card-content">
+          <h3 class="vessel-title">Bang Na Canal & Roads</h3>
+          <p class="vessel-subtitle">Surface Water Level</p>
+          <div class="data-readout" id="bnReadout" style="font-size: 1.8rem; margin-top: 0.5rem;">0.0 cm</div>
+          <div class="friendly-note" id="bnFriendly">Roads are completely clear of flash flood water.</div>
+        </div>
+        <div class="card-content">
+          <span class="status-badge">Clear</span>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <script>
+    let isBeginnerMode = true;
+
+    // Real-time telemetry values
+    const telemetry = {
+      mainstemFlow: 2637.84, // m3/s
+      phraKhanongFlow: 34.46,
+      prawetFlow: 32.07,
+      bangNaFloodingCm: 0.0
+    };
+
+    function toggleUnitMode() {
+      isBeginnerMode = !isBeginnerMode;
+      const label = document.getElementById('modeLabel');
+      
+      if (isBeginnerMode) {
+        label.innerText = "Beginner Friendly";
+        updateToBeginnerUnits();
+      } else {
+        label.innerText = "Engineering Data";
+        updateToEngineeringUnits();
+      }
+    }
+
+    function updateToBeginnerUnits() {
+      const poolsPerMin = Math.round((telemetry.mainstemFlow * 60) / 2500);
+      document.getElementById('mainstemReadout').innerText = `${poolsPerMin} Pools / min`;
+      document.getElementById('mainstemFriendly').innerText = '💡 Expressed in Olympic swimming pools emptying every minute!';
+
+      document.getElementById('pkReadout').innerText = 'Normal Discharge';
+      document.getElementById('pkFriendly').innerText = 'Pumps draining water safely into the main river.';
+
+      document.getElementById('pbReadout').innerText = 'Smooth Flow';
+      document.getElementById('pbFriendly').innerText = 'Canal capacity is currently at a healthy 38%.';
+
+      document.getElementById('bnReadout').innerText = 'Dry Roads';
+      document.getElementById('bnFriendly').innerText = 'Sukhumvit & Bang Na roads are 100% dry.';
+    }
+
+    function updateToEngineeringUnits() {
+      document.getElementById('mainstemReadout').innerText = `${telemetry.mainstemFlow.toFixed(2)} m³/s`;
+      document.getElementById('mainstemFriendly').innerText = 'Velocity: 0.88 m/s | Station: Rama VIII';
+
+      document.getElementById('pkReadout').innerText = `${telemetry.phraKhanongFlow.toFixed(2)} m³/s`;
+      document.getElementById('pkFriendly').innerText = 'Water Level Elevation: -0.76 m MSL';
+
+      document.getElementById('pbReadout').innerText = `${telemetry.prawetFlow.toFixed(2)} m³/s`;
+      document.getElementById('pbFriendly').innerText = 'Wat Krathum Suea Pla Sensor Node';
+
+      document.getElementById('bnReadout').innerText = `${telemetry.bangNaFloodingCm.toFixed(1)} cm`;
+      document.getElementById('bnFriendly').innerText = 'Localized Surface Sensor Array';
+    }
+
+    // Initialize initial state
+    updateToBeginnerUnits();
+  </script>
+</body>
+</html>
