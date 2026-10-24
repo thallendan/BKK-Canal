@@ -127,8 +127,8 @@
             <!-- Status Badge -->
             <div class="flex items-center gap-2 bg-navy-900/90 px-3 py-1.5 rounded-xl border border-slate-800 font-mono">
                 <span id="system-status-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                <span class="text-slate-400">State:</span>
-                <span id="system-status-text" class="text-emerald-400 font-bold">NORMAL CASCADE</span>
+                <span class="text-slate-400">CloudFront:</span>
+                <span id="system-status-text" class="text-emerald-400 font-bold">LIVE TELEMETRY ACTIVE</span>
             </div>
 
             <div class="bg-navy-900/90 px-3 py-1.5 rounded-xl border border-slate-800 font-mono text-slate-400 flex items-center gap-2">
@@ -192,7 +192,7 @@
                 <div class="grid grid-cols-2 gap-2">
                     <button id="preset-baseline" onclick="applyPreset('baseline')" class="preset-btn px-3 py-2 rounded-xl text-xs font-semibold border transition-all flex items-center gap-2 bg-cyan-glow/20 text-cyan-glow border-cyan-glow/40">
                         <i data-lucide="database" class="w-3.5 h-3.5"></i>
-                        Live Master Baseline
+                        CloudFront Master Baseline
                     </button>
                     <button id="preset-monsoon" onclick="applyPreset('monsoon')" class="preset-btn px-3 py-2 rounded-xl text-xs font-semibold border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-2">
                         <i data-lucide="cloud-rain" class="w-3.5 h-3.5 text-warning"></i>
@@ -344,6 +344,9 @@
     <!-- MASTER JAVASCRIPT & HTML5 CANVAS ENGINE                   -->
     <!-- ========================================================= -->
     <script>
+        // CloudFront Telemetry Endpoint
+        const CLOUDFRONT_URL = 'https://d2jyi6rznjny0r.cloudfront.net/klongmap-latest.json';
+
         // =========================================================
         // DATASETS & GEOGRAPHIC NODE DEFINITIONS
         // =========================================================
@@ -532,9 +535,43 @@
             // Generate particles
             initRiverParticles();
 
+            // Fetch live CloudFront Telemetry data
+            loadCloudFrontData();
+
             // Start Animation Loop
             requestAnimationFrame(globalAnimationLoop);
         });
+
+        async function loadCloudFrontData() {
+            try {
+                const res = await fetch(CLOUDFRONT_URL);
+                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                const data = await res.json();
+                
+                const stations = data.waterStation || data.data?.waterStation || data.data || [];
+                updateNodesFromCloudFront(stations);
+            } catch (err) {
+                console.warn('CloudFront fetch fallback to baseline simulation:', err.message);
+            }
+        }
+
+        function updateNodesFromCloudFront(stations) {
+            if (!Array.isArray(stations)) return;
+            stations.forEach(st => {
+                const info = st.water_station_info || {};
+                const wl = st.water_level_last || {};
+                const shortName = (info.water_shortname_en || info.water_shortname || '').toLowerCase();
+                
+                for (let key in waterNodes) {
+                    const node = waterNodes[key];
+                    if (node.id.toLowerCase() === shortName || node.name.toLowerCase().includes(shortName)) {
+                        if (wl.wl_in !== undefined && wl.wl_in !== null) {
+                            node.currentLevel = parseFloat(wl.wl_in);
+                        }
+                    }
+                }
+            });
+        }
 
         function startClock() {
             setInterval(() => {
@@ -780,7 +817,7 @@
             } else {
                 dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-ping';
                 txt.className = 'text-emerald-400 font-bold';
-                txt.innerText = 'NORMAL CASCADE';
+                txt.innerText = 'LIVE TELEMETRY ACTIVE';
             }
 
             if (simState.selectedNode) render2DCrossSection();
