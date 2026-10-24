@@ -166,7 +166,7 @@
     </main>
 
     <!-- ========================================================= -->
-    <!-- FLOATING HUD CONTROL DRAWER (DEBUG & PRESETS)            -->
+    <!-- FLOATING HUD CONTROL DRAWER                              -->
     <!-- ========================================================= -->
     <div id="hud-drawer" class="glass-panel absolute bottom-3 left-3 right-3 z-30 p-4 rounded-2xl border border-slate-800 transition-all duration-300 max-h-[260px] overflow-y-auto">
         <div class="flex items-center justify-between border-b border-slate-800/80 pb-2 mb-3">
@@ -174,7 +174,7 @@
                 <div class="p-1.5 bg-cyan-glow/10 rounded-lg text-cyan-glow border border-cyan-glow/20">
                     <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
                 </div>
-                <span class="text-xs font-bold text-white uppercase tracking-wider">Hydraulic Controls & Debug Presets</span>
+                <span class="text-xs font-bold text-white uppercase tracking-wider">Hydraulic System Simulation Controls</span>
             </div>
 
             <div class="flex items-center gap-2">
@@ -184,79 +184,51 @@
             </div>
         </div>
 
-        <div id="hud-content-grid" class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            
-            <!-- Presets Section (4 Columns) -->
-            <div class="lg:col-span-5 space-y-2">
-                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block font-mono">Debug Preset Scenarios:</span>
-                <div class="grid grid-cols-2 gap-2">
-                    <button id="preset-baseline" onclick="applyPreset('baseline')" class="preset-btn px-3 py-2 rounded-xl text-xs font-semibold border transition-all flex items-center gap-2 bg-cyan-glow/20 text-cyan-glow border-cyan-glow/40">
-                        <i data-lucide="database" class="w-3.5 h-3.5"></i>
-                        CloudFront Master Baseline
-                    </button>
-                    <button id="preset-monsoon" onclick="applyPreset('monsoon')" class="preset-btn px-3 py-2 rounded-xl text-xs font-semibold border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-2">
-                        <i data-lucide="cloud-rain" class="w-3.5 h-3.5 text-warning"></i>
-                        Monsoon Surge
-                    </button>
-                    <button id="preset-dry" onclick="applyPreset('dry')" class="preset-btn px-3 py-2 rounded-xl text-xs font-semibold border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-2">
-                        <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-300"></i>
-                        Dry Season Low-Flow
-                    </button>
-                    <button id="preset-hightide" onclick="applyPreset('hightide')" class="preset-btn px-3 py-2 rounded-xl text-xs font-semibold border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-2">
-                        <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-critical"></i>
-                        High-Tide Coastal Lockout
-                    </button>
+        <div id="hud-content-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 text-xs font-mono">
+            <!-- Dam Release Multiplier -->
+            <div class="bg-navy-900/80 p-2.5 rounded-xl border border-slate-800">
+                <div class="flex justify-between text-slate-300 mb-1">
+                    <label>Dam Release Mult.</label>
+                    <span id="lbl-dam-mult" class="text-cyan-glow font-bold">1.0x</span>
                 </div>
+                <input type="range" id="slider-dam-mult" min="0.2" max="2.5" step="0.1" value="1.0" oninput="updateControls()" class="w-full accent-cyan-glow bg-slate-800 h-1 rounded-lg cursor-pointer">
             </div>
 
-            <!-- Simulation Parameters Sliders (7 Columns) -->
-            <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs font-mono">
-                <!-- Dam Release Multiplier -->
-                <div class="bg-navy-900/80 p-2.5 rounded-xl border border-slate-800">
-                    <div class="flex justify-between text-slate-300 mb-1">
-                        <label>Dam Release Mult.</label>
-                        <span id="lbl-dam-mult" class="text-cyan-glow font-bold">1.0x</span>
-                    </div>
-                    <input type="range" id="slider-dam-mult" min="0.2" max="2.5" step="0.1" value="1.0" oninput="updateControls()" class="w-full accent-cyan-glow bg-slate-800 h-1 rounded-lg cursor-pointer">
+            <!-- Rainfall Intensity -->
+            <div class="bg-navy-900/80 p-2.5 rounded-xl border border-slate-800">
+                <div class="flex justify-between text-slate-300 mb-1">
+                    <label>Rainfall Intensity</label>
+                    <span id="lbl-rainfall" class="text-warning font-bold">15 mm/h</span>
                 </div>
-
-                <!-- Rainfall Intensity -->
-                <div class="bg-navy-900/80 p-2.5 rounded-xl border border-slate-800">
-                    <div class="flex justify-between text-slate-300 mb-1">
-                        <label>Rainfall Intensity</label>
-                        <span id="lbl-rainfall" class="text-warning font-bold">15 mm/h</span>
-                    </div>
-                    <input type="range" id="slider-rainfall" min="0" max="100" step="5" value="15" oninput="updateControls()" class="w-full accent-warning bg-slate-800 h-1 rounded-lg cursor-pointer">
-                </div>
-
-                <!-- Gate Openings -->
-                <div class="bg-navy-900/80 p-2.5 rounded-xl border border-slate-800">
-                    <div class="flex justify-between text-slate-300 mb-1">
-                        <label>Sluice Gate Open %</label>
-                        <span id="lbl-gate-open" class="text-amber-300 font-bold">45%</span>
-                    </div>
-                    <input type="range" id="slider-gate-open" min="0" max="100" step="5" value="45" oninput="updateControls()" class="w-full accent-amber-400 bg-slate-800 h-1 rounded-lg cursor-pointer">
-                </div>
-
-                <!-- Pump Power % -->
-                <div class="bg-navy-900/80 p-2.5 rounded-xl border border-slate-800">
-                    <div class="flex justify-between text-slate-300 mb-1">
-                        <label>BMA Pump Power</label>
-                        <span id="lbl-pump-power" class="text-emerald-400 font-bold">80%</span>
-                    </div>
-                    <input type="range" id="slider-pump-power" min="0" max="100" step="5" value="80" oninput="updateControls()" class="w-full accent-emerald-400 bg-slate-800 h-1 rounded-lg cursor-pointer">
-                </div>
-
-                <!-- Gulf Tide Height -->
-                <div class="bg-navy-900/80 p-2.5 rounded-xl border border-slate-800 sm:col-span-2 lg:col-span-2">
-                    <div class="flex justify-between text-slate-300 mb-1">
-                        <label>Gulf Sea Level (Fort Chula)</label>
-                        <span id="lbl-tide-height" class="text-cyan-electric font-bold">+1.20 m MSL</span>
-                    </div>
-                    <input type="range" id="slider-tide-height" min="-0.50" max="3.00" step="0.1" value="1.20" oninput="updateControls()" class="w-full accent-cyan-electric bg-slate-800 h-1 rounded-lg cursor-pointer">
-                </div>
+                <input type="range" id="slider-rainfall" min="0" max="100" step="5" value="15" oninput="updateControls()" class="w-full accent-warning bg-slate-800 h-1 rounded-lg cursor-pointer">
             </div>
 
+            <!-- Gate Openings -->
+            <div class="bg-navy-900/80 p-2.5 rounded-xl border border-slate-800">
+                <div class="flex justify-between text-slate-300 mb-1">
+                    <label>Sluice Gate Open %</label>
+                    <span id="lbl-gate-open" class="text-amber-300 font-bold">45%</span>
+                </div>
+                <input type="range" id="slider-gate-open" min="0" max="100" step="5" value="45" oninput="updateControls()" class="w-full accent-amber-400 bg-slate-800 h-1 rounded-lg cursor-pointer">
+            </div>
+
+            <!-- Pump Power % -->
+            <div class="bg-navy-900/80 p-2.5 rounded-xl border border-slate-800">
+                <div class="flex justify-between text-slate-300 mb-1">
+                    <label>BMA Pump Power</label>
+                    <span id="lbl-pump-power" class="text-emerald-400 font-bold">80%</span>
+                </div>
+                <input type="range" id="slider-pump-power" min="0" max="100" step="5" value="80" oninput="updateControls()" class="w-full accent-emerald-400 bg-slate-800 h-1 rounded-lg cursor-pointer">
+            </div>
+
+            <!-- Gulf Tide Height -->
+            <div class="bg-navy-900/80 p-2.5 rounded-xl border border-slate-800">
+                <div class="flex justify-between text-slate-300 mb-1">
+                    <label>Gulf Sea Level (Fort Chula)</label>
+                    <span id="lbl-tide-height" class="text-cyan-electric font-bold">+1.20 m MSL</span>
+                </div>
+                <input type="range" id="slider-tide-height" min="-0.50" max="3.00" step="0.1" value="1.20" oninput="updateControls()" class="w-full accent-cyan-electric bg-slate-800 h-1 rounded-lg cursor-pointer">
+            </div>
         </div>
     </div>
 
@@ -436,25 +408,25 @@
             }
         };
 
-        // Polyline River Paths (In World Coordinates)
+        // Polyline River Paths & Labeled River Segments
         const riverPaths = [
             // Ping River Path
-            { id: 'ping', stroke: '#00f5d4', width: 5, points: [
+            { id: 'ping', stroke: '#00f5d4', width: 5, name: 'Ping River', labelPt: { x: 480, y: 380 }, points: [
                 {x: 380, y: 140}, {x: 440, y: 300}, {x: 560, y: 500}, {x: 720, y: 680}
             ]},
             // Nan River Path (with Kwai Noi branch)
-            { id: 'nan', stroke: '#00b4d8', width: 5, points: [
+            { id: 'nan', stroke: '#00b4d8', width: 5, name: 'Nan River', labelPt: { x: 1010, y: 380 }, points: [
                 {x: 950, y: 120}, {x: 1040, y: 280}, {x: 980, y: 480}, {x: 720, y: 680}
             ]},
-            { id: 'kwainoi', stroke: '#00b4d8', width: 3, points: [
+            { id: 'kwainoi', stroke: '#00b4d8', width: 3, name: 'Kwai Noi River', labelPt: { x: 1110, y: 250 }, points: [
                 {x: 1180, y: 260}, {x: 1040, y: 280}
             ]},
             // Chao Phraya Main Stem (Upper)
-            { id: 'chaophraya_upper', stroke: '#00f5d4', width: 8, points: [
+            { id: 'chaophraya_upper', stroke: '#00f5d4', width: 8, name: 'Chao Phraya River (Upper)', labelPt: { x: 720, y: 770 }, points: [
                 {x: 720, y: 680}, {x: 720, y: 860}, {x: 800, y: 1140}
             ]},
             // Chao Phraya Lower - Classic Meandering / Looping Path through Bangkok & Bang Krachao Peninsula
-            { id: 'chaophraya_lower', stroke: '#00f5d4', width: 10, points: [
+            { id: 'chaophraya_lower', stroke: '#00f5d4', width: 10, name: 'Chao Phraya River (Lower BMA Loop)', labelPt: { x: 810, y: 1650 }, points: [
                 {x: 800, y: 1140}, // Ayutthaya Confluence
                 {x: 760, y: 1320}, // Station C.29A (Bang Sai)
                 {x: 700, y: 1400}, // Nonthaburi Approach Bend
@@ -467,19 +439,19 @@
                 {x: 860, y: 1980}  // Fort Chula / Gulf Estuary Mouth
             ]},
             // Tha Chin River Branch
-            { id: 'thachin', stroke: '#0284c7', width: 5, points: [
+            { id: 'thachin', stroke: '#0284c7', width: 5, name: 'Tha Chin River', labelPt: { x: 500, y: 1300 }, points: [
                 {x: 720, y: 860}, {x: 520, y: 1100}, {x: 500, y: 1500}, {x: 500, y: 1920}
             ]},
             // Pasak River
-            { id: 'pasak', stroke: '#ffb703', width: 5, points: [
+            { id: 'pasak', stroke: '#ffb703', width: 5, name: 'Pasak River', labelPt: { x: 1200, y: 840 }, points: [
                 {x: 1350, y: 680}, {x: 1080, y: 960}, {x: 800, y: 1140}
             ]},
             // Mae Klong River
-            { id: 'maeklong', stroke: '#38bdf8', width: 6, points: [
+            { id: 'maeklong', stroke: '#38bdf8', width: 6, name: 'Mae Klong River', labelPt: { x: 250, y: 1100 }, points: [
                 {x: 160, y: 480}, {x: 280, y: 560}, {x: 250, y: 760}, {x: 250, y: 1920}
             ]},
             // Bang Pakong River (East)
-            { id: 'bangpakong', stroke: '#38bdf8', width: 5, points: [
+            { id: 'bangpakong', stroke: '#38bdf8', width: 5, name: 'Bang Pakong River', labelPt: { x: 1380, y: 1500 }, points: [
                 {x: 1500, y: 1200}, {x: 1380, y: 1600}, {x: 1380, y: 1920}
             ]}
         ];
@@ -745,59 +717,6 @@
             };
         }
 
-        // =========================================================
-        // PRESET CONTROL SCENARIOS
-        // =========================================================
-        function applyPreset(presetKey) {
-            document.querySelectorAll('.preset-btn').forEach(b => {
-                b.className = "preset-btn px-3 py-2 rounded-xl text-xs font-semibold border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-all flex items-center gap-2";
-            });
-
-            const btn = document.getElementById('preset-' + presetKey);
-            
-            if (presetKey === 'baseline') {
-                if (btn) btn.className = "preset-btn px-3 py-2 rounded-xl text-xs font-semibold border transition-all flex items-center gap-2 bg-cyan-glow/20 text-cyan-glow border-cyan-glow/40";
-                simState.damReleaseMult = 1.0;
-                simState.rainfall = 15;
-                simState.gateOpeningPct = 45;
-                simState.pumpPowerPct = 80;
-                simState.tideHeight = 1.20;
-            } else if (presetKey === 'monsoon') {
-                if (btn) btn.className = "preset-btn px-3 py-2 rounded-xl text-xs font-semibold border transition-all flex items-center gap-2 bg-warning/20 text-warning border-warning/40";
-                simState.damReleaseMult = 2.2;
-                simState.rainfall = 85;
-                simState.gateOpeningPct = 100;
-                simState.pumpPowerPct = 100;
-                simState.tideHeight = 1.80;
-            } else if (presetKey === 'dry') {
-                if (btn) btn.className = "preset-btn px-3 py-2 rounded-xl text-xs font-semibold border transition-all flex items-center gap-2 bg-amber-300/20 text-amber-300 border-amber-300/40";
-                simState.damReleaseMult = 0.4;
-                simState.rainfall = 0;
-                simState.gateOpeningPct = 15;
-                simState.pumpPowerPct = 30;
-                simState.tideHeight = 0.40;
-            } else if (presetKey === 'hightide') {
-                if (btn) btn.className = "preset-btn px-3 py-2 rounded-xl text-xs font-semibold border transition-all flex items-center gap-2 bg-critical/20 text-critical border-critical/40";
-                simState.damReleaseMult = 1.4;
-                simState.rainfall = 40;
-                simState.gateOpeningPct = 0; // Lockout
-                simState.pumpPowerPct = 100;
-                simState.tideHeight = 2.80;
-            }
-
-            syncUIWithState();
-        }
-
-        function syncUIWithState() {
-            document.getElementById('slider-dam-mult').value = simState.damReleaseMult;
-            document.getElementById('slider-rainfall').value = simState.rainfall;
-            document.getElementById('slider-gate-open').value = simState.gateOpeningPct;
-            document.getElementById('slider-pump-power').value = simState.pumpPowerPct;
-            document.getElementById('slider-tide-height').value = simState.tideHeight;
-
-            updateControls();
-        }
-
         function updateControls() {
             simState.damReleaseMult = parseFloat(document.getElementById('slider-dam-mult').value);
             simState.rainfall = parseInt(document.getElementById('slider-rainfall').value);
@@ -869,7 +788,7 @@
             // 3. Draw Bangkok Canal Regional Highlight Box
             drawBangkokCanalBox(mapCtx);
 
-            // 4. Draw River Polyline Paths
+            // 4. Draw River Polyline Paths & Segment Labels
             drawRiverPaths(mapCtx);
 
             // 5. Draw Path Particles
@@ -969,6 +888,7 @@
         }
 
         function drawRiverPaths(ctx) {
+            // 1. Draw River Polyline Paths
             riverPaths.forEach(path => {
                 ctx.beginPath();
                 ctx.moveTo(path.points[0].x, path.points[0].y);
@@ -980,6 +900,36 @@
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 ctx.stroke();
+            });
+
+            // 2. Render River Segment Name Badges
+            riverPaths.forEach(path => {
+                if (path.name && path.labelPt) {
+                    ctx.save();
+                    ctx.font = 'bold 11px JetBrains Mono, monospace';
+                    const textWidth = ctx.measureText(path.name).width;
+
+                    // Background pill container
+                    ctx.fillStyle = 'rgba(7, 10, 18, 0.9)';
+                    ctx.strokeStyle = path.stroke;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    
+                    if (ctx.roundRect) {
+                        ctx.roundRect(path.labelPt.x - textWidth/2 - 8, path.labelPt.y - 10, textWidth + 16, 20, 5);
+                    } else {
+                        ctx.rect(path.labelPt.x - textWidth/2 - 8, path.labelPt.y - 10, textWidth + 16, 20);
+                    }
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Text
+                    ctx.fillStyle = '#ffffff';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(path.name, path.labelPt.x, path.labelPt.y);
+                    ctx.restore();
+                }
             });
         }
 
