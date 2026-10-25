@@ -23,7 +23,7 @@
                     },
                     colors: {
                         navy: {
-                            950: '#070a12',
+                            950: '#080e21',
                             900: '#0b132b',
                             800: '#1c2541',
                             700: '#2a3b5c'
@@ -47,7 +47,7 @@
 
     <style>
         body {
-            background-color: #070a12;
+            background-color: #080e21;
             color: #f1f5f9;
             overflow: hidden;
             user-select: none;
@@ -76,7 +76,13 @@
         }
     </style>
 </head>
-<body class="w-screen h-screen flex flex-col font-sans overflow-hidden bg-navy-950 text-slate-100">
+<body class="w-screen h-screen flex flex-col font-sans overflow-hidden bg-[#080e21] text-slate-100 relative">
+
+    <!-- Traditional Thai Silk Lattice Grid Background Overlay -->
+    <div class="absolute inset-0 pointer-events-none opacity-20 z-0" style="
+        background-image: url(&quot;data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2300b4d8' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M20 0L40 20L20 40L0 20zM20 5L35 20L20 35L5 20z'/%3E%3C/g%3E%3C/svg%3E&quot;);
+        background-repeat: repeat;
+    "></div>
 
     <!-- ========================================================= -->
     <!-- TOP NAVIGATION & STATUS BAR                               -->
@@ -171,7 +177,7 @@
                         </span>
                     </div>
 
-                    <div class="relative w-full h-[240px] md:h-[300px] rounded-2xl bg-navy-950 border border-slate-800 overflow-hidden shadow-inner">
+                    <div class="relative w-full h-[240px] md:h-[300px] rounded-2xl bg-[#080e21] border border-slate-800 overflow-hidden shadow-inner">
                         <canvas id="cross-section-canvas" class="w-full h-full"></canvas>
                     </div>
                 </div>
@@ -932,8 +938,7 @@
         function globalAnimationLoop(timestamp) {
             simState.time = timestamp;
 
-            mapCtx.fillStyle = '#070a12';
-            mapCtx.fillRect(0, 0, mapCv.width, mapCv.height);
+            mapCtx.clearRect(0, 0, mapCv.width, mapCv.height);
 
             mapCtx.save();
             mapCtx.translate(simState.offsetX, simState.offsetY);
@@ -1114,7 +1119,7 @@
             const y = -boxH / 2;
 
             // 1. Dam outer container box
-            ctx.fillStyle = '#070a12';
+            ctx.fillStyle = '#080e21';
             ctx.strokeStyle = isHovered ? '#00f5d4' : status.color;
             ctx.lineWidth = isHovered ? 3.5 : 2.5;
 
