@@ -173,11 +173,6 @@
 
                     <div class="relative w-full h-[240px] md:h-[300px] rounded-2xl bg-navy-950 border border-slate-800 overflow-hidden shadow-inner">
                         <canvas id="cross-section-canvas" class="w-full h-full"></canvas>
-
-                        <!-- DYNAMIC HUD OVERLAY FOR SELECTED STATION TYPE -->
-                        <div id="station-hud" class="absolute top-3 right-3 glass-panel p-3 rounded-xl border border-cyan-glow/30 font-mono text-[11px] space-y-1 text-slate-300 pointer-events-none min-w-[180px] md:min-w-[210px]">
-                            <!-- Dynamically rendered by updateHud() -->
-                        </div>
                     </div>
                 </div>
 
@@ -1334,7 +1329,6 @@
 
             renderModalInfoCards(node);
             render2DCrossSection();
-            updateHud(node);
         }
 
         function closeInspectorModal() {
@@ -1440,50 +1434,6 @@
                 <div class="bg-navy-900/90 p-4 rounded-xl border border-slate-800 space-y-2">${card1Html}</div>
                 <div class="bg-navy-900/90 p-4 rounded-xl border border-slate-800 space-y-2">${card2Html}</div>
                 <div class="bg-navy-900/90 p-4 rounded-xl border border-slate-800 space-y-2">${card3Html}</div>
-            `;
-        }
-
-        function updateHud(node) {
-            const hudContainer = document.getElementById('station-hud');
-            const type = node.type;
-            const status = getNodeWaterStatus(node);
-            const waterLevel = (node.stage !== undefined && node.stage !== null && node.stage !== -99) ? node.stage : (node.tideLevel !== undefined ? node.tideLevel : null);
-
-            let rowsHtml = '';
-
-            if (node.waterId) {
-                rowsHtml += `<div class="flex justify-between gap-4 text-cyan-glow"><span>Station ID:</span> <span class="font-bold">water_id ${node.waterId}</span></div>`;
-            }
-
-            rowsHtml += `<div class="flex justify-between gap-4"><span>Threat Status:</span> <span class="font-bold" style="color:${status.color}">${status.badge}</span></div>`;
-
-            if (type === 'dam') {
-                rowsHtml += `<div class="flex justify-between gap-4"><span>Dam Storage:</span> <span class="text-cyan-glow font-bold">${node.pctFull !== undefined ? node.pctFull + '%' : 'Data Not Available'}</span></div>`;
-                rowsHtml += `<div class="flex justify-between gap-4"><span>Volume:</span> <span class="text-white">${node.storageMcm ? node.storageMcm.toLocaleString() + ' MCM' : 'Data Not Available'}</span></div>`;
-            } else {
-                const stageDisp = waterLevel !== null ? (waterLevel >= 0 ? '+' : '') + waterLevel.toFixed(2) + 'm MSL' : (node.isOffline ? 'OFFLINE' : 'Data Not Available');
-                rowsHtml += `<div class="flex justify-between gap-4"><span>Water Stage:</span> <span class="text-white font-bold">${stageDisp}</span></div>`;
-
-                if (node.bedBank !== undefined && node.bedBank !== null) {
-                    rowsHtml += `<div class="flex justify-between gap-4"><span>Bed Elevation:</span> <span class="text-amber-300">${node.bedBank.toFixed(2)}m MSL</span></div>`;
-                } else {
-                    rowsHtml += `<div class="flex justify-between gap-4"><span>Bed Elevation:</span> <span class="text-slate-400">Data Not Available</span></div>`;
-                }
-
-                if (node.leftBank !== undefined && node.leftBank !== null && node.rightBank !== undefined && node.rightBank !== null) {
-                    rowsHtml += `<div class="flex justify-between gap-4"><span>Left / Right Bank:</span> <span class="text-slate-300">${node.leftBank.toFixed(2)}m / ${node.rightBank.toFixed(2)}m</span></div>`;
-                } else {
-                    rowsHtml += `<div class="flex justify-between gap-4"><span>Bank Elevations:</span> <span class="text-slate-400">Data Not Available</span></div>`;
-                }
-
-                if (node.wlOut !== undefined && node.wlOut !== null && node.wlOut !== -99) {
-                    rowsHtml += `<div class="flex justify-between gap-4"><span>Outbound Stage:</span> <span class="text-slate-300">${(node.wlOut >= 0 ? '+' : '') + node.wlOut.toFixed(2)}m MSL</span></div>`;
-                }
-            }
-
-            hudContainer.innerHTML = `
-                <div class="text-[10px] font-sans font-bold text-cyan-glow uppercase tracking-wider mb-1">Station Telemetry HUD</div>
-                ${rowsHtml}
             `;
         }
 
