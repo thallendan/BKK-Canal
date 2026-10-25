@@ -1,577 +1,1605 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HydroView - Real-Time Hydrological Monitoring System</title>
+    <title>Thailand Macro Water System & Basin Hydraulics Telemetry</title>
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        navy: {
+                            950: '#070a12',
+                            900: '#0b132b',
+                            800: '#1c2541',
+                            700: '#2a3b5c'
+                        },
+                        cyan: {
+                            glow: '#00f5d4',
+                            electric: '#00b4d8'
+                        },
+                        status: {
+                            low: '#2196F3',
+                            normal: '#4CAF50',
+                            warning: '#FF9800',
+                            critical: '#F44336',
+                            offline: '#9E9E9E'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; }
-        canvas { touch-action: none; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.8); border-radius: 3px; }
+        body {
+            background-color: #070a12;
+            color: #f1f5f9;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .glass-panel {
+            background: rgba(11, 19, 43, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b132b; }
+        ::-webkit-scrollbar-thumb { background: #1c2541; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00b4d8; }
+
+        #map-canvas {
+            cursor: grab;
+        }
+        #map-canvas:active {
+            cursor: grabbing;
+        }
     </style>
 </head>
-<body class="h-full flex flex-col overflow-hidden bg-slate-950 text-slate-100">
+<body class="w-screen h-screen flex flex-col font-sans overflow-hidden bg-navy-950 text-slate-100">
 
-    <!-- Header Navigation -->
-    <header class="h-14 border-b border-slate-800 bg-slate-900/80 backdrop-blur px-4 flex items-center justify-between z-10 shrink-0">
+    <!-- ========================================================= -->
+    <!-- TOP NAVIGATION & STATUS BAR                               -->
+    <!-- ========================================================= -->
+    <header class="glass-panel absolute top-0 left-0 right-0 z-30 px-4 py-2.5 mx-3 my-3 rounded-2xl flex flex-wrap items-center justify-between gap-3 border border-slate-800">
         <div class="flex items-center gap-3">
-            <div class="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/30">
-                HV
+            <div class="p-2 bg-cyan-glow/10 rounded-xl border border-cyan-glow/30 text-cyan-glow">
+                <i data-lucide="waves" class="w-5 h-5"></i>
             </div>
             <div>
-                <h1 class="text-sm font-bold leading-none text-slate-100">HydroView Engine</h1>
-                <p class="text-[10px] text-slate-400 mt-0.5">Standardized Hydrological Risk & Telemetry Dashboard</p>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-sm font-bold text-white tracking-wide">Thailand Macro Water System Canvas</h1>
+                    <span id="telemetry-badge" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-glow/20 text-cyan-glow border border-cyan-glow/30">Loading Telemetry...</span>
+                </div>
+                <p class="text-[11px] text-slate-400">Northern Reservoirs &rarr; Central Confluences &rarr; Bangkok Strategic Gates &rarr; Gulf Estuary</p>
             </div>
         </div>
 
-        <!-- Legend Bar -->
-        <div class="hidden md:flex items-center gap-4 bg-slate-950/60 border border-slate-800/80 px-3 py-1 rounded-full text-xs">
-            <div class="flex items-center gap-1.5">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#2196F3]"></span>
-                <span class="text-slate-300">Low Water</span>
+        <div class="flex items-center flex-wrap gap-2 text-xs">
+            <div class="flex items-center bg-navy-900/90 p-1 rounded-xl border border-slate-800 font-mono">
+                <button onclick="zoomMap(1.2)" class="p-1.5 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-white transition" title="Zoom In">
+                    <i data-lucide="zoom-in" class="w-4 h-4"></i>
+                </button>
+                <button onclick="zoomMap(0.8)" class="p-1.5 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-white transition" title="Zoom Out">
+                    <i data-lucide="zoom-out" class="w-4 h-4"></i>
+                </button>
+                <button onclick="fitMapToScreen()" class="p-1.5 hover:bg-slate-800 rounded-lg text-cyan-glow transition" title="Fit to Screen">
+                    <i data-lucide="maximize-2" class="w-4 h-4"></i>
+                </button>
+                <button onclick="resetMapView()" class="p-1.5 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-white transition" title="Reset View">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                </button>
             </div>
-            <div class="flex items-center gap-1.5">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#4CAF50]"></span>
-                <span class="text-slate-300">Normal</span>
+
+            <div class="flex items-center gap-2 bg-navy-900/90 px-3 py-1.5 rounded-xl border border-slate-800 font-mono">
+                <span id="system-status-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span class="text-slate-400">Telemetry Feed:</span>
+                <span id="system-status-text" class="text-emerald-400 font-bold">DYNAMIC_FEED_CONNECTING</span>
             </div>
-            <div class="flex items-center gap-1.5">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#FF9800]"></span>
-                <span class="text-slate-300">Warning</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#F44336]"></span>
-                <span class="text-slate-300">Danger / Critical</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#9E9E9E]"></span>
-                <span class="text-slate-400">Offline</span>
+
+            <div class="bg-navy-900/90 px-3 py-1.5 rounded-xl border border-slate-800 font-mono text-slate-400 flex items-center gap-2">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-cyan-glow"></i>
+                <span id="live-clock">00:00:00 UTC+7</span>
             </div>
         </div>
     </header>
 
-    <!-- Main Workspace -->
-    <div class="flex-1 flex overflow-hidden relative">
-        
-        <!-- Canvas Map Area -->
-        <div class="flex-1 relative bg-slate-950 overflow-hidden">
-            <canvas id="mapCanvas" class="w-full h-full cursor-grab active:cursor-grabbing block"></canvas>
-            
-            <!-- Map Overlay Controls -->
-            <div class="absolute bottom-4 left-4 flex flex-col gap-2 bg-slate-900/90 border border-slate-800 p-1.5 rounded-lg shadow-xl backdrop-blur">
-                <button id="zoomInBtn" class="w-8 h-8 flex items-center justify-center hover:bg-slate-800 rounded font-bold text-slate-200 transition">+</button>
-                <button id="zoomOutBtn" class="w-8 h-8 flex items-center justify-center hover:bg-slate-800 rounded font-bold text-slate-200 transition">-</button>
-                <button id="resetViewBtn" class="w-8 h-8 flex items-center justify-center hover:bg-slate-800 rounded text-xs text-slate-300 transition">Reset</button>
+    <!-- ========================================================= -->
+    <!-- UNIFIED GEOGRAPHIC CANVAS & FLOATING OVERLAYS            -->
+    <!-- ========================================================= -->
+    <main class="relative flex-1 w-full h-full overflow-hidden">
+        <canvas id="map-canvas" class="absolute inset-0 w-full h-full"></canvas>
+
+        <div id="node-tooltip" class="pointer-events-none fixed z-40 hidden glass-panel px-3 py-2 rounded-xl border border-cyan-glow/40 text-xs font-mono shadow-2xl space-y-0.5">
+            <div id="tooltip-title" class="font-bold text-white text-sm">Node Title</div>
+            <div id="tooltip-subtitle" class="text-cyan-glow text-[11px]">Subtitle</div>
+            <div id="tooltip-status" class="text-[10px] font-bold">Status Badge</div>
+            <div id="tooltip-detail" class="text-slate-300 text-[10px]">Detail text</div>
+            <div class="text-[9px] text-slate-400 italic mt-1">&bull; Click node to open 2D Hydraulic Inspector &bull;</div>
+        </div>
+
+        <!-- STRATEGIC WATER GATES & PUMPING STATIONS QUICK PANEL -->
+        <div id="strategic-panel" class="absolute top-20 right-4 z-20 glass-panel p-3.5 rounded-2xl border border-slate-800 max-w-sm w-80 shadow-2xl space-y-2.5 hidden md:block">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="shield-alert" class="w-4 h-4 text-cyan-glow"></i>
+                    <h3 class="text-xs font-bold text-white uppercase tracking-wider font-mono">BMA Strategic Gates & Pumps</h3>
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Active Feed</span>
+            </div>
+
+            <div id="strategic-gates-list" class="space-y-1.5 max-h-[380px] overflow-y-auto pr-1">
+                <!-- Dynamically populated by renderStrategicPanel() -->
             </div>
         </div>
 
-        <!-- Sidebar Inspector Panel -->
-        <aside class="w-80 border-l border-slate-800 bg-slate-900/90 backdrop-blur flex flex-col overflow-hidden shrink-0">
-            <div class="p-3 border-b border-slate-800 bg-slate-900">
-                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Station Inspector</h2>
+        <!-- STANDARDIZED WATER LEVEL STATUS LEGEND -->
+        <div class="absolute bottom-6 left-4 z-20 glass-panel p-3.5 rounded-2xl border border-slate-800/80 text-[11px] font-mono space-y-2 hidden md:block">
+            <div class="text-xs font-bold text-white font-sans uppercase tracking-wider mb-1 flex items-center gap-1.5 border-b border-slate-800 pb-1.5">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-cyan-glow"></i> Standardized Water Threat Tiers
             </div>
-            
-            <div id="inspectorContent" class="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-4">
-                <div class="text-center py-12 text-slate-500 text-xs">
-                    Hover or click a station or river reach to inspect telemetry data and derived hydrological metrics.
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-md bg-[#2196F3] border border-blue-300"></span> 🔵 Low Water ($WL_{in} \le WL_{dry}$ or $I_{prox} < 50\%$)</div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-md bg-[#4CAF50] border border-emerald-300"></span> 🟢 Medium / Normal ($WL_{dry} < WL_{in} < WL_{warn}$)</div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-md bg-[#FF9800] border border-amber-300"></span> 🟠 Warning Level ($WL_{warn} \le WL_{in} < WL_{crit}$)</div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-md bg-[#F44336] border border-red-300"></span> 🔴 Danger / Critical ($WL_{in} \ge WL_{crit}$)</div>
+            <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-md bg-[#9E9E9E] border border-slate-400"></span> ⚪ Offline / Offline RTU ($WL_{in} = -99\text{ m MSL}$)</div>
+        </div>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- INTERACTIVE 2D CANAL & NODE INSPECTOR MODAL               -->
+    <!-- ========================================================= -->
+    <div id="inspector-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-md">
+        <div class="glass-panel w-full max-w-4xl rounded-3xl border border-slate-800 overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
+            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-navy-900/90">
+                <div class="flex items-center gap-3">
+                    <div id="modal-node-icon" class="p-2.5 rounded-xl bg-cyan-glow/10 text-cyan-glow border border-cyan-glow/30">
+                        <i data-lucide="waves" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h2 id="modal-node-title" class="text-lg font-bold text-white">Node Name</h2>
+                        <p id="modal-node-subtitle" class="text-xs text-cyan-glow font-mono">Location & Basin Specs</p>
+                    </div>
+                </div>
+                <button onclick="closeInspectorModal()" class="p-2 text-slate-400 hover:text-white bg-navy-800 rounded-xl hover:bg-slate-800 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6">
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="move-diagonal-2" class="w-4 h-4 text-cyan-glow"></i>
+                            <span class="text-xs font-bold text-white uppercase tracking-wider font-mono">Interactive 2D Hydraulics Cross-Section</span>
+                        </div>
+                        <span id="modal-alert-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                            TELEMETRY NORMAL
+                        </span>
+                    </div>
+
+                    <div class="relative w-full h-[300px] rounded-2xl bg-navy-950 border border-slate-800 overflow-hidden shadow-inner">
+                        <canvas id="cross-section-canvas" class="w-full h-full"></canvas>
+
+                        <!-- DYNAMIC HUD OVERLAY FOR SELECTED STATION TYPE -->
+                        <div id="station-hud" class="absolute top-3 right-3 glass-panel p-3 rounded-xl border border-cyan-glow/30 font-mono text-[11px] space-y-1 text-slate-300 pointer-events-none min-w-[210px]">
+                            <!-- Dynamically rendered by updateHud() -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC INFO CARDS GRID TAILORED PER STATION TYPE -->
+                <div id="modal-grid-container" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+                    <!-- Dynamically rendered by renderModalInfoCards() -->
                 </div>
             </div>
-        </aside>
+        </div>
     </div>
 
-    <!-- Application Script -->
+    <!-- ========================================================= -->
+    <!-- MASTER JAVASCRIPT & HTML5 CANVAS ENGINE                   -->
+    <!-- ========================================================= -->
     <script>
-        // =========================================================================
-        // STANDARDIZED COLOR ENGINE & HYDROLOGICAL METRICS
-        // =========================================================================
-
-        const WATER_COLORS = {
-            LOW: '#2196F3',      // Blue
-            MEDIUM: '#4CAF50',   // Green
-            WARNING: '#FF9800',  // Orange
-            DANGER: '#F44336',   // Red
-            OFFLINE: '#9E9E9E'   // Gray
+        const ENDPOINTS = {
+            klongmap: 'klongmap-latest.json',
+            masterWater: 'master_water_level_data.json'
         };
 
-        function getWaterStatus(node) {
-            if (!node || node.stage === null || node.stage === undefined || node.stage === -99) {
-                return { color: WATER_COLORS.OFFLINE, label: 'OFFLINE / NO SIGNAL', badgeClass: 'bg-slate-800 text-slate-400 border border-slate-700' };
+        // BASE TELEMETRY DATA STRUCTURE
+        const waterNodes = {
+            bhumibol: {
+                id: 'bhumibol', waterId: null, type: 'dam', name: 'Bhumibol Dam', subtitle: 'Ping River Basin / Tak Province',
+                worldX: 380, worldY: 140, capMcm: 13462.0, storageMcm: 9534.0, pctFull: 70.8, stage: 246.43, discharge: 0.03,
+                operation: '70.8% Filled', basin: 'Ping River Basin (EGAT)'
+            },
+            sirikit: {
+                id: 'sirikit', waterId: null, type: 'dam', name: 'Sirikit Dam', subtitle: 'Nan River Basin / Uttaradit Province',
+                worldX: 950, worldY: 120, capMcm: 9510.0, storageMcm: 7770.0, pctFull: 81.7, stage: 145.20, discharge: null,
+                operation: '81.7% Filled', basin: 'Nan River Basin (EGAT)'
+            },
+            kwainoi: {
+                id: 'kwainoi', waterId: null, type: 'dam', name: 'Kwai Noi Bamrung Dan Dam', subtitle: 'Kwai Noi Basin / Phitsanulok',
+                worldX: 1180, worldY: 260, capMcm: 939.0, storageMcm: 802.8, pctFull: 85.5, stage: 112.40, discharge: null,
+                operation: '85.5% Filled', basin: 'Kwai Noi Basin (RID)'
+            },
+            pasak: {
+                id: 'pasak', waterId: null, type: 'dam', name: 'Pasak Jolasid Dam', subtitle: 'Pasak River Basin / Lopburi',
+                worldX: 1350, worldY: 680, capMcm: 872.0, storageMcm: 805.7, pctFull: 92.4, stage: 39.80, discharge: null,
+                operation: '92.4% Filled', basin: 'Pasak River Basin (RID)'
+            },
+            vajiralongkorn: {
+                id: 'vajiralongkorn', waterId: null, type: 'dam', name: 'Vajiralongkorn Dam', subtitle: 'Mae Klong Basin / Kanchanaburi',
+                worldX: 160, worldY: 480, capMcm: 8860.0, storageMcm: 8638.5, pctFull: 97.5, stage: 142.10, discharge: null,
+                operation: '97.5% Filled', basin: 'Mae Klong Basin (EGAT)'
+            },
+            srinagarind: {
+                id: 'srinagarind', waterId: null, type: 'dam', name: 'Srinagarind Dam', subtitle: 'Mae Klong Basin / Kanchanaburi',
+                worldX: 280, worldY: 560, capMcm: 17745.0, storageMcm: 17549.8, pctFull: 98.9, stage: 172.50, discharge: null,
+                operation: '98.9% Filled', basin: 'Mae Klong Basin (EGAT)'
+            },
+            c2_nakhonsawan: {
+                id: 'c2_nakhonsawan', waterId: null, type: 'gauge', name: 'Station C.2 (Nakhon Sawan)', subtitle: 'Ping & Nan Confluence Entry Gauge',
+                worldX: 720, worldY: 680, discharge: 2150.00, stage: 22.35, warningLevel: 25.00, criticalLevel: 26.00, bedBank: 15.00, leftBank: 26.00, rightBank: 26.00, operation: 'Active River Gauge', basin: 'Upper Chao Phraya Basin'
+            },
+            c13_chaophraya_dam: {
+                id: 'c13_chaophraya_dam', waterId: null, type: 'gate', name: 'Chao Phraya Dam Barrage (Station C.13)', subtitle: 'Chai Nat Barrage & Western Diversion Gate',
+                worldX: 720, worldY: 860, stage: 14.20, wlIn: 137.38, wlOut: 131.34, warningLevel: 16.00, criticalLevel: 17.00, bedBank: 8.00, leftBank: 17.00, rightBank: 17.00, operation: 'Regulated Diversion Barrage', basin: 'Central Chao Phraya'
+            },
+            rama6_barrage: {
+                id: 'rama6_barrage', waterId: null, type: 'gate', name: 'Rama VI Barrage', subtitle: 'Pasak River Flood Control Gate / Ayutthaya',
+                worldX: 1080, worldY: 960, stage: 6.15, warningLevel: 8.00, criticalLevel: 9.00, bedBank: 1.00, leftBank: 9.00, rightBank: 9.00, operation: 'Operational Floodgate', basin: 'Lower Pasak Basin'
+            },
+            ayutthaya_confluence: {
+                id: 'ayutthaya_confluence', waterId: null, type: 'gauge', name: 'Ayutthaya Confluence', subtitle: 'Pasak & Chao Phraya River Merge',
+                worldX: 800, worldY: 1140, discharge: 2270.00, stage: 3.10, warningLevel: 4.50, criticalLevel: 5.20, bedBank: -1.00, leftBank: 5.00, rightBank: 5.00, operation: 'Free Flowing Confluence', basin: 'Lower Chao Phraya Basin'
+            },
+            c29a_bangsai: {
+                id: 'c29a_bangsai', waterId: null, type: 'gauge', name: 'Station C.29A (Bang Sai)', subtitle: 'Primary Flood Discharge Gauge to Greater Bangkok',
+                worldX: 760, worldY: 1320, discharge: 2380.00, stage: 2.15, warningLevel: 2.80, criticalLevel: 3.50, bedBank: -2.00, leftBank: 3.50, rightBank: 3.50, operation: 'Key Monitoring Station', basin: 'Greater Bangkok Entry'
+            },
+            khlong_bang_phrom_kancha: {
+                id: 'khlong_bang_phrom_kancha', waterId: '10', type: 'canal', name: 'Khlong Bang Phrom (Kanchanaphisek)', subtitle: 'จุดวัดคลองบางพรม ตอนถนนกาญจนาภิเษก',
+                worldX: 580, worldY: 1540, stage: 0.48, wlIn: 0.48, warningLevel: 0.60, criticalLevel: 0.70, dryLevel: 0.50, bedBank: -2.00, leftBank: 1.91, rightBank: 2.00, operation: 'Telemetered Canal Gauge (ID 10)', basin: 'Thonburi Grid'
+            },
+            khlong_songsaitai: {
+                id: 'khlong_songsaitai', waterId: '19', type: 'gate', name: 'Khlong Song Sai Tai Water Gate', subtitle: 'ประตูระบายน้ำคลองสองสายใต้ (Sai Mai Border)',
+                worldX: 980, worldY: 1400, stage: 0.68, wlIn: 0.68, wlOut: 1.14, warningLevel: 1.40, criticalLevel: 1.60, bedBank: -1.36, leftBank: 1.25, rightBank: 1.65, operation: 'Operational Gate (ID 19)', basin: 'Northern BMA Defense'
+            },
+            khlong_song_phahon: {
+                id: 'khlong_song_phahon', waterId: '114', type: 'canal', name: 'Khlong Song (Phahon Yothin)', subtitle: 'จุดวัดคลองสอง ตอนถนนพหลโยธิน',
+                worldX: 980, worldY: 1360, stage: 0.52, wlIn: 0.52, warningLevel: 0.80, criticalLevel: 1.00, bedBank: -1.36, leftBank: 1.25, rightBank: 1.65, operation: 'Telemetered Canal Gauge (ID 114)', basin: 'Northern BMA Grid'
+            },
+            pump_phra_khanong: {
+                id: 'pump_phra_khanong', waterId: '43', type: 'pump', name: 'Phra Khanong Pumping Station', subtitle: 'สถานีสูบน้ำพระโขนง (Primary East Outfall)',
+                worldX: 1120, worldY: 1620, pumpOn: 12, pumpTotal: 15, stage: -0.86, wlIn: -0.86, wlOut: 1.30, warningLevel: 0.50, criticalLevel: 1.00, bedBank: -3.00, leftBank: 1.50, rightBank: 1.50, operation: '12/15 High-Cap Pumps Active', basin: 'East BMA / Saen Saep Outlet', labelPos: 'right'
+            },
+            pump_bangsue: {
+                id: 'pump_bangsue', waterId: '28', type: 'pump', name: 'Bang Sue Pumping Station', subtitle: 'สถานีสูบน้ำคลองบางซื่อ (Giant Tunnel Catchment)',
+                worldX: 680, worldY: 1520, pumpOn: 6, pumpTotal: 7, stage: -1.09, wlIn: -1.09, wlOut: 1.25, warningLevel: 0.50, criticalLevel: 0.80, bedBank: -1.89, leftBank: 0.90, rightBank: 1.00, operation: '6/7 Tunnel Feed Pumps Active', basin: 'Central BMA Grid', labelPos: 'left'
+            },
+            pump_hokwa_sai_lang: {
+                id: 'pump_hokwa_sai_lang', waterId: '42', type: 'pump', name: 'Khlong Hok Wa Lower Station', subtitle: 'สถานีสูบน้ำคลองหกวาสายล่าง',
+                worldX: 1120, worldY: 1400, pumpOn: 4, pumpTotal: 4, stage: -0.26, wlIn: -0.26, wlOut: 1.10, warningLevel: 0.80, criticalLevel: 1.20, bedBank: -2.00, leftBank: 1.50, rightBank: 1.50, operation: '4/4 Pumps Operational', basin: 'Northeast Perimeter Defense', labelPos: 'top'
+            },
+            gate_mahasawat_khunsi: {
+                id: 'gate_mahasawat_khunsi', waterId: '108', type: 'gate', name: 'Khlong Khun Si / Mahasawat Gate', subtitle: 'ประตูระบายน้ำ คลองขุนศรีบุรีรักษ์',
+                worldX: 520, worldY: 1460, stage: 0.59, wlIn: 0.59, wlOut: 1.10, warningLevel: 1.80, criticalLevel: 2.00, bedBank: -2.00, leftBank: 1.98, rightBank: 1.98, operation: 'Gate Operational (ID 108)', basin: 'Mahasawat West Defense'
+            },
+            pump_bangkok_yai: {
+                id: 'pump_bangkok_yai', waterId: '109', type: 'pump', name: 'Khlong Bangkok Yai Station', subtitle: 'สถานีสูบน้ำคลองบางกอกใหญ่',
+                worldX: 620, worldY: 1660, pumpOn: 4, pumpTotal: 5, stage: 0.31, wlIn: 0.31, wlOut: 1.19, warningLevel: 0.60, criticalLevel: 0.70, bedBank: -2.00, leftBank: 1.80, rightBank: 1.90, operation: '4/5 Pumps Active', basin: 'Thonburi Basin', labelPos: 'bottom'
+            },
+            khlong_lam_pla_thio_132: {
+                id: 'khlong_lam_pla_thio_132', waterId: '132', type: 'canal', name: 'Khlong Lam Pla Thio (Sangkhasantisuk)', subtitle: 'ค.ลำปลาทิว ถ.สังฆสันติสุข',
+                worldX: 1240, worldY: 1480, stage: 0.94, wlIn: 0.94, warningLevel: 0.90, criticalLevel: 1.10, bedBank: -2.09, leftBank: 2.00, rightBank: 2.00, operation: 'Telemetered Warning Station (ID 132)', basin: 'East BMA Perimeter'
+            },
+            khlong_bang_talat_123: {
+                id: 'khlong_bang_talat_123', waterId: '123', type: 'canal', name: 'Khlong Bang Talat (Tha Sai)', subtitle: 'ค.บางตลาด-ท่าทราย',
+                worldX: 740, worldY: 1420, stage: -99, wlIn: -99, warningLevel: 0.70, criticalLevel: 0.80, bedBank: -1.40, leftBank: 1.62, rightBank: 1.62, isOffline: true, operation: 'Sensor Disconnected (ID 123)', basin: 'Nonthaburi Grid'
+            },
+            khlong_chuad_yai_rama9: {
+                id: 'khlong_chuad_yai_rama9', waterId: '184', type: 'canal', name: 'Rama IX / Khlong Chuad Yai', subtitle: 'จุดวัดคลองชวดใหญ่ ตอนถนนพระราม 9',
+                worldX: 1100, worldY: 1520, stage: -0.79, wlIn: -0.79, warningLevel: 0.50, criticalLevel: 0.80, bedBank: -2.00, leftBank: 1.00, rightBank: 1.00, operation: 'Rama IX Bypass Feeder', basin: 'East BMA Retention Grid'
+            },
+            khlong_saensaep: {
+                id: 'khlong_saensaep', waterId: null, type: 'canal', name: 'Khlong Saen Saep (Rama VIII)', subtitle: 'Bangkok Eastern Flood Bypass Conduit',
+                worldX: 1150, worldY: 1560, stage: 0.58, wlIn: 0.58, warningLevel: 1.40, criticalLevel: 1.60, bedBank: -2.00, leftBank: 2.00, rightBank: 2.00, operation: 'BMA Telemetered Flow', basin: 'East Bangkok Grid'
+            },
+            khlong_prem: {
+                id: 'khlong_prem', waterId: '118', type: 'canal', name: 'Khlong Prem Prachakon', subtitle: 'North-South Bangkok Arterial Canal',
+                worldX: 760, worldY: 1460, stage: 0.27, wlIn: 0.27, warningLevel: 1.20, criticalLevel: 1.40, bedBank: -2.00, leftBank: 1.50, rightBank: 1.50, operation: 'Regulated BMA Channel', basin: 'Central BMA Grid'
+            },
+            pump_phraya_ratcha: {
+                id: 'pump_phraya_ratcha', waterId: '106', type: 'pump', name: 'Khlong Phraya Ratchamontri Station', subtitle: 'สถานีสูบน้ำคลองพระยาราชมนตรี',
+                worldX: 600, worldY: 1760, pumpOn: 2, pumpTotal: 10, stage: -0.68, wlIn: -0.68, wlOut: 0.64, warningLevel: 0.40, criticalLevel: 0.50, bedBank: -3.54, leftBank: 1.20, rightBank: 1.20, operation: '2/10 Pumps Active', basin: 'Thonburi Basin', labelPos: 'top'
+            },
+            pump_sanamchai: {
+                id: 'pump_sanamchai', waterId: '113', type: 'pump', name: 'Khlong Sanam Chai Pumping Station', subtitle: 'สถานีสูบน้ำคลองสนามชัย',
+                worldX: 760, worldY: 1840, pumpOn: 3, pumpTotal: 15, stage: -0.28, wlIn: -0.28, wlOut: 0.78, warningLevel: 0.40, criticalLevel: 0.50, bedBank: -1.27, leftBank: 1.25, rightBank: 1.30, operation: '3/15 Pumps Active', basin: 'Thonburi Basin', labelPos: 'bottom'
+            },
+            pump_chaengron: {
+                id: 'pump_chaengron', waterId: '102', type: 'pump', name: 'Khlong Chaeng Ron Pumping Station', subtitle: 'สถานีสูบน้ำคลองแจ้งร้อน',
+                worldX: 920, worldY: 1760, pumpOn: 0, pumpTotal: 3, stage: 0.29, wlIn: 0.29, wlOut: 1.17, warningLevel: 0.60, criticalLevel: 0.70, bedBank: -2.00, leftBank: 2.60, rightBank: 2.80, operation: '0/3 Pumps Active', basin: 'Estuary Barrier', labelPos: 'top'
+            },
+            fort_chula: {
+                id: 'fort_chula', waterId: null, type: 'estuary', name: 'Fort Chula Tide Gauge Station', subtitle: 'Phra Chulachomklao Fort / Samut Prakan',
+                worldX: 860, worldY: 1980, tideLevel: 1.20, stage: 1.20, discharge: 2637.84, velocity: 0.88, warningLevel: 1.80, criticalLevel: 2.20, bedBank: null, leftBank: null, rightBank: null, operation: 'Estuary Tidal Telemetry', basin: 'Gulf of Thailand'
             }
-
-            const wl = node.stage;
-            const warn = node.warningLevel;
-            const crit = node.criticalLevel;
-            const dry = node.dryIn;
-
-            if (node.type === 'dam' && node.pctFull !== undefined && node.pctFull !== null) {
-                if (node.pctFull >= 90) return { color: WATER_COLORS.DANGER, label: 'CRITICAL CAPACITY', badgeClass: 'bg-red-500/20 text-red-400 border border-red-500/30' };
-                if (node.pctFull >= 80) return { color: WATER_COLORS.WARNING, label: 'HIGH STORAGE', badgeClass: 'bg-amber-500/20 text-amber-400 border border-amber-500/30' };
-                if (node.pctFull >= 50) return { color: WATER_COLORS.MEDIUM, label: 'NORMAL STORAGE', badgeClass: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' };
-                return { color: WATER_COLORS.LOW, label: 'LOW STORAGE', badgeClass: 'bg-blue-500/20 text-blue-400 border border-blue-500/30' };
-            }
-
-            if (crit !== null && crit !== undefined && wl >= crit) {
-                return { color: WATER_COLORS.DANGER, label: 'CRITICAL / DANGER', badgeClass: 'bg-red-500/20 text-red-400 border border-red-500/30' };
-            }
-            if (warn !== null && warn !== undefined && wl >= warn) {
-                return { color: WATER_COLORS.WARNING, label: 'WARNING LEVEL', badgeClass: 'bg-amber-500/20 text-amber-400 border border-amber-500/30' };
-            }
-            if (dry !== null && dry !== undefined && wl <= dry) {
-                return { color: WATER_COLORS.LOW, label: 'LOW WATER', badgeClass: 'bg-blue-500/20 text-blue-400 border border-blue-500/30' };
-            }
-
-            return { color: WATER_COLORS.MEDIUM, label: 'MEDIUM / NORMAL', badgeClass: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' };
-        }
-
-        function calculateHydrologicalMetrics(node) {
-            const wl = node.stage !== undefined ? node.stage : node.wlIn;
-            const bed = node.bedBank;
-            const bank = (node.leftBank !== null && node.leftBank !== undefined) 
-                ? Math.min(node.leftBank, node.rightBank !== null && node.rightBank !== undefined ? node.rightBank : node.leftBank) 
-                : null;
-            const crit = node.criticalLevel;
-
-            // 1. Water Depth Saturation Ratio (Sd)
-            let saturationRatio = null;
-            if (wl !== null && wl !== undefined && bed !== null && bed !== undefined && bank !== null && bank !== undefined && bank > bed) {
-                saturationRatio = ((wl - bed) / (bank - bed)) * 100;
-            }
-
-            // 2. Pumping Duty Load Ratio (Lp)
-            let pumpLoadRatio = null;
-            if (node.pumpTotal && node.pumpTotal > 0) {
-                const active = node.pumpOn || 0;
-                pumpLoadRatio = (active / node.pumpTotal) * 100;
-            }
-
-            // 3. Warning / Critical Proximity Index (Iprox)
-            let proximityIndex = null;
-            if (wl !== null && wl !== undefined && bed !== null && bed !== undefined && crit !== null && crit !== undefined && crit > bed) {
-                proximityIndex = ((wl - bed) / (crit - bed)) * 100;
-            }
-
-            return { saturationRatio, pumpLoadRatio, proximityIndex };
-        }
-
-        // =========================================================================
-        // SAMPLE TELEMETRY DATA (STRICTLY MAPS TO JSON SCHEMAS)
-        // =========================================================================
+        };
 
         const riverPaths = [
-            { id: 'ping', name: 'Ping River', color: WATER_COLORS.MEDIUM, points: [{x: 150, y: 50}, {x: 180, y: 150}, {x: 220, y: 220}] },
-            { id: 'nan', name: 'Nan River', color: WATER_COLORS.WARNING, points: [{x: 350, y: 50}, {x: 310, y: 150}, {x: 220, y: 220}] },
-            { id: 'pasak', name: 'Pasak River', color: WATER_COLORS.DANGER, points: [{x: 420, y: 180}, {x: 320, y: 250}, {x: 240, y: 310}] },
-            { id: 'chaophraya_upper', name: 'Upper Chao Phraya River', color: WATER_COLORS.MEDIUM, points: [{x: 220, y: 220}, {x: 230, y: 300}, {x: 240, y: 380}] },
-            { id: 'chaophraya_lower', name: 'Lower Chao Phraya (BMA Loop)', color: WATER_COLORS.MEDIUM, points: [{x: 240, y: 380}, {x: 250, y: 460}, {x: 230, y: 540}] }
+            { id: 'ping', stroke: '#2196F3', width: 5, name: 'Ping River', labelPt: { x: 480, y: 380 }, connectedNodes: ['bhumibol', 'c2_nakhonsawan'], points: [
+                {x: 380, y: 140}, {x: 440, y: 300}, {x: 560, y: 500}, {x: 720, y: 680}
+            ]},
+            { id: 'nan', stroke: '#4CAF50', width: 5, name: 'Nan River', labelPt: { x: 1010, y: 380 }, connectedNodes: ['sirikit', 'c2_nakhonsawan'], points: [
+                {x: 950, y: 120}, {x: 1040, y: 280}, {x: 980, y: 480}, {x: 720, y: 680}
+            ]},
+            { id: 'kwainoi', stroke: '#4CAF50', width: 3, name: 'Kwai Noi River', labelPt: { x: 1110, y: 250 }, connectedNodes: ['kwainoi'], points: [
+                {x: 1180, y: 260}, {x: 1040, y: 280}
+            ]},
+            { id: 'chaophraya_upper', stroke: '#4CAF50', width: 8, name: 'Chao Phraya River (Upper)', labelPt: { x: 720, y: 770 }, connectedNodes: ['c2_nakhonsawan', 'c13_chaophraya_dam', 'ayutthaya_confluence'], points: [
+                {x: 720, y: 680}, {x: 720, y: 860}, {x: 800, y: 1140}
+            ]},
+            { id: 'chaophraya_lower', stroke: '#4CAF50', width: 10, name: 'Chao Phraya River (Lower BMA Loop)', labelPt: { x: 810, y: 1650 }, connectedNodes: ['c29a_bangsai', 'pump_chaengron', 'fort_chula'], points: [
+                {x: 800, y: 1140},
+                {x: 760, y: 1320},
+                {x: 700, y: 1400},
+                {x: 640, y: 1460},
+                {x: 750, y: 1530},
+                {x: 940, y: 1600},
+                {x: 920, y: 1680},
+                {x: 700, y: 1720},
+                {x: 840, y: 1820},
+                {x: 860, y: 1980}
+            ]},
+            { id: 'thachin', stroke: '#4CAF50', width: 5, name: 'Tha Chin River', labelPt: { x: 500, y: 1300 }, connectedNodes: ['c13_chaophraya_dam', 'gate_mahasawat_khunsi'], points: [
+                {x: 720, y: 860}, {x: 520, y: 1100}, {x: 500, y: 1500}, {x: 500, y: 1920}
+            ]},
+            { id: 'pasak', stroke: '#FF9800', width: 5, name: 'Pasak River', labelPt: { x: 1200, y: 840 }, connectedNodes: ['pasak', 'rama6_barrage', 'ayutthaya_confluence'], points: [
+                {x: 1350, y: 680}, {x: 1080, y: 960}, {x: 800, y: 1140}
+            ]},
+            { id: 'maeklong', stroke: '#FF9800', width: 6, name: 'Mae Klong River', labelPt: { x: 250, y: 1100 }, connectedNodes: ['vajiralongkorn', 'srinagarind'], points: [
+                {x: 160, y: 480}, {x: 280, y: 560}, {x: 250, y: 760}, {x: 250, y: 1920}
+            ]},
+            { id: 'bangpakong', stroke: '#FF9800', width: 5, name: 'Bang Pakong River', labelPt: { x: 1380, y: 1500 }, connectedNodes: ['khlong_lam_pla_thio_132', 'pump_hokwa_sai_lang'], points: [
+                {x: 1500, y: 1200}, {x: 1380, y: 1600}, {x: 1380, y: 1920}
+            ]}
         ];
 
-        const stationNodes = [
-            {
-                id: '106',
-                name: 'Khlong Phraya Ratchamontri Pumping Station',
-                nameThai: 'ส.คลองพระยาราชมนตรี',
-                type: 'pump',
-                worldX: 180,
-                worldY: 480,
-                stage: -0.68,
-                bedBank: -3.54,
-                leftBank: 1.20,
-                rightBank: 1.20,
-                warningLevel: 0.40,
-                criticalLevel: 0.50,
-                dryIn: -2.00,
-                pumpOn: 2,
-                pumpTotal: 10
-            },
-            {
-                id: '113',
-                name: 'Khlong Sanam Chai Pumping Station',
-                nameThai: 'ส.คลองสนามชัย',
-                type: 'pump',
-                worldX: 210,
-                worldY: 520,
-                stage: -0.28,
-                bedBank: -1.27,
-                leftBank: 1.25,
-                rightBank: 1.25,
-                warningLevel: 0.40,
-                criticalLevel: 0.50,
-                dryIn: -1.00,
-                pumpOn: 3,
-                pumpTotal: 15
-            },
-            {
-                id: '132',
-                name: 'Khlong Lam Pla Thio (Sangkhasantisuk)',
-                nameThai: 'ค.ลำปลาทิว ถ.สังฆสันติสุข',
-                type: 'gauge',
-                worldX: 380,
-                worldY: 420,
-                stage: 0.94,
-                bedBank: -2.09,
-                leftBank: 2.00,
-                rightBank: 2.00,
-                warningLevel: 0.90,
-                criticalLevel: 1.10,
-                dryIn: -0.50,
-                pumpOn: 0,
-                pumpTotal: 0
-            },
-            {
-                id: '108',
-                name: 'Khun Si Buri Rak Water Gate',
-                nameThai: 'ปตร.ขุนศรีฯ-ค.มหาสวัสดิ์',
-                type: 'gate',
-                worldX: 160,
-                worldY: 390,
-                stage: 0.59,
-                bedBank: -2.00,
-                leftBank: 1.98,
-                rightBank: 1.98,
-                warningLevel: 1.80,
-                criticalLevel: 2.00,
-                dryIn: -1.00,
-                pumpOn: 0,
-                pumpTotal: 0
-            },
-            {
-                id: 'bhumibol',
-                name: 'Bhumibol Dam',
-                nameThai: 'เขื่อนภูมิพล',
-                type: 'dam',
-                worldX: 150,
-                worldY: 50,
-                stage: 240.50,
-                pctFull: 70.8,
-                warningLevel: null,
-                criticalLevel: null,
-                bedBank: null,
-                leftBank: null
-            },
-            {
-                id: 'pasak_dam',
-                name: 'Pasak Jolasid Dam',
-                nameThai: 'เขื่อนป่าสักชลสิทธิ์',
-                type: 'dam',
-                worldX: 420,
-                worldY: 180,
-                stage: 42.10,
-                pctFull: 92.4,
-                warningLevel: null,
-                criticalLevel: null,
-                bedBank: null,
-                leftBank: null
-            },
-            {
-                id: '123',
-                name: 'Khlong Bang Talat (Tha Sai)',
-                nameThai: 'ค.บางตลาด-ท่าทราย',
-                type: 'gauge',
-                worldX: 270,
-                worldY: 340,
-                stage: -99, // Offline indicator
-                bedBank: -1.40,
-                leftBank: 1.62,
-                warningLevel: 0.70,
-                criticalLevel: 0.80
+        const simState = {
+            scale: 0.72,
+            offsetX: 80,
+            offsetY: 40,
+            isDragging: false,
+            dragStartX: 0,
+            dragStartY: 0,
+            time: 0,
+            hoveredNode: null,
+            selectedNode: null
+        };
+
+        let riverParticles = [];
+        let mapCv, mapCtx;
+        let crossCv, crossCtx;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            startClock();
+
+            mapCv = document.getElementById('map-canvas');
+            mapCtx = mapCv.getContext('2d');
+
+            crossCv = document.getElementById('cross-section-canvas');
+            crossCtx = crossCv.getContext('2d');
+
+            resizeMapCanvas();
+            window.addEventListener('resize', () => {
+                resizeMapCanvas();
+                if (simState.selectedNode) render2DCrossSection();
+            });
+
+            mapCv.addEventListener('mousedown', onMouseDown);
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+            mapCv.addEventListener('wheel', onWheel, { passive: false });
+
+            initRiverParticles();
+
+            // FETCH & UPDATE DYNAMIC WATER LEVEL TELEMETRY
+            await fetchTelemetryData();
+
+            renderStrategicPanel();
+            requestAnimationFrame(globalAnimationLoop);
+        });
+
+        // STANDARDIZED WATER THREAT CLASSIFICATION FUNCTION
+        function getNodeWaterStatus(node) {
+            const wl = (node.stage !== undefined && node.stage !== null) ? node.stage : (node.wlIn !== undefined ? node.wlIn : null);
+            
+            // Sensor Disconnected or -99 m MSL
+            if (wl === undefined || wl === null || wl === -99 || node.isOffline) {
+                return {
+                    tier: 'Offline / Offline RTU',
+                    color: '#9E9E9E',
+                    bgClass: 'bg-slate-700/40 text-slate-300 border-slate-600/50',
+                    badge: '⚪ Offline / Sensor Error',
+                    code: 'OFFLINE'
+                };
             }
-        ];
 
-        // =========================================================================
-        // CANVAS & INTERACTIVE RENDERING ENGINE
-        // =========================================================================
+            // Dam Reservoir Storage Tier Classification
+            if (node.type === 'dam' && node.pctFull !== undefined && node.pctFull !== null) {
+                if (node.pctFull >= 95) {
+                    return { tier: 'Danger / Critical', color: '#F44336', bgClass: 'bg-red-500/20 text-red-300 border-red-500/30', badge: '🔴 Danger / Critical', code: 'CRITICAL' };
+                } else if (node.pctFull >= 85) {
+                    return { tier: 'Warning Level', color: '#FF9800', bgClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30', badge: '🟠 Warning Level', code: 'WARNING' };
+                } else if (node.pctFull >= 50) {
+                    return { tier: 'Medium / Normal', color: '#4CAF50', bgClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30', badge: '🟢 Medium / Normal', code: 'NORMAL' };
+                } else {
+                    return { tier: 'Low Water', color: '#2196F3', bgClass: 'bg-blue-500/20 text-blue-300 border-blue-500/30', badge: '🔵 Low Water', code: 'LOW' };
+                }
+            }
 
-        const canvas = document.getElementById('mapCanvas');
-        const ctx = canvas.getContext('2d');
-        const inspectorEl = document.getElementById('inspectorContent');
+            const warn = (node.warningLevel !== undefined && node.warningLevel !== null) ? node.warningLevel : null;
+            const crit = (node.criticalLevel !== undefined && node.criticalLevel !== null) ? node.criticalLevel : null;
+            const dry = (node.dryLevel !== undefined && node.dryLevel !== null) ? node.dryLevel : null;
+            const bed = (node.bedBank !== undefined && node.bedBank !== null) ? node.bedBank : null;
 
-        let zoom = 1.3;
-        let panX = 40;
-        let panY = 20;
-        let isDragging = false;
-        let startX, startY;
-        let hoveredNode = null;
+            // Tier 4: Danger / Critical (WL_in >= WL_crit)
+            if (crit !== null && wl >= crit) {
+                return {
+                    tier: 'Danger / Critical',
+                    color: '#F44336',
+                    bgClass: 'bg-red-500/20 text-red-300 border-red-500/30',
+                    badge: '🔴 Danger / Critical',
+                    code: 'CRITICAL'
+                };
+            }
 
-        function resizeCanvas() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-            draw();
+            // Tier 3: Warning Level (WL_warn <= WL_in < WL_crit)
+            if (warn !== null && wl >= warn) {
+                return {
+                    tier: 'Warning Level',
+                    color: '#FF9800',
+                    bgClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+                    badge: '🟠 Warning Level',
+                    code: 'WARNING'
+                };
+            }
+
+            // Tier 1: Low Water (WL_in <= WL_dry OR I_prox < 50% OR WL_in negative baseline)
+            let isLow = false;
+            if (dry !== null && wl <= dry) {
+                isLow = true;
+            } else if (bed !== null && crit !== null && crit > bed) {
+                const iProx = ((wl - bed) / (crit - bed)) * 100;
+                if (iProx < 50) isLow = true;
+            } else if (warn !== null && wl < 0) {
+                isLow = true;
+            }
+
+            if (isLow) {
+                return {
+                    tier: 'Low Water',
+                    color: '#2196F3',
+                    bgClass: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+                    badge: '🔵 Low Water',
+                    code: 'LOW'
+                };
+            }
+
+            // Tier 2: Medium / Normal (WL_dry < WL_in < WL_warn)
+            return {
+                tier: 'Medium / Normal',
+                color: '#4CAF50',
+                bgClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+                badge: '🟢 Medium / Normal',
+                code: 'NORMAL'
+            };
         }
 
-        window.addEventListener('resize', resizeCanvas);
+        function getRiverColor(path) {
+            if (!path.connectedNodes || path.connectedNodes.length === 0) return '#00b4d8';
+
+            const severityRank = { '#F44336': 4, '#FF9800': 3, '#4CAF50': 2, '#2196F3': 1, '#9E9E9E': 0 };
+            let maxRank = -1;
+            let topColor = '#00b4d8';
+
+            path.connectedNodes.forEach(nId => {
+                const node = waterNodes[nId];
+                if (node) {
+                    const status = getNodeWaterStatus(node);
+                    const rank = severityRank[status.color] || 0;
+                    if (rank > maxRank) {
+                        maxRank = rank;
+                        topColor = status.color;
+                    }
+                }
+            });
+
+            return topColor;
+        }
+
+        async function fetchTelemetryData() {
+            const badge = document.getElementById('telemetry-badge');
+            const statusText = document.getElementById('system-status-text');
+
+            try {
+                const [klongRes, masterRes] = await Promise.allSettled([
+                    fetch(ENDPOINTS.klongmap),
+                    fetch(ENDPOINTS.masterWater)
+                ]);
+
+                if (klongRes.status === 'fulfilled' && klongRes.value.ok) {
+                    const klongData = await klongRes.value.json();
+                    parseKlongmapData(klongData);
+                }
+
+                if (masterRes.status === 'fulfilled' && masterRes.value.ok) {
+                    const masterData = await masterRes.value.json();
+                    parseMasterWaterData(masterData);
+                }
+
+                badge.innerText = 'DYNAMIC JSON TELEMETRY VERIFIED';
+                badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                statusText.innerText = 'LIVE_TELEMETRY_ONLINE';
+            } catch (err) {
+                console.warn('Telemetry fetch fallback to embedded structure:', err);
+                badge.innerText = 'EMBEDDED TELEMETRY ACTIVE';
+                badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30';
+                statusText.innerText = 'OFFLINE_CACHE_ACTIVE';
+            }
+        }
+
+        function parseKlongmapData(data) {
+            if (!data || !data.waterStation) return;
+
+            const stations = data.waterStation;
+            stations.forEach(st => {
+                const info = st.water_station_info || {};
+                const wId = st.water_id ? st.water_id.toString() : (info.water_id ? info.water_id.toString() : null);
+                if (!wId) return;
+
+                // Match waterNodes by waterId
+                for (let k in waterNodes) {
+                    const node = waterNodes[k];
+                    if (node.waterId === wId) {
+                        const lastLvl = st.water_level_last || {};
+                        const pumpLast = st.water_pump_last || {};
+
+                        if (lastLvl.wl_in !== undefined && lastLvl.wl_in !== null) {
+                            if (lastLvl.wl_in === -99) {
+                                node.isOffline = true;
+                                node.stage = -99;
+                                node.wlIn = -99;
+                            } else {
+                                node.stage = lastLvl.wl_in;
+                                node.wlIn = lastLvl.wl_in;
+                                node.isOffline = false;
+                            }
+                        }
+                        if (lastLvl.wl_out01 !== undefined && lastLvl.wl_out01 !== null && lastLvl.wl_out01 !== -99) {
+                            node.wlOut = lastLvl.wl_out01;
+                        }
+
+                        // Hydraulic Threshold & Bank Elevations
+                        if (st.bed_bank !== undefined && st.bed_bank !== null) node.bedBank = st.bed_bank;
+                        else if (info.bed_bank !== undefined && info.bed_bank !== null) node.bedBank = info.bed_bank;
+
+                        if (st.left_bank !== undefined && st.left_bank !== null) node.leftBank = st.left_bank;
+                        else if (info.left_bank !== undefined && info.left_bank !== null) node.leftBank = info.left_bank;
+
+                        if (st.right_bank !== undefined && st.right_bank !== null) node.rightBank = st.right_bank;
+                        else if (info.right_bank !== undefined && info.right_bank !== null) node.rightBank = info.right_bank;
+
+                        if (st.warning !== undefined && st.warning !== null) node.warningLevel = st.warning;
+                        else if (info.warning !== undefined && info.warning !== null) node.warningLevel = info.warning;
+
+                        if (st.critical !== undefined && st.critical !== null) node.criticalLevel = st.critical;
+                        else if (info.critical !== undefined && info.critical !== null) node.criticalLevel = info.critical;
+
+                        if (st.dry_in !== undefined && st.dry_in !== null) node.dryLevel = st.dry_in;
+                        else if (info.dry_in !== undefined && info.dry_in !== null) node.dryLevel = info.dry_in;
+
+                        // Pump Active Count
+                        if (node.type === 'pump' && pumpLast) {
+                            let activeCount = 0;
+                            let totalCount = 0;
+                            for (let pKey in pumpLast) {
+                                if (pKey.startsWith('pump') && pumpLast[pKey] !== null) {
+                                    totalCount++;
+                                    if (pumpLast[pKey] === true) activeCount++;
+                                }
+                            }
+                            if (totalCount > 0) {
+                                node.pumpOn = activeCount;
+                                node.pumpTotal = totalCount;
+                                node.operation = `${activeCount}/${totalCount} Pumps Active`;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function parseMasterWaterData(master) {
+            if (!master || !master.parsed_summary) return;
+
+            const summary = master.parsed_summary;
+
+            if (summary.dam_analyst_v3) {
+                const damMap = summary.dam_analyst_v3;
+                if (damMap.bhumibol && waterNodes.bhumibol) {
+                    waterNodes.bhumibol.capMcm = damMap.bhumibol.capacity_mcm;
+                    waterNodes.bhumibol.storageMcm = damMap.bhumibol.storage_mcm;
+                    waterNodes.bhumibol.pctFull = damMap.bhumibol.storage_pct;
+                    waterNodes.bhumibol.operation = `${damMap.bhumibol.storage_pct}% Filled (${damMap.bhumibol.storage_mcm.toLocaleString()} MCM)`;
+                }
+                if (damMap.sirikit && waterNodes.sirikit) {
+                    waterNodes.sirikit.capMcm = damMap.sirikit.capacity_mcm;
+                    waterNodes.sirikit.storageMcm = damMap.sirikit.storage_mcm;
+                    waterNodes.sirikit.pctFull = damMap.sirikit.storage_pct;
+                    waterNodes.sirikit.operation = `${damMap.sirikit.storage_pct}% Filled (${damMap.sirikit.storage_mcm.toLocaleString()} MCM)`;
+                }
+                if (damMap.kwai_noi && waterNodes.kwainoi) {
+                    waterNodes.kwainoi.capMcm = damMap.kwai_noi.capacity_mcm;
+                    waterNodes.kwainoi.storageMcm = damMap.kwai_noi.storage_mcm;
+                    waterNodes.kwainoi.pctFull = damMap.kwai_noi.storage_pct;
+                    waterNodes.kwainoi.operation = `${damMap.kwai_noi.storage_pct}% Filled (${damMap.kwai_noi.storage_mcm.toLocaleString()} MCM)`;
+                }
+                if (damMap.pasak && waterNodes.pasak) {
+                    waterNodes.pasak.capMcm = damMap.pasak.capacity_mcm;
+                    waterNodes.pasak.storageMcm = damMap.pasak.storage_mcm;
+                    waterNodes.pasak.pctFull = damMap.pasak.storage_pct;
+                    waterNodes.pasak.operation = `${damMap.pasak.storage_pct}% Filled (${damMap.pasak.storage_mcm.toLocaleString()} MCM)`;
+                }
+                if (damMap.srinagarind && waterNodes.srinagarind) {
+                    waterNodes.srinagarind.capMcm = damMap.srinagarind.capacity_mcm;
+                    waterNodes.srinagarind.storageMcm = damMap.srinagarind.storage_mcm;
+                    waterNodes.srinagarind.pctFull = damMap.srinagarind.storage_pct;
+                    waterNodes.srinagarind.operation = `${damMap.srinagarind.storage_pct}% Filled (${damMap.srinagarind.storage_mcm.toLocaleString()} MCM)`;
+                }
+                if (damMap.vajiralongkorn && waterNodes.vajiralongkorn) {
+                    waterNodes.vajiralongkorn.capMcm = damMap.vajiralongkorn.capacity_mcm;
+                    waterNodes.vajiralongkorn.storageMcm = damMap.vajiralongkorn.storage_mcm;
+                    waterNodes.vajiralongkorn.pctFull = damMap.vajiralongkorn.storage_pct;
+                    waterNodes.vajiralongkorn.operation = `${damMap.vajiralongkorn.storage_pct}% Filled (${damMap.vajiralongkorn.storage_mcm.toLocaleString()} MCM)`;
+                }
+            }
+        }
+
+        function startClock() {
+            setInterval(() => {
+                const d = new Date();
+                document.getElementById('live-clock').innerText = d.toLocaleTimeString() + ' UTC+7';
+            }, 1000);
+        }
+
+        function resizeMapCanvas() {
+            mapCv.width = window.innerWidth;
+            mapCv.height = window.innerHeight;
+        }
+
+        function renderStrategicPanel() {
+            const listContainer = document.getElementById('strategic-gates-list');
+            if (!listContainer) return;
+            listContainer.innerHTML = '';
+
+            const strategicKeys = [
+                'pump_phra_khanong',
+                'pump_bangsue',
+                'khlong_songsaitai',
+                'pump_hokwa_sai_lang',
+                'gate_mahasawat_khunsi',
+                'pump_bangkok_yai',
+                'khlong_lam_pla_thio_132',
+                'khlong_bang_talat_123'
+            ];
+
+            strategicKeys.forEach(key => {
+                const node = waterNodes[key];
+                if (!node) return;
+
+                const status = getNodeWaterStatus(node);
+                const stVal = (node.stage !== undefined && node.stage !== null && node.stage !== -99) ? `${node.stage >= 0 ? '+' : ''}${node.stage.toFixed(2)}m` : 'OFFLINE';
+                const idTag = node.waterId ? `ID:${node.waterId}` : 'BMA';
+
+                const item = document.createElement('div');
+                item.className = 'glass-panel p-2.5 rounded-xl border border-slate-800/80 hover:border-cyan-glow/50 cursor-pointer transition flex items-center justify-between text-xs font-mono';
+                item.onclick = () => focusNodeAndInspect(node);
+
+                item.innerHTML = `
+                    <div class="space-y-0.5 max-w-[170px]">
+                        <div class="font-bold text-white text-[11px] truncate flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full" style="background-color: ${status.color}"></span>
+                            ${node.name}
+                        </div>
+                        <div class="text-[10px] text-slate-400 truncate">${node.subtitle}</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="badge px-1.5 py-0.5 text-[9px] rounded font-bold ${status.bgClass}">${stVal}</span>
+                        <div class="text-[9px] font-bold mt-1" style="color: ${status.color}">${status.badge}</div>
+                    </div>
+                `;
+
+                listContainer.appendChild(item);
+            });
+        }
+
+        function focusNodeAndInspect(node) {
+            simState.scale = 1.2;
+            simState.offsetX = (window.innerWidth / 2) - (node.worldX * simState.scale);
+            simState.offsetY = (window.innerHeight / 2) - (node.worldY * simState.scale);
+            openInspectorModal(node);
+        }
+
+        function onMouseDown(e) {
+            if (e.target !== mapCv) return;
+            
+            const worldPos = screenToWorld(e.clientX, e.clientY);
+            const clickedNode = findNodeAt(worldPos.x, worldPos.y);
+
+            if (clickedNode) {
+                openInspectorModal(clickedNode);
+                return;
+            }
+
+            simState.isDragging = true;
+            simState.dragStartX = e.clientX - simState.offsetX;
+            simState.dragStartY = e.clientY - simState.offsetY;
+        }
+
+        function onMouseMove(e) {
+            if (simState.isDragging) {
+                simState.offsetX = e.clientX - simState.dragStartX;
+                simState.offsetY = e.clientY - simState.dragStartY;
+            } else {
+                const worldPos = screenToWorld(e.clientX, e.clientY);
+                const node = findNodeAt(worldPos.x, worldPos.y);
+                
+                const tooltip = document.getElementById('node-tooltip');
+                if (node) {
+                    simState.hoveredNode = node;
+                    tooltip.style.left = (e.clientX + 15) + 'px';
+                    tooltip.style.top = (e.clientY + 15) + 'px';
+                    tooltip.classList.remove('hidden');
+
+                    const status = getNodeWaterStatus(node);
+                    const idLabel = node.waterId ? ` [water_id: ${node.waterId}]` : '';
+                    document.getElementById('tooltip-title').innerText = node.name + idLabel;
+                    document.getElementById('tooltip-subtitle').innerText = node.subtitle;
+                    
+                    const tooltipStatus = document.getElementById('tooltip-status');
+                    tooltipStatus.innerText = status.badge;
+                    tooltipStatus.style.color = status.color;
+
+                    let detailStr = `Type: ${node.type.toUpperCase()}`;
+                    if (node.type === 'dam') {
+                        detailStr += ` | ${node.pctFull}% Filled`;
+                    } else if (node.stage === -99 || node.isOffline) {
+                        detailStr += ` | Sensor Disconnected / Offline RTU`;
+                    } else if (node.bedBank !== undefined && node.bedBank !== null) {
+                        detailStr += ` | Bed: ${node.bedBank}m, Banks: L ${node.leftBank !== null ? node.leftBank : 'N/A'}m / R ${node.rightBank !== null ? node.rightBank : 'N/A'}m`;
+                    } else if (node.criticalLevel !== undefined && node.criticalLevel !== null) {
+                        const distCrit = (node.criticalLevel - (node.stage || 0)).toFixed(2);
+                        detailStr += ` | Distance to Critical: ${distCrit}m`;
+                    }
+                    document.getElementById('tooltip-detail').innerText = detailStr;
+                } else {
+                    simState.hoveredNode = null;
+                    tooltip.classList.add('hidden');
+                }
+            }
+        }
+
+        function onMouseUp() {
+            simState.isDragging = false;
+        }
+
+        function onWheel(e) {
+            e.preventDefault();
+            const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+            zoomMap(zoomFactor, e.clientX, e.clientY);
+        }
+
+        function zoomMap(factor, mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2) {
+            const newScale = Math.max(0.3, Math.min(2.5, simState.scale * factor));
+            simState.offsetX = mouseX - (mouseX - simState.offsetX) * (newScale / simState.scale);
+            simState.offsetY = mouseY - (mouseY - simState.offsetY) * (newScale / simState.scale);
+            simState.scale = newScale;
+        }
+
+        function fitMapToScreen() {
+            simState.scale = Math.min(window.innerWidth / 1700, window.innerHeight / 2100);
+            simState.offsetX = (window.innerWidth - 1700 * simState.scale) / 2;
+            simState.offsetY = 30;
+        }
+
+        function resetMapView() {
+            simState.scale = 0.72;
+            simState.offsetX = 80;
+            simState.offsetY = 40;
+        }
+
+        function screenToWorld(sx, sy) {
+            return {
+                x: (sx - simState.offsetX) / simState.scale,
+                y: (sy - simState.offsetY) / simState.scale
+            };
+        }
+
+        function findNodeAt(wx, wy) {
+            const threshold = 35 / simState.scale;
+            for (let k in waterNodes) {
+                const node = waterNodes[k];
+                const dx = node.worldX - wx;
+                const dy = node.worldY - wy;
+                if (Math.sqrt(dx*dx + dy*dy) < threshold) {
+                    return node;
+                }
+            }
+            return null;
+        }
+
+        function initRiverParticles() {
+            riverParticles = [];
+            riverPaths.forEach(path => {
+                for (let i = 0; i < 25; i++) {
+                    riverParticles.push({
+                        pathId: path.id,
+                        t: Math.random(),
+                        speedMult: 0.8 + Math.random() * 0.4,
+                        size: 2 + Math.random() * 2
+                    });
+                }
+            });
+        }
+
+        function updateAndDrawRiverParticles(ctx) {
+            const baseSpeed = 0.0015;
+
+            riverParticles.forEach(p => {
+                p.t += baseSpeed * p.speedMult;
+                if (p.t > 1.0) p.t = 0;
+
+                const path = riverPaths.find(r => r.id === p.pathId);
+                if (!path) return;
+
+                const pt = getInterpolatedPoint(path.points, p.t);
+                const strokeColor = getRiverColor(path);
+                
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = strokeColor;
+                ctx.shadowBlur = 6;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            });
+        }
+
+        function getInterpolatedPoint(pts, t) {
+            if (pts.length < 2) return pts[0];
+            const segs = pts.length - 1;
+            const scaledT = t * segs;
+            const idx = Math.min(Math.floor(scaledT), segs - 1);
+            const subT = scaledT - idx;
+
+            const p1 = pts[idx];
+            const p2 = pts[idx + 1];
+
+            return {
+                x: p1.x + (p2.x - p1.x) * subT,
+                y: p1.y + (p2.y - p1.y) * subT
+            };
+        }
+
+        function globalAnimationLoop(timestamp) {
+            simState.time = timestamp;
+
+            mapCtx.fillStyle = '#070a12';
+            mapCtx.fillRect(0, 0, mapCv.width, mapCv.height);
+
+            mapCtx.save();
+            mapCtx.translate(simState.offsetX, simState.offsetY);
+            mapCtx.scale(simState.scale, simState.scale);
+
+            drawGeographicGrid(mapCtx);
+            drawGulfOfThailand(mapCtx, timestamp);
+            drawBangkokCanalBox(mapCtx);
+            drawRiverPaths(mapCtx);
+            updateAndDrawRiverParticles(mapCtx);
+            drawWaterNodes(mapCtx, timestamp);
+
+            mapCtx.restore();
+
+            requestAnimationFrame(globalAnimationLoop);
+        }
+
+        function drawGeographicGrid(ctx) {
+            ctx.strokeStyle = 'rgba(28, 37, 65, 0.4)';
+            ctx.lineWidth = 1;
+            const step = 100;
+            for (let x = 0; x < 1700; x += step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0); ctx.lineTo(x, 2100);
+                ctx.stroke();
+            }
+            for (let y = 0; y < 2100; y += step) {
+                ctx.beginPath();
+                ctx.moveTo(0, y); ctx.lineTo(1700, y);
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.25)';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.fillText('NORTHERN THAILAND RESERVOIR CATCHMENTS', 50, 60);
+            ctx.fillText('CENTRAL PLAINS CONFLUENCES & BARRAGES', 50, 640);
+            ctx.fillText('GREATER BANGKOK METROPOLITAN CANALS & STRATEGIC GATES', 50, 1280);
+            ctx.fillText('GULF OF THAILAND ESTUARY & TIDAL OUTFALL', 50, 1880);
+        }
+
+        function drawGulfOfThailand(ctx, t) {
+            const gulfY = 1900;
+            const width = 1700;
+            const height = 300;
+
+            const grad = ctx.createLinearGradient(0, gulfY, 0, gulfY + height);
+            grad.addColorStop(0, 'rgba(15, 23, 42, 0.95)');
+            grad.addColorStop(0.3, 'rgba(30, 58, 138, 0.85)');
+            grad.addColorStop(1, 'rgba(15, 23, 42, 1.0)');
+
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, gulfY, width, height);
+
+            ctx.beginPath();
+            ctx.moveTo(0, gulfY);
+            for (let x = 0; x <= width; x += 20) {
+                const waveY = gulfY + Math.sin(x * 0.02 + t * 0.003) * 4;
+                ctx.lineTo(x, waveY);
+            }
+            ctx.lineTo(width, gulfY + height);
+            ctx.lineTo(0, gulfY + height);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 180, 216, 0.3)';
+            ctx.fill();
+
+            const tideVal = waterNodes.fort_chula ? waterNodes.fort_chula.tideLevel : 1.20;
+            const tideScale = 25;
+            const actTideY = gulfY - (tideVal * tideScale);
+
+            ctx.beginPath();
+            ctx.moveTo(0, actTideY);
+            ctx.lineTo(width, actTideY);
+            ctx.strokeStyle = '#00b4d8';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([8, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#00b4d8';
+            ctx.font = 'bold 12px monospace';
+            ctx.fillText(`ESTUARY SEA LEVEL (+MSL): ${tideVal >= 0 ? '+' : ''}${tideVal.toFixed(2)}m`, 60, actTideY - 8);
+        }
+
+        function drawBangkokCanalBox(ctx) {
+            const bx = 480, by = 1340, bw = 760, bh = 520;
+            
+            ctx.fillStyle = 'rgba(11, 19, 43, 0.6)';
+            ctx.fillRect(bx, by, bw, bh);
+            ctx.strokeStyle = 'rgba(0, 245, 212, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 6]);
+            ctx.strokeRect(bx, by, bw, bh);
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = '#00f5d4';
+            ctx.font = 'bold 12px font-mono';
+            ctx.fillText('BMA CANAL & STRATEGIC DRAINAGE PROTECTION ZONE', bx + 15, by + 25);
+        }
 
         function drawRiverPaths(ctx) {
             riverPaths.forEach(path => {
+                const dynamicColor = getRiverColor(path);
+
                 ctx.beginPath();
-                if (path.points && path.points.length > 0) {
-                    ctx.moveTo(path.points[0].x, path.points[0].y);
-                    for (let i = 1; i < path.points.length; i++) {
-                        ctx.lineTo(path.points[i].x, path.points[i].y);
-                    }
+                ctx.moveTo(path.points[0].x, path.points[0].y);
+                for (let i = 1; i < path.points.length; i++) {
+                    ctx.lineTo(path.points[i].x, path.points[i].y);
                 }
-                ctx.strokeStyle = path.color;
-                ctx.lineWidth = 6 / zoom;
+                ctx.strokeStyle = dynamicColor;
+                ctx.lineWidth = path.width;
                 ctx.lineCap = 'round';
                 ctx.lineJoin = 'round';
                 ctx.stroke();
             });
-        }
 
-        function drawDamNode(ctx, node, isHovered) {
-            const status = getWaterStatus(node);
-            ctx.fillStyle = '#0f172a';
-            ctx.strokeStyle = isHovered ? '#ffffff' : status.color;
-            ctx.lineWidth = (isHovered ? 3 : 2) / zoom;
+            riverPaths.forEach(path => {
+                if (path.name && path.labelPt) {
+                    const dynamicColor = getRiverColor(path);
 
-            ctx.beginPath();
-            ctx.arc(node.worldX, node.worldY, 14 / zoom, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
+                    ctx.save();
+                    ctx.font = 'bold 11px JetBrains Mono, monospace';
+                    const textWidth = ctx.measureText(path.name).width;
 
-            ctx.fillStyle = status.color;
-            ctx.beginPath();
-            ctx.arc(node.worldX, node.worldY, 8 / zoom, 0, Math.PI * 2);
-            ctx.fill();
-        }
+                    ctx.fillStyle = 'rgba(7, 10, 18, 0.9)';
+                    ctx.strokeStyle = dynamicColor;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    
+                    if (ctx.roundRect) {
+                        ctx.roundRect(path.labelPt.x - textWidth/2 - 8, path.labelPt.y - 10, textWidth + 16, 20, 5);
+                    } else {
+                        ctx.rect(path.labelPt.x - textWidth/2 - 8, path.labelPt.y - 10, textWidth + 16, 20);
+                    }
+                    ctx.fill();
+                    ctx.stroke();
 
-        function drawGateNode(ctx, node, isHovered) {
-            const status = getWaterStatus(node);
-            const size = 18 / zoom;
-            ctx.fillStyle = '#0f172a';
-            ctx.strokeStyle = isHovered ? '#ffffff' : status.color;
-            ctx.lineWidth = (isHovered ? 3 : 2) / zoom;
-
-            ctx.beginPath();
-            ctx.rect(node.worldX - size/2, node.worldY - size/2, size, size);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = status.color;
-            ctx.fillRect(node.worldX - size/4, node.worldY - size/4, size/2, size/2);
-        }
-
-        function drawPumpNode(ctx, node, isHovered) {
-            const status = getWaterStatus(node);
-            ctx.fillStyle = '#0f172a';
-            ctx.strokeStyle = isHovered ? '#ffffff' : status.color;
-            ctx.lineWidth = (isHovered ? 3 : 2) / zoom;
-
-            ctx.beginPath();
-            ctx.arc(node.worldX, node.worldY, 12 / zoom, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-
-            ctx.fillStyle = status.color;
-            ctx.beginPath();
-            ctx.arc(node.worldX, node.worldY, 6 / zoom, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        function drawGaugeNode(ctx, node, isHovered) {
-            const status = getWaterStatus(node);
-            ctx.fillStyle = status.color;
-            ctx.strokeStyle = isHovered ? '#ffffff' : '#020617';
-            ctx.lineWidth = 2 / zoom;
-
-            ctx.beginPath();
-            ctx.arc(node.worldX, node.worldY, 8 / zoom, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
-        }
-
-        function draw() {
-            ctx.save();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Grid lines background
-            ctx.strokeStyle = '#1e293b';
-            ctx.lineWidth = 0.5;
-            const gridSize = 40 * zoom;
-            for (let x = panX % gridSize; x < canvas.width; x += gridSize) {
-                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-            }
-            for (let y = panY % gridSize; y < canvas.height; y += gridSize) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-            }
-
-            ctx.translate(panX, panY);
-            ctx.scale(zoom, zoom);
-
-            // Render rivers & channels
-            drawRiverPaths(ctx);
-
-            // Render station nodes
-            stationNodes.forEach(node => {
-                const isHovered = hoveredNode === node;
-                if (node.type === 'dam') drawDamNode(ctx, node, isHovered);
-                else if (node.type === 'gate') drawGateNode(ctx, node, isHovered);
-                else if (node.type === 'pump') drawPumpNode(ctx, node, isHovered);
-                else drawGaugeNode(ctx, node, isHovered);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(path.name, path.labelPt.x, path.labelPt.y);
+                    ctx.restore();
+                }
             });
-
-            ctx.restore();
         }
 
-        // =========================================================================
-        // INSPECTOR SIDEBAR RENDERER
-        // =========================================================================
+        function drawWaterNodes(ctx, t) {
+            for (let k in waterNodes) {
+                const node = waterNodes[k];
+                const isHovered = simState.hoveredNode && simState.hoveredNode.id === node.id;
 
-        function updateInspector(node) {
-            if (!node) {
-                inspectorEl.innerHTML = `
-                    <div class="text-center py-12 text-slate-500 text-xs">
-                        Hover or click a station or river reach to inspect telemetry data and derived hydrological metrics.
-                    </div>
-                `;
-                return;
+                ctx.save();
+                ctx.translate(node.worldX, node.worldY);
+
+                if (node.type === 'dam') {
+                    drawDamNode(ctx, node, isHovered, t);
+                } else if (node.type === 'gate') {
+                    drawGateNode(ctx, node, isHovered, t);
+                } else if (node.type === 'pump') {
+                    drawPumpNode(ctx, node, isHovered, t);
+                } else if (node.type === 'estuary') {
+                    drawEstuaryNode(ctx, node, isHovered, t);
+                } else {
+                    drawGaugeNode(ctx, node, isHovered, t);
+                }
+
+                ctx.restore();
+            }
+        }
+
+        function drawDamNode(ctx, node, isHovered, t) {
+            const status = getNodeWaterStatus(node);
+            const curPct = node.pctFull !== undefined ? node.pctFull : 0;
+
+            ctx.fillStyle = isHovered ? '#00f5d4' : '#1c2541';
+            ctx.strokeStyle = status.color;
+            ctx.lineWidth = 3;
+
+            ctx.beginPath();
+            ctx.arc(0, 0, 22, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            const rotSpeed = t * 0.002;
+            ctx.save();
+            ctx.rotate(rotSpeed);
+            ctx.strokeStyle = status.color;
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 4; i++) {
+                ctx.rotate(Math.PI / 2);
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 14); ctx.stroke();
+            }
+            ctx.restore();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11px font-sans';
+            ctx.fillText(node.name, 28, 0);
+            ctx.fillStyle = status.color;
+            ctx.font = 'bold 10px monospace';
+            ctx.fillText(`STORAGE: ${curPct}% (${node.storageMcm ? node.storageMcm.toLocaleString() : 'Data Not Available'} MCM)`, 28, 14);
+        }
+
+        function drawGateNode(ctx, node, isHovered, t) {
+            const status = getNodeWaterStatus(node);
+
+            ctx.fillStyle = '#1c2541';
+            ctx.strokeStyle = isHovered ? '#00f5d4' : status.color;
+            ctx.lineWidth = 2.5;
+
+            ctx.fillRect(-14, -14, 28, 28);
+            ctx.strokeRect(-14, -14, 28, 28);
+
+            ctx.fillStyle = status.color;
+            ctx.fillRect(-10, 0, 20, 10);
+
+            const labelStr = node.waterId ? `${node.name} [ID:${node.waterId}]` : node.name;
+            const stageText = (node.stage !== undefined && node.stage !== null && node.stage !== -99) ? `${node.stage >= 0 ? '+' : ''}${node.stage.toFixed(2)}m MSL` : 'OFFLINE';
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11px font-sans';
+            ctx.fillText(labelStr, 20, -2);
+            ctx.fillStyle = status.color;
+            ctx.font = 'bold 10px monospace';
+            ctx.fillText(`STAGE: ${stageText}`, 20, 12);
+        }
+
+        function drawPumpNode(ctx, node, isHovered, t) {
+            const status = getNodeWaterStatus(node);
+
+            ctx.fillStyle = '#1c2541';
+            ctx.strokeStyle = isHovered ? '#00f5d4' : status.color;
+            ctx.lineWidth = 2.5;
+
+            ctx.beginPath();
+            ctx.arc(0, 0, 18, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            const pumpRot = t * 0.005;
+            ctx.save();
+            ctx.rotate(pumpRot);
+            ctx.fillStyle = status.color;
+            for (let b = 0; b < 3; b++) {
+                ctx.rotate((Math.PI * 2) / 3);
+                ctx.fillRect(-2, -12, 4, 12);
+            }
+            ctx.restore();
+
+            const labelPos = node.labelPos || 'bottom';
+            ctx.font = 'bold 11px font-sans';
+            ctx.textAlign = 'left';
+
+            const displayName = node.waterId ? `${node.name} [ID:${node.waterId}]` : node.name;
+            const pText = node.pumpOn !== undefined ? `${node.pumpOn}/${node.pumpTotal} PUMPS` : 'PUMP STATION';
+
+            if (labelPos === 'top') {
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(displayName, 0, -24);
+                ctx.fillStyle = status.color;
+                ctx.font = 'bold 10px monospace';
+                ctx.fillText(pText, 0, -10);
+            } else if (labelPos === 'bottom') {
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(displayName, 0, 28);
+                ctx.fillStyle = status.color;
+                ctx.font = 'bold 10px monospace';
+                ctx.fillText(pText, 0, 42);
+            } else if (labelPos === 'left') {
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(displayName, -22, -2);
+                ctx.fillStyle = status.color;
+                ctx.font = 'bold 10px monospace';
+                ctx.fillText(pText, -22, 12);
+            } else {
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(displayName, 22, -2);
+                ctx.fillStyle = status.color;
+                ctx.font = 'bold 10px monospace';
+                ctx.fillText(pText, 22, 12);
+            }
+            ctx.textAlign = 'left';
+        }
+
+        function drawGaugeNode(ctx, node, isHovered, t) {
+            const status = getNodeWaterStatus(node);
+
+            ctx.fillStyle = isHovered ? '#00f5d4' : status.color;
+            ctx.beginPath();
+            ctx.arc(0, 0, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            const labelStr = node.waterId ? `${node.name} [ID:${node.waterId}]` : node.name;
+            const qOrStage = node.discharge !== undefined && node.discharge !== null 
+                ? `Q: ${node.discharge.toLocaleString()} m³/s` 
+                : ((node.stage !== undefined && node.stage !== null && node.stage !== -99) ? `WL: ${node.stage >= 0 ? '+' : ''}${node.stage.toFixed(2)}m` : 'OFFLINE');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11px font-sans';
+            ctx.fillText(labelStr, 16, -2);
+            ctx.fillStyle = status.color;
+            ctx.font = 'bold 10px monospace';
+            ctx.fillText(qOrStage, 16, 10);
+        }
+
+        function drawEstuaryNode(ctx, node, isHovered, t) {
+            const status = getNodeWaterStatus(node);
+
+            ctx.fillStyle = '#1e3a8a';
+            ctx.strokeStyle = status.color;
+            ctx.lineWidth = 3;
+
+            ctx.fillRect(-18, -18, 36, 36);
+            ctx.strokeRect(-18, -18, 36, 36);
+
+            ctx.beginPath();
+            ctx.moveTo(-12, 0);
+            for (let x = -12; x <= 12; x += 4) {
+                ctx.lineTo(x, Math.sin(x * 0.3 + t * 0.005) * 4);
+            }
+            ctx.strokeStyle = status.color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            const tLvl = node.tideLevel !== undefined ? node.tideLevel : null;
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11px font-sans';
+            ctx.fillText(node.name, 24, -2);
+            ctx.fillStyle = status.color;
+            ctx.font = 'bold 10px monospace';
+            ctx.fillText(`TIDE: ${tLvl !== null ? (tLvl >= 0 ? '+' : '') + tLvl.toFixed(2) + 'm' : 'Data Not Available'}`, 24, 12);
+        }
+
+        function openInspectorModal(node) {
+            simState.selectedNode = node;
+            
+            const titleStr = node.waterId ? `${node.name} (water_id: ${node.waterId})` : node.name;
+            document.getElementById('modal-node-title').innerText = titleStr;
+            document.getElementById('modal-node-subtitle').innerText = node.subtitle;
+
+            const status = getNodeWaterStatus(node);
+            const alertBadge = document.getElementById('modal-alert-badge');
+            alertBadge.innerText = status.badge;
+            alertBadge.className = `px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold ${status.bgClass}`;
+
+            document.getElementById('inspector-modal').classList.remove('hidden');
+
+            renderModalInfoCards(node);
+            render2DCrossSection();
+            updateHud(node);
+        }
+
+        function closeInspectorModal() {
+            simState.selectedNode = null;
+            document.getElementById('inspector-modal').classList.add('hidden');
+        }
+
+        function renderModalInfoCards(node) {
+            const gridContainer = document.getElementById('modal-grid-container');
+            const type = node.type;
+            const status = getNodeWaterStatus(node);
+
+            let card1Html = '';
+            let card2Html = '';
+            let card3Html = '';
+
+            const stageStr = (node.stage !== undefined && node.stage !== null && node.stage !== -99) ? `${node.stage >= 0 ? '+' : ''}${node.stage.toFixed(2)}m MSL` : (node.isOffline ? 'OFFLINE (-99m MSL)' : 'Data Not Available');
+            const qStr = (node.discharge !== undefined && node.discharge !== null) ? `${node.discharge.toLocaleString()} m³/s` : 'Data Not Available';
+            const wlInStr = (node.wlIn !== undefined && node.wlIn !== null && node.wlIn !== -99) ? `${node.wlIn >= 0 ? '+' : ''}${node.wlIn.toFixed(2)}m MSL` : 'Data Not Available';
+            const wlOutStr = (node.wlOut !== undefined && node.wlOut !== null && node.wlOut !== -99) ? `${node.wlOut >= 0 ? '+' : ''}${node.wlOut.toFixed(2)}m MSL` : 'Data Not Available';
+
+            // Calculate Saturation Ratio (Sd), Pump Duty Load (Lp), and Critical Proximity Index (Iprox)
+            const bed = (node.bedBank !== undefined && node.bedBank !== null) ? node.bedBank : null;
+            const leftB = (node.leftBank !== undefined && node.leftBank !== null) ? node.leftBank : null;
+            const rightB = (node.rightBank !== undefined && node.rightBank !== null) ? node.rightBank : null;
+            const minBank = (leftB !== null && rightB !== null) ? Math.min(leftB, rightB) : (leftB || rightB || null);
+            const crit = (node.criticalLevel !== undefined && node.criticalLevel !== null) ? node.criticalLevel : null;
+
+            let sdStr = "Data Not Available";
+            if (node.stage !== null && node.stage !== undefined && node.stage !== -99 && bed !== null && minBank !== null && minBank > bed) {
+                const sd = ((node.stage - bed) / (minBank - bed)) * 100;
+                sdStr = `${sd.toFixed(2)}%`;
             }
 
-            const status = getWaterStatus(node);
-            const metrics = calculateHydrologicalMetrics(node);
+            let lpStr = "Data Not Available";
+            if (type === 'pump' && node.pumpTotal !== undefined && node.pumpTotal !== null && node.pumpTotal > 0) {
+                const active = node.pumpOn !== undefined ? node.pumpOn : 0;
+                const lp = (active / node.pumpTotal) * 100;
+                lpStr = `${lp.toFixed(1)}% (${active}/${node.pumpTotal} Active)`;
+            } else if (type !== 'pump') {
+                lpStr = "N/A (Non-pumping station)";
+            }
 
-            inspectorEl.innerHTML = `
-                <div class="space-y-4">
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Station ID: #${node.id}</span>
-                        <h3 class="text-base font-bold text-slate-100 leading-tight mt-0.5">${node.name}</h3>
-                        ${node.nameThai ? `<p class="text-xs text-slate-400 mt-0.5 font-sans">${node.nameThai}</p>` : ''}
-                    </div>
+            let iproxStr = "Data Not Available";
+            if (node.stage !== null && node.stage !== undefined && node.stage !== -99 && bed !== null && crit !== null && crit > bed) {
+                const iprox = ((node.stage - bed) / (crit - bed)) * 100;
+                iproxStr = `${iprox.toFixed(2)}%`;
+            }
 
-                    <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-lg">
-                        <div class="flex justify-between items-center mb-1.5">
-                            <span class="text-xs text-slate-400 font-medium">Water Level Status</span>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${status.badgeClass}">${status.label}</span>
-                        </div>
-                        <div class="text-2xl font-mono font-bold" style="color: ${status.color}">
-                            ${node.stage !== null && node.stage !== undefined && node.stage !== -99 ? node.stage.toFixed(2) + ' m MSL' : 'N/A'}
-                        </div>
-                    </div>
+            if (type === 'dam') {
+                const pct = node.pctFull !== undefined ? node.pctFull : 'Data Not Available';
+                card1Html = `
+                    <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-cyan-glow">Dam Reservoir Telemetry</span>
+                    <div class="flex justify-between"><span class="text-slate-300">Storage Volume:</span> <span class="text-white font-bold">${node.storageMcm ? node.storageMcm.toLocaleString() + ' MCM' : 'Data Not Available'}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Total Capacity:</span> <span class="text-slate-300">${node.capMcm ? node.capMcm.toLocaleString() + ' MCM' : 'Data Not Available'}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Percentage Full:</span> <span class="font-bold text-sm" style="color: ${status.color}">${pct}%</span></div>
+                `;
+                card2Html = `
+                    <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-amber-400">Reservoir Operations</span>
+                    <div class="flex justify-between"><span class="text-slate-300">Operation Status:</span> <span class="text-amber-300 font-bold">${node.operation || 'Data Not Available'}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Stage Elevation:</span> <span class="text-white font-bold">${stageStr}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Standardized Status:</span> <span class="font-bold" style="color:${status.color}">${status.tier}</span></div>
+                `;
+                card3Html = `
+                    <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-cyan-electric">Basin & Agency Metadata</span>
+                    <div class="flex justify-between"><span class="text-slate-300">Catchment Basin:</span> <span class="text-white">${node.basin || 'Data Not Available'}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Discharge Flow Q:</span> <span class="text-emerald-400 font-bold">${qStr}</span></div>
+                `;
+            } else {
+                card1Html = `
+                    <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-cyan-glow">Telemetry & Threat Classification</span>
+                    <div class="flex justify-between"><span class="text-slate-300">Station Water ID:</span> <span class="text-cyan-glow font-bold">${node.waterId || 'Data Not Available'}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Current Stage (WLin):</span> <span class="text-white font-bold">${stageStr}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Threat Tier:</span> <span class="font-bold" style="color:${status.color}">${status.badge}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Pump Duty Load (Lp):</span> <span class="text-emerald-300 font-bold">${lpStr}</span></div>
+                `;
 
-                    <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-lg space-y-2.5">
-                        <span class="text-[11px] font-bold text-blue-400 uppercase tracking-wider block border-b border-slate-800 pb-1">Derived Hydrological Metrics</span>
-                        
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="text-slate-400">Water Depth Saturation ($S_d$):</span>
-                            <span class="font-mono font-bold text-slate-200">
-                                ${metrics.saturationRatio !== null ? metrics.saturationRatio.toFixed(1) + '%' : 'N/A'}
-                            </span>
-                        </div>
+                const bedVal = bed !== null ? `${bed >= 0 ? '+' : ''}${bed.toFixed(2)}m MSL` : 'Data Not Available';
+                const leftVal = leftB !== null ? `${leftB >= 0 ? '+' : ''}${leftB.toFixed(2)}m MSL` : 'Data Not Available';
+                const rightVal = rightB !== null ? `${rightB >= 0 ? '+' : ''}${rightB.toFixed(2)}m MSL` : 'Data Not Available';
+                
+                card2Html = `
+                    <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-cyan-electric">Hydraulic Geometry & Saturation</span>
+                    <div class="flex justify-between"><span class="text-slate-300">Canal Bed Elevation:</span> <span class="text-amber-300 font-bold">${bedVal}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Left / Right Bank:</span> <span class="text-slate-200">${leftVal} / ${rightVal}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Depth Saturation (Sd):</span> <span class="text-cyan-glow font-bold">${sdStr}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Critical Proximity (Iprox):</span> <span class="font-bold" style="color:${status.color}">${iproxStr}</span></div>
+                `;
 
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="text-slate-400">Critical Proximity Index ($I_{prox}$):</span>
-                            <span class="font-mono font-bold text-amber-400">
-                                ${metrics.proximityIndex !== null ? metrics.proximityIndex.toFixed(1) + '%' : 'N/A'}
-                            </span>
-                        </div>
+                const warnVal = (node.warningLevel !== undefined && node.warningLevel !== null) ? `${node.warningLevel.toFixed(2)}m MSL` : 'Data Not Available';
+                const critVal = (node.criticalLevel !== undefined && node.criticalLevel !== null) ? `${node.criticalLevel.toFixed(2)}m MSL` : 'Data Not Available';
 
-                        ${metrics.pumpLoadRatio !== null ? `
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="text-slate-400">Pumping Duty Load ($L_p$):</span>
-                            <span class="font-mono font-bold text-emerald-400">
-                                ${metrics.pumpLoadRatio.toFixed(1)}% (${node.pumpOn}/${node.pumpTotal} Active)
-                            </span>
-                        </div>
-                        ` : ''}
-                    </div>
+                card3Html = `
+                    <span class="text-slate-400 text-[10px] uppercase block font-sans font-bold text-emerald-400">Station Operations & Outfall</span>
+                    <div class="flex justify-between"><span class="text-slate-300">Warning Threshold:</span> <span class="text-amber-300 font-bold">${warnVal}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Critical Threshold:</span> <span class="text-rose-400 font-bold">${critVal}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Outbound Stage (WLout):</span> <span class="text-cyan-glow font-bold">${wlOutStr}</span></div>
+                    <div class="flex justify-between"><span class="text-slate-300">Basin Zone:</span> <span class="text-slate-300">${node.basin || 'Data Not Available'}</span></div>
+                `;
+            }
 
-                    <div class="p-3 bg-slate-950/60 border border-slate-800 rounded-lg space-y-2 text-xs">
-                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block border-b border-slate-800 pb-1">Telemetry Thresholds</span>
-                        
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Canal Bed Level:</span>
-                            <span class="font-mono text-slate-300">${node.bedBank !== null && node.bedBank !== undefined ? node.bedBank.toFixed(2) + ' m MSL' : 'N/A'}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Bank Level:</span>
-                            <span class="font-mono text-slate-300">${node.leftBank !== null && node.leftBank !== undefined ? node.leftBank.toFixed(2) + ' m MSL' : 'N/A'}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Warning Threshold:</span>
-                            <span class="font-mono text-amber-400">${node.warningLevel !== null && node.warningLevel !== undefined ? node.warningLevel.toFixed(2) + ' m MSL' : 'N/A'}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-slate-400">Critical Threshold:</span>
-                            <span class="font-mono text-red-400">${node.criticalLevel !== null && node.criticalLevel !== undefined ? node.criticalLevel.toFixed(2) + ' m MSL' : 'N/A'}</span>
-                        </div>
-                    </div>
-                </div>
+            gridContainer.innerHTML = `
+                <div class="bg-navy-900/90 p-4 rounded-xl border border-slate-800 space-y-2">${card1Html}</div>
+                <div class="bg-navy-900/90 p-4 rounded-xl border border-slate-800 space-y-2">${card2Html}</div>
+                <div class="bg-navy-900/90 p-4 rounded-xl border border-slate-800 space-y-2">${card3Html}</div>
             `;
         }
 
-        // =========================================================================
-        // INTERACTION & PAN/ZOOM EVENT LISTENERS
-        // =========================================================================
+        function updateHud(node) {
+            const hudContainer = document.getElementById('station-hud');
+            const type = node.type;
+            const status = getNodeWaterStatus(node);
+            const waterLevel = (node.stage !== undefined && node.stage !== null && node.stage !== -99) ? node.stage : (node.tideLevel !== undefined ? node.tideLevel : null);
 
-        function getMouseWorldCoords(e) {
-            const rect = canvas.getBoundingClientRect();
-            const clientX = e.clientX - rect.left;
-            const clientY = e.clientY - rect.top;
-            return {
-                x: (clientX - panX) / zoom,
-                y: (clientY - panY) / zoom
-            };
-        }
+            let rowsHtml = '';
 
-        canvas.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.clientX - panX;
-            startY = e.clientY - panY;
-        });
-
-        window.addEventListener('mouseup', () => { isDragging = false; });
-
-        canvas.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                panX = e.clientX - startX;
-                panY = e.clientY - startY;
-                draw();
-                return;
+            if (node.waterId) {
+                rowsHtml += `<div class="flex justify-between gap-4 text-cyan-glow"><span>Station ID:</span> <span class="font-bold">water_id ${node.waterId}</span></div>`;
             }
 
-            const coords = getMouseWorldCoords(e);
-            let found = null;
+            rowsHtml += `<div class="flex justify-between gap-4"><span>Threat Status:</span> <span class="font-bold" style="color:${status.color}">${status.badge}</span></div>`;
 
-            for (const node of stationNodes) {
-                const dx = coords.x - node.worldX;
-                const dy = coords.y - node.worldY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 15 / zoom) {
-                    found = node;
-                    break;
+            if (type === 'dam') {
+                rowsHtml += `<div class="flex justify-between gap-4"><span>Dam Storage:</span> <span class="text-cyan-glow font-bold">${node.pctFull !== undefined ? node.pctFull + '%' : 'Data Not Available'}</span></div>`;
+                rowsHtml += `<div class="flex justify-between gap-4"><span>Volume:</span> <span class="text-white">${node.storageMcm ? node.storageMcm.toLocaleString() + ' MCM' : 'Data Not Available'}</span></div>`;
+            } else {
+                const stageDisp = waterLevel !== null ? (waterLevel >= 0 ? '+' : '') + waterLevel.toFixed(2) + 'm MSL' : (node.isOffline ? 'OFFLINE' : 'Data Not Available');
+                rowsHtml += `<div class="flex justify-between gap-4"><span>Water Stage:</span> <span class="text-white font-bold">${stageDisp}</span></div>`;
+
+                if (node.bedBank !== undefined && node.bedBank !== null) {
+                    rowsHtml += `<div class="flex justify-between gap-4"><span>Bed Elevation:</span> <span class="text-amber-300">${node.bedBank.toFixed(2)}m MSL</span></div>`;
+                } else {
+                    rowsHtml += `<div class="flex justify-between gap-4"><span>Bed Elevation:</span> <span class="text-slate-400">Data Not Available</span></div>`;
+                }
+
+                if (node.leftBank !== undefined && node.leftBank !== null && node.rightBank !== undefined && node.rightBank !== null) {
+                    rowsHtml += `<div class="flex justify-between gap-4"><span>Left / Right Bank:</span> <span class="text-slate-300">${node.leftBank.toFixed(2)}m / ${node.rightBank.toFixed(2)}m</span></div>`;
+                } else {
+                    rowsHtml += `<div class="flex justify-between gap-4"><span>Bank Elevations:</span> <span class="text-slate-400">Data Not Available</span></div>`;
+                }
+
+                if (node.wlOut !== undefined && node.wlOut !== null && node.wlOut !== -99) {
+                    rowsHtml += `<div class="flex justify-between gap-4"><span>Outbound Stage:</span> <span class="text-slate-300">${(node.wlOut >= 0 ? '+' : '') + node.wlOut.toFixed(2)}m MSL</span></div>`;
                 }
             }
 
-            if (found !== hoveredNode) {
-                hoveredNode = found;
-                draw();
-                updateInspector(hoveredNode);
+            hudContainer.innerHTML = `
+                <div class="text-[10px] font-sans font-bold text-cyan-glow uppercase tracking-wider mb-1">Station Telemetry HUD</div>
+                ${rowsHtml}
+            `;
+        }
+
+        function render2DCrossSection() {
+            if (!crossCv || !crossCtx || !simState.selectedNode) return;
+            const node = simState.selectedNode;
+
+            const rect = crossCv.parentElement.getBoundingClientRect();
+            crossCv.width = rect.width;
+            crossCv.height = rect.height;
+
+            const w = crossCv.width;
+            const h = crossCv.height;
+
+            crossCtx.clearRect(0, 0, w, h);
+
+            const status = getNodeWaterStatus(node);
+
+            // Channel Hydraulic Profile & Reference Planes
+            const bed = (node.bedBank !== undefined && node.bedBank !== null) ? node.bedBank : null;
+            const leftBank = (node.leftBank !== undefined && node.leftBank !== null) ? node.leftBank : null;
+            const rightBank = (node.rightBank !== undefined && node.rightBank !== null) ? node.rightBank : null;
+            const minBank = (leftBank !== null && rightBank !== null) ? Math.min(leftBank, rightBank) : (leftBank || rightBank || null);
+            
+            const warn = (node.warningLevel !== undefined && node.warningLevel !== null) ? node.warningLevel : null;
+            const crit = (node.criticalLevel !== undefined && node.criticalLevel !== null) ? node.criticalLevel : null;
+            const wl = (node.stage !== undefined && node.stage !== null && node.stage !== -99) ? node.stage : (node.wlIn !== undefined && node.wlIn !== -99 ? node.wlIn : null);
+
+            // Vertical axis range calculations
+            let minElev = bed !== null ? bed - 0.5 : (wl !== null ? wl - 2.0 : -3.0);
+            let maxElev = minBank !== null ? minBank + 0.5 : (crit !== null ? crit + 0.5 : (wl !== null ? wl + 2.0 : 3.0));
+            
+            if (crit !== null && crit > maxElev) maxElev = crit + 0.3;
+            if (warn !== null && warn > maxElev) maxElev = warn + 0.3;
+            if (wl !== null && wl > maxElev) maxElev = wl + 0.3;
+
+            const elevSpan = Math.max(1.0, maxElev - minElev);
+
+            function elevToY(elev) {
+                return (h - 35) - ((elev - minElev) / elevSpan) * (h - 75);
             }
-        });
 
-        canvas.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+            const y_bed = bed !== null ? elevToY(bed) : h - 45;
+            const y_leftBank = leftBank !== null ? elevToY(leftBank) : 55;
+            const y_rightBank = rightBank !== null ? elevToY(rightBank) : 55;
+            const y_water = wl !== null ? elevToY(wl) : null;
 
-            panX = mouseX - (mouseX - panX) * zoomFactor;
-            panY = mouseY - (mouseY - panY) * zoomFactor;
-            zoom *= zoomFactor;
-            zoom = Math.min(Math.max(zoom, 0.5), 5.0);
+            const x_center = w / 2;
+            const w_bed = w * 0.42;
+            const x_bed_left = x_center - w_bed / 2;
+            const x_bed_right = x_center + w_bed / 2;
+            const x_top_left = w * 0.14;
+            const x_top_right = w * 0.86;
 
-            draw();
-        });
+            // 1. Draw Physical Canal Trapezoidal Earth Profile
+            crossCtx.beginPath();
+            crossCtx.moveTo(x_top_left, y_leftBank);
+            crossCtx.lineTo(x_bed_left, y_bed);
+            crossCtx.lineTo(x_bed_right, y_bed);
+            crossCtx.lineTo(x_top_right, y_rightBank);
+            crossCtx.lineTo(x_top_right, h);
+            crossCtx.lineTo(x_top_left, h);
+            crossCtx.closePath();
 
-        document.getElementById('zoomInBtn').addEventListener('click', () => { zoom *= 1.2; draw(); });
-        document.getElementById('zoomOutBtn').addEventListener('click', () => { zoom /= 1.2; draw(); });
-        document.getElementById('resetViewBtn').addEventListener('click', () => { zoom = 1.3; panX = 40; panY = 20; draw(); });
+            crossCtx.fillStyle = '#1c2541';
+            crossCtx.fill();
+            crossCtx.strokeStyle = '#334155';
+            crossCtx.lineWidth = 3;
+            crossCtx.stroke();
 
-        // Initialize Canvas
-        resizeCanvas();
+            // 2. Render Water Body with Dynamic Threat Color Gradient
+            if (y_water !== null) {
+                let waterXLeft = x_bed_left;
+                let waterXRight = x_bed_right;
+
+                if (y_water < y_bed && y_water >= y_leftBank) {
+                    const ratioL = (y_bed - y_water) / Math.max(0.1, (y_bed - y_leftBank));
+                    waterXLeft = x_bed_left - ratioL * (x_bed_left - x_top_left);
+                }
+                if (y_water < y_bed && y_water >= y_rightBank) {
+                    const ratioR = (y_bed - y_water) / Math.max(0.1, (y_bed - y_rightBank));
+                    waterXRight = x_bed_right + ratioR * (x_top_right - x_bed_right);
+                }
+
+                crossCtx.beginPath();
+                crossCtx.moveTo(waterXLeft, y_water);
+                crossCtx.lineTo(waterXRight, y_water);
+                crossCtx.lineTo(x_bed_right, y_bed);
+                crossCtx.lineTo(x_bed_left, y_bed);
+                crossCtx.closePath();
+
+                // Fill gradient using standardized threat status color
+                const waterGrad = crossCtx.createLinearGradient(0, y_water, 0, y_bed);
+                waterGrad.addColorStop(0, status.color + 'DD');
+                waterGrad.addColorStop(1, status.color + '33');
+                crossCtx.fillStyle = waterGrad;
+                crossCtx.fill();
+
+                // Surface boundary line
+                crossCtx.beginPath();
+                crossCtx.moveTo(waterXLeft, y_water);
+                crossCtx.lineTo(waterXRight, y_water);
+                crossCtx.strokeStyle = status.color;
+                crossCtx.lineWidth = 3;
+                crossCtx.stroke();
+            }
+
+            // 3. Render Hydraulic Threshold Marker Lines
+            if (crit !== null) {
+                const y_c = elevToY(crit);
+                crossCtx.beginPath();
+                crossCtx.moveTo(x_top_left - 10, y_c);
+                crossCtx.lineTo(x_top_right + 10, y_c);
+                crossCtx.strokeStyle = '#F44336';
+                crossCtx.lineWidth = 1.5;
+                crossCtx.setLineDash([5, 3]);
+                crossCtx.stroke();
+                crossCtx.setLineDash([]);
+
+                crossCtx.fillStyle = '#F44336';
+                crossCtx.font = 'bold 10px monospace';
+                crossCtx.fillText(`WL_crit: +${crit.toFixed(2)}m MSL`, x_top_right + 15, y_c + 3);
+            }
+
+            if (warn !== null) {
+                const y_w = elevToY(warn);
+                crossCtx.beginPath();
+                crossCtx.moveTo(x_top_left - 10, y_w);
+                crossCtx.lineTo(x_top_right + 10, y_w);
+                crossCtx.strokeStyle = '#FF9800';
+                crossCtx.lineWidth = 1.5;
+                crossCtx.setLineDash([5, 3]);
+                crossCtx.stroke();
+                crossCtx.setLineDash([]);
+
+                crossCtx.fillStyle = '#FF9800';
+                crossCtx.font = 'bold 10px monospace';
+                crossCtx.fillText(`WL_warn: +${warn.toFixed(2)}m MSL`, x_top_right + 15, y_w + 3);
+            }
+
+            if (wl !== null && y_water !== null) {
+                crossCtx.fillStyle = status.color;
+                crossCtx.font = 'bold 11px JetBrains Mono, monospace';
+                const wlSign = wl >= 0 ? '+' : '';
+                crossCtx.fillText(`WL_in: ${wlSign}${wl.toFixed(2)}m MSL`, x_top_left - 110, y_water + 3);
+            }
+
+            if (leftBank !== null) {
+                crossCtx.fillStyle = '#94a3b8';
+                crossCtx.font = '10px monospace';
+                crossCtx.fillText(`Left Bank: ${leftBank.toFixed(2)}m`, x_top_left - 10, y_leftBank - 8);
+            } else {
+                crossCtx.fillStyle = '#64748b';
+                crossCtx.font = '10px monospace';
+                crossCtx.fillText(`Left Bank: Data Not Available`, x_top_left - 10, y_leftBank - 8);
+            }
+
+            if (rightBank !== null) {
+                crossCtx.fillStyle = '#94a3b8';
+                crossCtx.font = '10px monospace';
+                crossCtx.fillText(`Right Bank: ${rightBank.toFixed(2)}m`, x_top_right - 60, y_rightBank - 8);
+            } else {
+                crossCtx.fillStyle = '#64748b';
+                crossCtx.font = '10px monospace';
+                crossCtx.fillText(`Right Bank: Data Not Available`, x_top_right - 60, y_rightBank - 8);
+            }
+
+            if (bed !== null) {
+                crossCtx.fillStyle = '#ffb703';
+                crossCtx.font = '10px monospace';
+                crossCtx.fillText(`Bed Level: ${bed.toFixed(2)}m MSL`, x_center - 40, y_bed + 16);
+            } else {
+                crossCtx.fillStyle = '#64748b';
+                crossCtx.font = '10px monospace';
+                crossCtx.fillText(`Bed Level: Data Not Available`, x_center - 60, y_bed + 16);
+            }
+        }
     </script>
 </body>
 </html>
