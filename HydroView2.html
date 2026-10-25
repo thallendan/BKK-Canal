@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bangkok Canal Hydro-Command & Flood Control Center</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Leaflet GIS Map CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Chart.js for Hydrographs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            bma: {
+              50: '#f0f9ff',
+              500: '#0284c7',
+              600: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            },
+            flood: {
+              normal: '#10b981',
+              advisory: '#eab308',
+              warning: '#f97316',
+              critical: '#ef4444',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    /* Pulse animation for active pumps */
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin-slow {
+      animation: spin-slow 3s linear infinite;
+    }
+
+    @keyframes wave-flow {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-wave {
+      animation: wave-flow 4s linear infinite;
+    }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.5);
+    }
+
+    /* Leaflet Dark Theme Overrides */
+    .leaflet-tile {
+      filter: brightness(0.7) invert(1) me-hue rotate(180deg) saturate(1.2);
+    }
+    .leaflet-container {
+      background-color: #090d16 !important;
+    }
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+      background: #0f172a !important;
+      color: #f8fafc !important;
+      border: 1px solid #334155;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+
+<body class="h-full flex flex-col overflow-hidden font-sans text-slate-100 bg-slate-950 select-none">
+
+  <!-- TOP HEADER / CONTROL ROOM NAVBAR -->
+  <header class="h-16 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between px-4 z-30 shrink-0">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+        <i class="fa-solid to-blue-200 fa-water-waves text-xl text-white"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
+            Bangkok Hydro-Command System
+            <span class="text-xs px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 font-mono">BMA Telemetry v4.2</span>
+          </h1>
+        </div>
+        <p class="text-xs text-slate-400">Flood Control & Drainage Operations Division (ระบบระบายน้ำกรุงเทพมหานคร)</p>
+      </div>
+    </div>
+
+    <!-- QUICK SYSTEM HEALTH STATS -->
+    <div class="hidden lg:flex items-center space-x-6 text-xs font-mono">
+      <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span class="text-slate-400">Stations Monitored:</span>
+        <span class="text-emerald-400 font-bold" id="stat-total-stations">8</span>
+      </div>
+
+      <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+        <i class="fa-solid fa-gears text-cyan-400"></i>
+        <span class="text-slate-400">Active Pumps:</span>
+        <span class="text-cyan-400 font-bold" id="stat-active-pumps">4 / 22</span>
+      </div>
+
+      <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+        <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+        <span class="text-slate-400">Flood Risk:</span>
+        <span class="text-emerald-400 font-bold" id="stat-flood-level">NORMAL (LOW)</span>
+      </div>
+
+      <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+        <i class="fa-solid fa-clock text-amber-400"></i>
+        <span class="text-slate-300 font-mono" id="live-clock">--:--:-- ICT</span>
+      </div>
+    </div>
+
+    <!-- CONTROL ACTIONS & SIMULATION TOGGLE -->
+    <div class="flex items-center space-x-3">
+      <button id="btn-simulation" onclick="toggleSimulation()" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 transition">
+        <i class="fa-solid fa-cloud-showers-heavy text-amber-400"></i>
+        <span>Monsoon Crisis Sim</span>
+      </button>
+
+      <button onclick="exportDataReport()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-file-arrow-down text-slate-400"></i>
+        <span class="hidden sm:inline">Export Status</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTENT GRID -->
+  <div class="flex-1 flex overflow-hidden relative">
+
+    <!-- LEFT SIDEBAR: FILTER & STATION LIST -->
+    <aside class="w-80 md:w-96 bg-slate-900/95 border-r border-slate-800 flex flex-col z-20 shrink-0">
+      <!-- Search & Filter Controls -->
+      <div class="p-3 border-b border-slate-800 space-y-2">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-400"></i>
+          <input type="text" id="search-input" onkeyup="filterStations()" placeholder="Search canal / station (TH or EN)..."
+                 class="w-full pl-8 pr-3 py-1.5 bg-slate-950 text-xs rounded-lg border border-slate-800 text-slate-200 focus:outline-none focus:border-cyan-500">
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="flex items-center gap-1 overflow-x-auto pb-1 text-[11px] font-medium no-scrollbar">
+          <button onclick="setFilter('all')" id="filter-all" class="filter-chip px-2.5 py-1 rounded-md bg-cyan-600 text-white font-semibold">All (8)</button>
+          <button onclick="setFilter('pump')" id="filter-pump" class="filter-chip px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 hover:bg-slate-700">Pumping (5)</button>
+          <button onclick="setFilter('gate')" id="filter-gate" class="filter-chip px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 hover:bg-slate-700">Gates (1)</button>
+          <button onclick="setFilter('sensor')" id="filter-sensor" class="filter-chip px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 hover:bg-slate-700">Level (2)</button>
+          <button onclick="setFilter('active-pump')" id="filter-active-pump" class="filter-chip px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 hover:bg-slate-700 text-emerald-400">Pumping ON</button>
+        </div>
+      </div>
+
+      <!-- Station List Items -->
+      <div class="flex-1 overflow-y-auto p-2 space-y-2" id="station-list-container">
+        <!-- Dynamic Insertion via JS -->
+      </div>
+
+      <!-- Footer Telemetry Sync Status -->
+      <div class="p-2.5 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
+        <span class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Data Stream Active
+        </span>
+        <span class="font-mono text-slate-500" id="last-updated-timestamp">Updated 21:15 ICT</span>
+      </div>
+    </aside>
+
+    <!-- CENTER AREA: INTERACTIVE VISUALIZER (MAP + HYDRAULIC CANVAS + CONTROLS) -->
+    <main class="flex-1 flex flex-col relative overflow-hidden bg-slate-950">
+
+      <!-- TOOLBAR / VIEW TABS -->
+      <div class="h-11 bg-slate-900/60 border-b border-slate-800 flex items-center justify-between px-4 z-10">
+        <div class="flex items-center space-x-1">
+          <button onclick="switchView('map')" id="tab-map" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-cyan-600 text-white flex items-center gap-1.5">
+            <i class="fa-solid fa-map-location-dot"></i> GIS Spatial Map
+          </button>
+          <button onclick="switchView('profile')" id="tab-profile" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-water-ladder"></i> Hydro-Cross Profile
+          </button>
+          <button onclick="switchView('matrix')" id="tab-matrix" class="px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-chart-line"></i> Risk Analytics Matrix
+          </button>
+        </div>
+
+        <!-- Legend Quick Reference -->
+        <div class="hidden sm:flex items-center space-x-4 text-[11px]">
+          <span class="flex items-center gap-1 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Normal (&lt; 0.4m)</span>
+          <span class="flex items-center gap-1 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Warning (&gt; 0.6m)</span>
+          <span class="flex items-center gap-1 text-slate-300"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Critical (&gt; 0.7m)</span>
+        </div>
+      </div>
+
+      <!-- VIEW CONTAINER 1: LEAFLET MAP -->
+      <div id="view-map" class="flex-1 relative w-full h-full">
+        <div id="leaflet-map" class="w-full h-full"></div>
+
+        <!-- OVERLAY SIMULATION BANNER (VISIBLE ONLY WHEN SIMULATION ACTIVE) -->
+        <div id="sim-banner" class="hidden absolute top-3 left-1/2 -translate-x-1/2 z-[500] bg-amber-950/90 border border-amber-500/50 text-amber-200 px-4 py-2 rounded-xl backdrop-blur-md shadow-2xl flex items-center gap-3">
+          <i class="fa-solid fa-cloud-bolt text-amber-400 text-xl animate-bounce"></i>
+          <div>
+            <div class="text-xs font-bold text-amber-300">MONSOON RAIN CRISIS SIMULATION ACTIVE</div>
+            <div class="text-[11px] text-amber-200/80">Simulating heavy runoff (+0.65m water level surge across Western Bangkok canals)</div>
+          </div>
+          <button onclick="toggleSimulation()" class="ml-2 text-xs bg-amber-500/20 hover:bg-amber-500/40 text-amber-200 px-2 py-1 rounded-md border border-amber-400/30">Stop</button>
+        </div>
+      </div>
+
+      <!-- VIEW CONTAINER 2: HYDRO-CROSS PROFILE VISUALIZER -->
+      <div id="view-profile" class="hidden flex-1 p-4 overflow-y-auto bg-slate-950 flex flex-col gap-4">
+        <div class="glass-card p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-water-ladder text-cyan-400"></i>
+              Canal Elevation & Embankment Profile Visualizer
+            </h2>
+            <p class="text-xs text-slate-400">Cross-sectional hydrographic view comparing river bed, inner canal water level (wl_in), outer level (wl_out), and embankment heights.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-400">Select Station:</label>
+            <select id="profile-station-select" onchange="renderProfileView()" class="bg-slate-900 border border-slate-700 text-slate-200 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-cyan-500">
+              <!-- Dynamic options -->
+            </select>
+          </div>
+        </div>
+
+        <!-- SVG Profile Diagram -->
+        <div class="glass-card p-6 rounded-xl flex-1 flex flex-col justify-center items-center relative overflow-hidden min-h-[360px]">
+          <svg id="profile-svg" class="w-full h-80" viewBox="0 0 900 400" preserveAspectRatio="xMidYMid meet">
+            <!-- Dynamic SVG content drawn by JS -->
+          </svg>
+        </div>
+      </div>
+
+      <!-- VIEW CONTAINER 3: ANALYTICS & RISK MATRIX -->
+      <div id="view-matrix" class="hidden flex-1 p-4 overflow-y-auto bg-slate-950 flex flex-col gap-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <!-- Multi Station Water Level Chart -->
+          <div class="glass-card p-4 rounded-xl flex flex-col">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-chart-column text-cyan-400"></i> Water Level vs Warning Limits (m)
+              </h3>
+              <span class="text-xs text-slate-400">Mean Sea Level (MSL)</span>
+            </div>
+            <div class="h-64 relative">
+              <canvas id="chart-water-levels"></canvas>
+            </div>
+          </div>
+
+          <!-- Pumping Station Capacity & Gate Status Matrix -->
+          <div class="glass-card p-4 rounded-xl flex flex-col">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2 mb-3">
+              <i class="fa-solid fa-industry text-amber-400"></i> Drain Infrastructure Health & Capacity
+            </h3>
+            <div id="infrastructure-matrix-container" class="space-y-3 overflow-y-auto max-h-64 pr-1">
+              <!-- Dynamic rows -->
+            </div>
+          </div>
+        </div>
+
+        <!-- System Recommendations Card -->
+        <div class="glass-card p-4 rounded-xl border-l-4 border-l-cyan-500 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-lg bg-cyan-950 border border-cyan-800 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-brain-circuit text-cyan-400 text-lg"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-slate-100">BMA Automated Hydro-Optimization Advice</h4>
+              <p class="text-xs text-slate-400 mt-0.5" id="ai-recommendation-text">
+                All station levels currently stabilized. Pumping Station Khlong Phraya Ratchamontri (106) operating at 20% pump capacity (2/10 pumps). Discharge flow into Chao Phraya Estuary optimal.
+              </p>
+            </div>
+          </div>
+          <button onclick="triggerAutoOptimize()" class="px-3 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-xs rounded-lg shrink-0 transition">
+            <i class="fa-solid fa-bolt mr-1"></i> Auto-Optimize Gates
+          </button>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- RIGHT PANEL: DETAILED TELEMETRY & STATION CONTROL -->
+    <aside id="detail-panel" class="w-80 md:w-96 bg-slate-900/95 border-l border-slate-800 flex flex-col z-20 shrink-0 overflow-y-auto">
+      <div id="detail-panel-content" class="p-4 space-y-4">
+        <!-- Selected Station Header & Telemetry -->
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // =========================================================================
+    // 1. DATASET INITIALIZATION (Parsed from klongmap-latest.json + Hydrology Extras)
+    // =========================================================================
+    const rawStationsData = [
+      {
+        water_id: "10",
+        station_name: "ค.บางพรม-ถ.กาญจนาฯ",
+        station_name_en: "Khlong Bang Phrom, Thanon Kanchanaphisek",
+        type: "Level Sensor",
+        latitude: 13.76264,
+        longitude: 100.39624,
+        wl_in: 0.48,
+        wl_out01: null,
+        warning: 0.6,
+        critical: 0.7,
+        left_bank: 1.91,
+        right_bank: 2.0,
+        bed_bank: -2.0,
+        pump_count: 0,
+        water_gate_count: 0,
+        water_pump_last: null,
+        water_gate_last: null,
+        water_status: 1,
+        river_name: "คลองบางพรม"
+      },
+      {
+        water_id: "100",
+        station_name: "ค.ทวีวัฒนา-ภาษีฯ",
+        station_name_en: "Khlong Thawi Watthana, Phasi Charoen",
+        type: "Level Sensor",
+        latitude: 13.69163,
+        longitude: 100.38106,
+        wl_in: 0.35,
+        wl_out01: null,
+        warning: 0.6,
+        critical: 0.7,
+        left_bank: 1.2,
+        right_bank: 1.2,
+        bed_bank: -1.66,
+        pump_count: 0,
+        water_gate_count: 0,
+        water_pump_last: null,
+        water_gate_last: null,
+        water_status: 1,
+        river_name: "คลองทวีวัฒนา"
+      },
+      {
+        water_id: "102",
+        station_name: "ส.คลองแจงร้อน",
+        station_name_en: "Khlong Chaeng Ron Pumping Station",
+        type: "Pumping Station",
+        latitude: 13.67634,
+        longitude: 100.52111,
+        wl_in: 0.29,
+        wl_out01: 1.17,
+        warning: 0.6,
+        critical: 0.7,
+        left_bank: 2.6,
+        right_bank: 2.8,
+        bed_bank: -2.0,
+        pump_count: 3,
+        water_gate_count: 1,
+        water_pump_last: { pump01: false, pump02: false, pump03: false },
+        water_gate_last: { watergate01: 0.0 },
+        water_status: 1,
+        river_name: "คลองแจงร้อน"
+      },
+      {
+        water_id: "104",
+        station_name: "ส.คลองเลนเปน",
+        station_name_en: "Khlong Len Pen Pumping Station",
+        type: "Pumping Station",
+        latitude: 13.60695,
+        longitude: 100.41311,
+        wl_in: -0.88,
+        wl_out01: 0.64,
+        warning: 0.4,
+        critical: 0.5,
+        left_bank: 1.98,
+        right_bank: 1.98,
+        bed_bank: -3.0,
+        pump_count: 3,
+        water_gate_count: 1,
+        water_pump_last: { pump01: true, pump02: false, pump03: false },
+        water_gate_last: { watergate01: 0.0 },
+        water_status: 1,
+        river_name: "คลองเลนเปน"
+      },
+      {
+        water_id: "105",
+        station_name: "ส.คลองระหาญ",
+        station_name_en: "Khlong Rahan Pumping Station",
+        type: "Pumping Station",
+        latitude: 13.60384,
+        longitude: 100.39460,
+        wl_in: -0.89,
+        wl_out01: 0.62,
+        warning: 0.4,
+        critical: 0.5,
+        left_bank: 1.98,
+        right_bank: 1.98,
+        bed_bank: -2.0,
+        pump_count: 3,
+        water_gate_count: 1,
+        water_pump_last: { pump01: true, pump02: true, pump03: false },
+        water_gate_last: { watergate01: 0.0 },
+        water_status: 1,
+        river_name: "คลองระหาญ"
+      },
+      {
+        water_id: "106",
+        station_name: "ส.คลองพระยาราชมนตรี",
+        station_name_en: "Khlong Phraya Ratchamontri Pumping Station",
+        type: "Pumping Station",
+        latitude: 13.62817,
+        longitude: 100.43914,
+        wl_in: -0.68,
+        wl_out01: 0.64,
+        warning: 0.4,
+        critical: 0.5,
+        left_bank: 1.2,
+        right_bank: 1.2,
+        bed_bank: -3.54,
+        pump_count: 10,
+        water_gate_count: 2,
+        water_pump_last: { pump01: false, pump02: true, pump03: false, pump04: false, pump05: true, pump06: false, pump07: false, pump08: false, pump09: false, pump10: false },
+        water_gate_last: { watergate01: 0.0, watergate02: 0.0 },
+        water_status: 1,
+        river_name: "คลองพระยาราชมนตรี"
+      },
+      {
+        water_id: "107",
+        station_name: "ส.คลองบางไส้ไก่",
+        station_name_en: "Khlong Bang Sai Kai Pumping Station",
+        type: "Pumping Station",
+        latitude: 13.70682,
+        longitude: 100.49744,
+        wl_in: 0.20,
+        wl_out01: 1.14,
+        warning: 0.7,
+        critical: 0.8,
+        left_bank: 2.6,
+        right_bank: 2.8,
+        bed_bank: -2.0,
+        pump_count: 3,
+        water_gate_count: 2,
+        water_pump_last: { pump01: false, pump02: false, pump03: false },
+        water_gate_last: { watergate01: 0.0, watergate02: 0.0 },
+        water_status: 1,
+        river_name: "คลองบางไส้ไก่"
+      },
+      {
+        water_id: "108",
+        station_name: "ปตร.ขุนศรีฯ-ค.มหาสวัสดิ์",
+        station_name_en: "Khun Si Buri Rak Water Gate, Khlong Maha Sawat",
+        type: "Water Gate",
+        latitude: 13.80251,
+        longitude: 100.37078,
+        wl_in: 0.52,
+        wl_out01: 0.45,
+        warning: 1.8,
+        critical: 2.0,
+        left_bank: 1.98,
+        right_bank: 1.98,
+        bed_bank: -2.0,
+        pump_count: 0,
+        water_gate_count: 1,
+        water_pump_last: null,
+        water_gate_last: { watergate01: 0.8 },
+        water_status: 1,
+        river_name: "คลองขุนศรีบุรีรักษ์"
+      }
+    ];
+
+    // State Variables
+    let stations = JSON.parse(JSON.stringify(rawStationsData));
+    let selectedStationId = "106"; // Default selected station
+    let activeFilter = "all";
+    let isSimulationActive = false;
+    let leafletMap = null;
+    let markersMap = {};
+    let chartInstance = null;
+
+    // =========================================================================
+    // 2. LIFECYCLE & INITIALIZATION
+    // =========================================================================
+    window.onload = function () {
+      initMap();
+      renderStationList();
+      renderProfileOptions();
+      selectStation("106");
+      startClock();
+      initChart();
+      renderInfrastructureMatrix();
+    };
+
+    function startClock() {
+      setInterval(() => {
+        const now = new Date();
+        document.getElementById('live-clock').innerText = now.toLocaleTimeString('en-GB') + ' ICT';
+      }, 1000);
+    }
+
+    // =========================================================================
+    // 3. GIS LEAFLET MAP INTEGRATION
+    // =========================================================================
+    function initMap() {
+      // Center map over West Bangkok / Thonburi Canal Grid
+      leafletMap = L.map('leaflet-map', {
+        center: [13.685, 100.435],
+        zoom: 12,
+        zoomControl: false
+      });
+
+      L.control.zoom({ position: 'bottomright' }).addTo(leafletMap);
+
+      // Dark Matter Map Tiles
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap & BMA Drainage Dept'
+      }).addTo(leafletMap);
+
+      // Draw Stations
+      drawMapMarkers();
+    }
+
+    function getStationColor(st) {
+      if (st.wl_in >= st.critical) return '#ef4444'; // Red
+      if (st.wl_in >= st.warning) return '#f97316';  // Orange
+      return '#10b981'; // Green
+    }
+
+    function drawMapMarkers() {
+      // Clear existing markers
+      Object.values(markersMap).forEach(m => leafletMap.removeLayer(m));
+      markersMap = {};
+
+      stations.forEach(st => {
+        const color = getStationColor(st);
+        const activePumps = getActivePumpCount(st);
+        
+        // Custom Pulsing HTML Icon for Map
+        const customIcon = L.divIcon({
+          className: 'custom-map-pin',
+          html: `
+            <div class="relative group cursor-pointer">
+              <span class="flex h-6 w-6 relative items-center justify-center">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-40" style="background-color: ${color}"></span>
+                <span class="relative inline-flex rounded-full h-5 w-5 border-2 border-slate-950 items-center justify-center text-[10px] font-bold text-white" style="background-color: ${color}">
+                  ${activePumps > 0 ? `<i class="fa-solid fa-gears animate-spin-slow text-[9px]"></i>` : st.water_id}
+                </span>
+              </span>
+            </div>
+          `,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+
+        const marker = L.marker([st.latitude, st.longitude], { icon: customIcon }).addTo(leafletMap);
+        
+        // Popup content
+        const popupContent = `
+          <div class="p-1 font-sans">
+            <div class="text-xs font-bold text-slate-100">${st.station_name_en}</div>
+            <div class="text-[11px] text-slate-400 mb-2">${st.station_name}</div>
+            <div class="flex items-center justify-between text-xs bg-slate-900 p-2 rounded border border-slate-800">
+              <span>WL (In): <strong class="text-cyan-400">${st.wl_in.toFixed(2)} m</strong></span>
+              <span>Warning: <strong class="text-amber-400">${st.warning} m</strong></span>
+            </div>
+            <button onclick="selectStation('${st.water_id}')" class="mt-2 w-full py-1 bg-cyan-600 text-white rounded text-xs font-semibold hover:bg-cyan-500">
+              Open Telemetry Deck
+            </button>
+          </div>
+        `;
+
+        marker.bindPopup(popupContent);
+        marker.on('click', () => selectStation(st.water_id));
+        markersMap[st.water_id] = marker;
+      });
+    }
+
+    // =========================================================================
+    // 4. STATION SELECTION & TELEMETRY DECK
+    // =========================================================================
+    function getActivePumpCount(st) {
+      if (!st.water_pump_last) return 0;
+      return Object.values(st.water_pump_last).filter(val => val === true).length;
+    }
+
+    function selectStation(id) {
+      selectedStationId = id;
+      const st = stations.find(s => s.water_id === id);
+      if (!st) return;
+
+      // Pan map smoothly if in map view
+      if (leafletMap && st.latitude && st.longitude) {
+        leafletMap.panTo([st.latitude, st.longitude]);
+      }
+
+      // Update active highlight in UI list
+      document.querySelectorAll('.station-card').forEach(el => {
+        el.classList.remove('border-cyan-500', 'bg-slate-800/90');
+        el.classList.add('border-slate-800', 'bg-slate-900/60');
+      });
+
+      const selectedCard = document.getElementById(`station-card-${id}`);
+      if (selectedCard) {
+        selectedCard.classList.remove('border-slate-800', 'bg-slate-900/60');
+        selectedCard.classList.add('border-cyan-500', 'bg-slate-800/90');
+      }
+
+      // Sync select dropdown in Profile view
+      const profileSelect = document.getElementById('profile-station-select');
+      if (profileSelect) profileSelect.value = id;
+
+      // Render Detail Side Panel
+      renderDetailPanel(st);
+
+      // Render Profile SVG if on profile view
+      renderProfileView();
+    }
+
+    function renderDetailPanel(st) {
+      const activePumps = getActivePumpCount(st);
+      const isCritical = st.wl_in >= st.critical;
+      const isWarning = st.wl_in >= st.warning && !isCritical;
+
+      const statusBadge = isCritical 
+        ? `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-red-500/20 text-red-400 border border-red-500/30"><i class="fa-solid fa-triangle-exclamation mr-1"></i>CRITICAL FLOOD</span>`
+        : isWarning 
+          ? `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30"><i class="fa-solid fa-circle-exclamation mr-1"></i>ELEVATED RISK</span>`
+          : `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"><i class="fa-solid fa-circle-check mr-1"></i>STABLE LEVEL</span>`;
+
+      const container = document.getElementById('detail-panel-content');
+      container.innerHTML = `
+        <!-- Station Header -->
+        <div class="border-b border-slate-800 pb-3">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-mono text-cyan-400 font-bold">STATION ID: #${st.water_id}</span>
+            ${statusBadge}
+          </div>
+          <h2 class="text-base font-bold text-white">${st.station_name_en}</h2>
+          <p class="text-xs text-slate-400 font-thai">${st.station_name} (${st.river_name || 'Bangkok Canal Network'})</p>
+        </div>
+
+        <!-- Telemetry Gauges Grid -->
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Inner Water Level -->
+          <div class="glass-card p-3 rounded-xl border border-slate-800">
+            <div class="text-[11px] text-slate-400 mb-1 flex items-center justify-between">
+              <span>WL Inside (wl_in)</span>
+              <i class="fa-solid fa-water text-cyan-400"></i>
+            </div>
+            <div class="text-xl font-bold font-mono text-cyan-300">
+              ${st.wl_in.toFixed(2)} <span class="text-xs font-normal text-slate-400">m MSL</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+              <div class="bg-cyan-500 h-full rounded-full" style="width: ${Math.min(100, Math.max(10, ((st.wl_in + 2) / (st.critical + 2)) * 100))}%"></div>
+            </div>
+          </div>
+
+          <!-- Outer Water Level / River Discharge -->
+          <div class="glass-card p-3 rounded-xl border border-slate-800">
+            <div class="text-[11px] text-slate-400 mb-1 flex items-center justify-between">
+              <span>WL Outside (wl_out)</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-amber-400"></i>
+            </div>
+            <div class="text-xl font-bold font-mono text-amber-300">
+              ${st.wl_out01 !== null ? st.wl_out01.toFixed(2) : 'N/A'} <span class="text-xs font-normal text-slate-400">m MSL</span>
+            </div>
+            <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+              <div class="bg-amber-500 h-full rounded-full" style="width: ${st.wl_out01 !== null ? Math.min(100, Math.max(10, ((st.wl_out01 + 2) / 4) * 100)) : 0}%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Threshold Reference Limits -->
+        <div class="glass-card p-3 rounded-xl space-y-2 text-xs">
+          <div class="font-bold text-slate-200 border-b border-slate-800 pb-1 mb-2">Safety Threshold Parameters</div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Warning Threshold:</span>
+            <span class="font-mono text-amber-400 font-semibold">${st.warning} m</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Critical Flood Threshold:</span>
+            <span class="font-mono text-red-400 font-semibold">${st.critical} m</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Canal Embankment Crest:</span>
+            <span class="font-mono text-slate-200">${st.left_bank} m</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Canal Bed Depth:</span>
+            <span class="font-mono text-slate-400">${st.bed_bank} m</span>
+          </div>
+        </div>
+
+        <!-- PUMPING ARRAY CONTROL PANEL -->
+        <div class="glass-card p-3 rounded-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="text-xs font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-gears text-cyan-400"></i> Drain Pumps Matrix (${activePumps}/${st.pump_count})
+            </div>
+            ${st.pump_count > 0 ? `<span class="text-[10px] font-mono text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">Operational</span>` : `<span class="text-[10px] font-mono text-slate-500">No Pumps</span>`}
+          </div>
+
+          ${st.pump_count > 0 ? `
+            <div class="grid grid-cols-4 gap-2">
+              ${Object.keys(st.water_pump_last || {}).map((pumpKey, idx) => {
+                const isOn = st.water_pump_last[pumpKey];
+                return `
+                  <div onclick="toggleSinglePump('${st.water_id}', '${pumpKey}')" 
+                       class="cursor-pointer p-2 rounded-lg border flex flex-col items-center justify-center gap-1 transition ${isOn ? 'bg-cyan-950/80 border-cyan-500/50 text-cyan-300' : 'bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700'}">
+                    <i class="fa-solid fa-fan text-sm ${isOn ? 'animate-spin-slow text-cyan-400' : 'text-slate-600'}"></i>
+                    <span class="text-[10px] font-mono font-bold">P#${idx+1}</span>
+                    <span class="text-[9px] uppercase font-bold ${isOn ? 'text-emerald-400' : 'text-slate-500'}">${isOn ? 'ON' : 'OFF'}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          ` : `
+            <div class="text-xs text-slate-500 italic text-center py-2 bg-slate-950/50 rounded-lg">This station is a telemetry level sensor (No active drainage pump array).</div>
+          `}
+        </div>
+
+        <!-- SLUICE GATE CONTROL PANEL -->
+        <div class="glass-card p-3 rounded-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="text-xs font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-torii-gate text-amber-400"></i> Sluice Water Gates (${st.water_gate_count})
+            </div>
+          </div>
+
+          ${st.water_gate_count > 0 ? `
+            <div class="space-y-2">
+              ${Object.keys(st.water_gate_last || {}).map((gateKey, idx) => {
+                const gateVal = st.water_gate_last[gateKey] || 0;
+                return `
+                  <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1.5">
+                    <div class="flex justify-between items-center text-xs">
+                      <span class="font-bold text-slate-300">Sluice Gate #${idx+1}</span>
+                      <span class="font-mono ${gateVal > 0 ? 'text-amber-400' : 'text-emerald-400'} font-bold">${gateVal > 0 ? `OPEN (${(gateVal*100).toFixed(0)}%)` : 'CLOSED'}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <button onclick="setGateState('${st.water_id}', '${gateKey}', 0.0)" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-[10px] font-bold text-slate-300 rounded border border-slate-700">Close</button>
+                      <button onclick="setGateState('${st.water_id}', '${gateKey}', 0.5)" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-[10px] font-bold text-slate-300 rounded border border-slate-700">50%</button>
+                      <button onclick="setGateState('${st.water_id}', '${gateKey}', 1.0)" class="px-2 py-1 bg-amber-600/30 hover:bg-amber-600/50 text-[10px] font-bold text-amber-300 rounded border border-amber-500/40">100% Open</button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          ` : `
+            <div class="text-xs text-slate-500 italic text-center py-2 bg-slate-950/50 rounded-lg">No adjustable sluice gates installed at this location.</div>
+          `}
+        </div>
+
+        <!-- Quick Emergency Command Button -->
+        <button onclick="dispatchEmergencyPump('${st.water_id}')" class="w-full py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-cyan-600/20 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-bolt"></i> OVERRIDE: START ALL PUMPS
+        </button>
+      `;
+    }
+
+    // =========================================================================
+    // 5. SIDEBAR STATION LIST & FILTERS
+    // =========================================================================
+    function setFilter(filterType) {
+      activeFilter = filterType;
+      document.querySelectorAll('.filter-chip').forEach(btn => {
+        btn.classList.remove('bg-cyan-600', 'text-white', 'font-semibold');
+        btn.classList.add('bg-slate-800', 'text-slate-400');
+      });
+
+      const activeBtn = document.getElementById(`filter-${filterType}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-slate-800', 'text-slate-400');
+        activeBtn.classList.add('bg-cyan-600', 'text-white', 'font-semibold');
+      }
+
+      filterStations();
+    }
+
+    function filterStations() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+
+      const filtered = stations.filter(st => {
+        const matchesQuery = st.station_name.toLowerCase().includes(query) || 
+                             st.station_name_en.toLowerCase().includes(query) ||
+                             st.river_name.toLowerCase().includes(query);
+
+        if (!matchesQuery) return false;
+
+        if (activeFilter === 'pump') return st.type === 'Pumping Station';
+        if (activeFilter === 'gate') return st.type === 'Water Gate';
+        if (activeFilter === 'sensor') return st.type === 'Level Sensor';
+        if (activeFilter === 'active-pump') return getActivePumpCount(st) > 0;
+
+        return true;
+      });
+
+      renderStationList(filtered);
+    }
+
+    function renderStationList(data = stations) {
+      const container = document.getElementById('station-list-container');
+      if (data.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-xs text-slate-500">No telemetry stations match the current filter.</div>`;
+        return;
+      }
+
+      container.innerHTML = data.map(st => {
+        const activePumps = getActivePumpCount(st);
+        const isSelected = st.water_id === selectedStationId;
+        const color = getStationColor(st);
+
+        return `
+          <div id="station-card-${st.water_id}" onclick="selectStation('${st.water_id}')"
+               class="station-card p-3 rounded-xl border transition cursor-pointer flex flex-col gap-2 ${isSelected ? 'border-cyan-500 bg-slate-800/90 shadow-md shadow-cyan-950/40' : 'border-slate-800 bg-slate-900/60 hover:border-slate-700 hover:bg-slate-900'}">
+            
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <span class="text-[10px] font-mono font-bold text-slate-400">ID #${st.water_id} • ${st.type}</span>
+                <h3 class="text-xs font-bold text-white leading-snug">${st.station_name_en}</h3>
+                <p class="text-[11px] text-slate-400">${st.station_name}</p>
+              </div>
+              <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${color}"></span>
+            </div>
+
+            <div class="flex items-center justify-between text-[11px] pt-1 border-t border-slate-800/80 font-mono">
+              <span class="text-slate-400">WL: <strong class="text-cyan-300">${st.wl_in.toFixed(2)}m</strong></span>
+              <span class="text-slate-400">Warn: <span class="text-amber-400">${st.warning}m</span></span>
+              ${st.pump_count > 0 ? `<span class="text-xs text-emerald-400 font-bold"><i class="fa-solid fa-gears mr-1 ${activePumps > 0 ? 'animate-spin-slow' : ''}"></i>${activePumps}/${st.pump_count}</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 6. HYDRO-CROSS SECTION PROFILE VISUALIZER (SVG DYNAMIC CANVAS)
+    // =========================================================================
+    function renderProfileOptions() {
+      const select = document.getElementById('profile-station-select');
+      select.innerHTML = stations.map(s => `<option value="${s.water_id}">${s.station_name_en}</option>`).join('');
+    }
+
+    function renderProfileView() {
+      const select = document.getElementById('profile-station-select');
+      const stId = select ? select.value : selectedStationId;
+      const st = stations.find(s => s.water_id === stId) || stations[0];
+
+      const svg = document.getElementById('profile-svg');
+      if (!svg) return;
+
+      // Scaling Math for Profile: Map elevation -4m..+4m to Y: 320px..40px
+      const translateY = (val) => 240 - (val * 45);
+
+      const yBed = translateY(st.bed_bank || -2.0);
+      const yLeftBank = translateY(st.left_bank || 2.0);
+      const yRightBank = translateY(st.right_bank || 2.0);
+      const yWlIn = translateY(st.wl_in);
+      const yWarning = translateY(st.warning);
+      const yCritical = translateY(st.critical);
+
+      svg.innerHTML = `
+        <!-- Background Grid -->
+        <defs>
+          <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#0284c7" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#075985" stop-opacity="0.95"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Elevation Grid Lines -->
+        <line x1="100" y1="${translateY(2)}" x2="800" y2="${translateY(2)}" stroke="#334155" stroke-dasharray="4" />
+        <text x="70" y="${translateY(2)+4}" fill="#64748b" font-size="11" font-family="monospace">+2.0m</text>
+
+        <line x1="100" y1="${translateY(0)}" x2="800" y2="${translateY(0)}" stroke="#475569" stroke-width="1.5" />
+        <text x="70" y="${translateY(0)+4}" fill="#94a3b8" font-size="11" font-family="monospace"> 0.0m MSL</text>
+
+        <line x1="100" y1="${translateY(-2)}" x2="800" y2="${translateY(-2)}" stroke="#334155" stroke-dasharray="4" />
+        <text x="70" y="${translateY(-2)+4}" fill="#64748b" font-size="11" font-family="monospace">-2.0m</text>
+
+        <!-- Canal Cross Bed Geometry -->
+        <!-- Embankments & Riverbed -->
+        <polygon points="100,60 180,${yLeftBank} 280,${yBed} 620,${yBed} 720,${yRightBank} 800,60 800,380 100,380" fill="#1e293b" stroke="#475569" stroke-width="2" />
+        
+        <!-- Water Volume Fill -->
+        <polygon points="280,${yBed} 620,${yBed} 620,${yWlIn} 280,${yWlIn}" fill="url(#waterGrad)" />
+
+        <!-- Water Surface Dynamic Line -->
+        <line x1="260" y1="${yWlIn}" x2="640" y2="${yWlIn}" stroke="#38bdf8" stroke-width="3" />
+        <text x="450" y="${yWlIn - 10}" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">
+          Current Level: ${st.wl_in.toFixed(2)} m MSL
+        </text>
+
+        <!-- Warning Limit Line -->
+        <line x1="180" y1="${yWarning}" x2="720" y2="${yWarning}" stroke="#f97316" stroke-width="2" stroke-dasharray="6" />
+        <text x="730" y="${yWarning+4}" fill="#f97316" font-size="11" font-weight="bold" font-family="monospace">Warning (${st.warning}m)</text>
+
+        <!-- Critical Limit Line -->
+        <line x1="180" y1="${yCritical}" x2="720" y2="${yCritical}" stroke="#ef4444" stroke-width="2" stroke-dasharray="4" />
+        <text x="730" y="${yCritical+4}" fill="#ef4444" font-size="11" font-weight="bold" font-family="monospace">Critical (${st.critical}m)</text>
+
+        <!-- Left & Right Embankment Badges -->
+        <rect x="130" y="${yLeftBank-25}" width="90" height="20" rx="4" fill="#0f172a" stroke="#475569" />
+        <text x="175" y="${yLeftBank-11}" fill="#cbd5e1" font-size="10" text-anchor="middle">Left Bank: ${st.left_bank}m</text>
+
+        <rect x="680" y="${yRightBank-25}" width="90" height="20" rx="4" fill="#0f172a" stroke="#475569" />
+        <text x="725" y="${yRightBank-11}" fill="#cbd5e1" font-size="10" text-anchor="middle">Right Bank: ${st.right_bank}m</text>
+      `;
+    }
+
+    // =========================================================================
+    // 7. RISK ANALYTICS MATRIX & CHART.JS
+    // =========================================================================
+    function initChart() {
+      const ctx = document.getElementById('chart-water-levels').getContext('2d');
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: stations.map(s => s.water_id),
+          datasets: [
+            {
+              label: 'Water Level (wl_in)',
+              data: stations.map(s => s.wl_in),
+              backgroundColor: stations.map(s => s.wl_in >= s.critical ? '#ef4444' : (s.wl_in >= s.warning ? '#f97316' : '#0284c7')),
+              borderRadius: 6
+            },
+            {
+              label: 'Warning Level',
+              data: stations.map(s => s.warning),
+              type: 'line',
+              borderColor: '#f59e0b',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 } } }
+          },
+          scales: {
+            x: { ticks: { color: '#64748b' }, grid: { color: '#1e293b' } },
+            y: { ticks: { color: '#64748b' }, grid: { color: '#1e293b' }, min: -2, max: 2.5 }
+          }
+        }
+      });
+    }
+
+    function renderInfrastructureMatrix() {
+      const container = document.getElementById('infrastructure-matrix-container');
+      container.innerHTML = stations.filter(s => s.pump_count > 0 || s.water_gate_count > 0).map(st => {
+        const activePumps = getActivePumpCount(st);
+        return `
+          <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between text-xs">
+            <div>
+              <span class="font-bold text-slate-200">${st.station_name_en}</span>
+              <div class="text-[11px] text-slate-400 font-thai">${st.station_name}</div>
+            </div>
+            <div class="flex items-center gap-3 font-mono">
+              <span class="text-slate-400">Pumps: <strong class="text-cyan-400">${activePumps}/${st.pump_count}</strong></span>
+              <span class="text-slate-400">Gates: <strong class="text-amber-400">${st.water_gate_count}</strong></span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 8. INTERACTIVE SIMULATION & CONTROL ACTIONS
+    // =========================================================================
+    function toggleSimulation() {
+      isSimulationActive = !isSimulationActive;
+      const btn = document.getElementById('btn-simulation');
+      const banner = document.getElementById('sim-banner');
+
+      if (isSimulationActive) {
+        btn.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
+        banner.classList.remove('hidden');
+
+        // Simulate Heavy Rain Runoff Surge across West Bangkok Canals
+        stations.forEach(st => {
+          st.wl_in = parseFloat((st.wl_in + 0.55 + (Math.random() * 0.2)).toFixed(2));
+          if (st.wl_out01 !== null) st.wl_out01 = parseFloat((st.wl_out01 + 0.4).toFixed(2));
+        });
+
+        document.getElementById('stat-flood-level').innerText = "HIGH MONSOON RISK";
+        document.getElementById('stat-flood-level').className = "text-red-400 font-bold";
+
+        document.getElementById('ai-recommendation-text').innerText = 
+          "CRITICAL RUNOFF ALERT: Heavy precipitation causing +0.65m surge across Khlong Bang Phrom & Phraya Ratchamontri. Recommended to open all sluice gates to 100% and activate all 22 drainage pumps immediately!";
+      } else {
+        btn.classList.remove('bg-amber-500', 'text-slate-950', 'font-bold');
+        banner.classList.add('hidden');
+
+        // Reset to normal raw json values
+        stations = JSON.parse(JSON.stringify(rawStationsData));
+
+        document.getElementById('stat-flood-level').innerText = "NORMAL (LOW)";
+        document.getElementById('stat-flood-level').className = "text-emerald-400 font-bold";
+
+        document.getElementById('ai-recommendation-text').innerText = 
+          "All station levels currently stabilized. Pumping Station Khlong Phraya Ratchamontri (106) operating at 20% pump capacity (2/10 pumps). Discharge flow into Chao Phraya Estuary optimal.";
+      }
+
+      // Re-render UI
+      drawMapMarkers();
+      renderStationList();
+      selectStation(selectedStationId);
+      if (chartInstance) {
+        chartInstance.data.datasets[0].data = stations.map(s => s.wl_in);
+        chartInstance.update();
+      }
+    }
+
+    function toggleSinglePump(stId, pumpKey) {
+      const st = stations.find(s => s.water_id === stId);
+      if (!st || !st.water_pump_last) return;
+
+      st.water_pump_last[pumpKey] = !st.water_pump_last[pumpKey];
+
+      // Update UI
+      renderStationList();
+      renderDetailPanel(st);
+      drawMapMarkers();
+      updateTotalActivePumps();
+    }
+
+    function setGateState(stId, gateKey, value) {
+      const st = stations.find(s => s.water_id === stId);
+      if (!st || !st.water_gate_last) return;
+
+      st.water_gate_last[gateKey] = value;
+      renderDetailPanel(st);
+    }
+
+    function dispatchEmergencyPump(stId) {
+      const st = stations.find(s => s.water_id === stId);
+      if (!st || !st.water_pump_last) return;
+
+      Object.keys(st.water_pump_last).forEach(k => {
+        st.water_pump_last[k] = true;
+      });
+
+      renderStationList();
+      renderDetailPanel(st);
+      drawMapMarkers();
+      updateTotalActivePumps();
+    }
+
+    function triggerAutoOptimize() {
+      stations.forEach(st => {
+        if (st.pump_count > 0 && st.water_pump_last) {
+          Object.keys(st.water_pump_last).forEach((k, idx) => {
+            st.water_pump_last[k] = idx < Math.ceil(st.pump_count / 2);
+          });
+        }
+      });
+
+      renderStationList();
+      selectStation(selectedStationId);
+      drawMapMarkers();
+      updateTotalActivePumps();
+    }
+
+    function updateTotalActivePumps() {
+      let totalPumps = 0;
+      let activePumps = 0;
+
+      stations.forEach(st => {
+        totalPumps += st.pump_count || 0;
+        activePumps += getActivePumpCount(st);
+      });
+
+      document.getElementById('stat-active-pumps').innerText = `${activePumps} / ${totalPumps}`;
+    }
+
+    function switchView(viewName) {
+      ['map', 'profile', 'matrix'].forEach(v => {
+        document.getElementById(`view-${v}`).classList.add('hidden');
+        const tab = document.getElementById(`tab-${v}`);
+        tab.classList.remove('bg-cyan-600', 'text-white');
+        tab.classList.add('bg-slate-800', 'text-slate-300');
+      });
+
+      document.getElementById(`view-${viewName}`).classList.remove('hidden');
+      const activeTab = document.getElementById(`tab-${viewName}`);
+      activeTab.classList.remove('bg-slate-800', 'text-slate-300');
+      activeTab.classList.add('bg-cyan-600', 'text-white');
+
+      if (viewName === 'map' && leafletMap) {
+        setTimeout(() => leafletMap.invalidateSize(), 100);
+      }
+      if (viewName === 'profile') {
+        renderProfileView();
+      }
+    }
+
+    function exportDataReport() {
+      const reportData = stations.map(s => ({
+        ID: s.water_id,
+        Station_TH: s.station_name,
+        Station_EN: s.station_name_en,
+        Type: s.type,
+        WaterLevel_m: s.wl_in,
+        WarningLimit_m: s.warning,
+        CriticalLimit_m: s.critical,
+        ActivePumps: getActivePumpCount(s)
+      }));
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(reportData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `BMA_Canal_Hydro_Report_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+  </script>
+</body>
+</html>
