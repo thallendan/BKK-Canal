@@ -1089,33 +1089,72 @@
         function drawDamNode(ctx, node, isHovered, t) {
             const status = getNodeWaterStatus(node);
             const curPct = node.pctFull !== undefined ? node.pctFull : 0;
+            const pctRatio = Math.min(100, Math.max(0, curPct)) / 100;
 
-            ctx.fillStyle = isHovered ? '#00f5d4' : '#1c2541';
-            ctx.strokeStyle = status.color;
-            ctx.lineWidth = 3;
+            const boxW = 32;
+            const boxH = 36;
+            const x = -boxW / 2;
+            const y = -boxH / 2;
 
-            ctx.beginPath();
-            ctx.arc(0, 0, 22, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.stroke();
+            // 1. Dam outer container box
+            ctx.fillStyle = '#070a12';
+            ctx.strokeStyle = isHovered ? '#00f5d4' : status.color;
+            ctx.lineWidth = isHovered ? 3 : 2.5;
 
-            const rotSpeed = t * 0.002;
-            ctx.save();
-            ctx.rotate(rotSpeed);
-            ctx.strokeStyle = status.color;
-            ctx.lineWidth = 2;
-            for (let i = 0; i < 4; i++) {
-                ctx.rotate(Math.PI / 2);
-                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 14); ctx.stroke();
+            if (ctx.roundRect) {
+                ctx.beginPath();
+                ctx.roundRect(x, y, boxW, boxH, 4);
+                ctx.fill();
+                ctx.stroke();
+            } else {
+                ctx.fillRect(x, y, boxW, boxH);
+                ctx.strokeRect(x, y, boxW, boxH);
             }
-            ctx.restore();
 
+            // 2. Dam crest wall top accent
+            ctx.fillStyle = status.color;
+            ctx.fillRect(x + 2, y + 2, boxW - 4, 3);
+
+            // 3. Water level fill based on percentage full
+            const innerPad = 2;
+            const innerW = boxW - innerPad * 2;
+            const innerH = boxH - innerPad * 2 - 4;
+            const fillH = innerH * pctRatio;
+            const fillY = (y + boxH - innerPad) - fillH;
+
+            if (fillH > 0) {
+                ctx.fillStyle = status.color;
+                ctx.globalAlpha = 0.65;
+                ctx.fillRect(x + innerPad, fillY, innerW, fillH);
+                ctx.globalAlpha = 1.0;
+
+                ctx.beginPath();
+                ctx.moveTo(x + innerPad, fillY);
+                ctx.lineTo(x + innerPad + innerW, fillY);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+
+            // 4. Percentage full label centered in the dam icon
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 10px JetBrains Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = '#000000';
+            ctx.shadowBlur = 4;
+            ctx.fillText(`${Math.round(curPct)}%`, 0, 2);
+            ctx.shadowBlur = 0;
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'alphabetic';
+
+            // 5. Station details & status text
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 11px font-sans';
-            ctx.fillText(node.name, 28, 0);
+            ctx.fillText(node.name, 26, 0);
             ctx.fillStyle = status.color;
             ctx.font = 'bold 10px monospace';
-            ctx.fillText(`STORAGE: ${curPct}% (${node.storageMcm ? node.storageMcm.toLocaleString() : 'Data Not Available'} MCM)`, 28, 14);
+            ctx.fillText(`STORAGE: ${curPct}% (${node.storageMcm ? node.storageMcm.toLocaleString() : 'Data Not Available'} MCM)`, 26, 14);
         }
 
         function drawGateNode(ctx, node, isHovered, t) {
