@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Thailand Macro Water System & Basin Hydraulics Telemetry</title>
     
     <!-- Tailwind CSS CDN -->
@@ -51,6 +51,7 @@
             color: #f1f5f9;
             overflow: hidden;
             user-select: none;
+            -webkit-user-select: none;
         }
 
         .glass-panel {
@@ -68,6 +69,7 @@
 
         #map-canvas {
             cursor: grab;
+            touch-action: none;
         }
         #map-canvas:active {
             cursor: grabbing;
@@ -79,17 +81,17 @@
     <!-- ========================================================= -->
     <!-- TOP NAVIGATION & STATUS BAR                               -->
     <!-- ========================================================= -->
-    <header class="glass-panel absolute top-0 left-0 right-0 z-30 px-4 py-2.5 mx-3 my-3 rounded-2xl flex flex-wrap items-center justify-between gap-3 border border-slate-800">
-        <div class="flex items-center gap-3">
-            <div class="p-2 bg-cyan-glow/10 rounded-xl border border-cyan-glow/30 text-cyan-glow">
-                <i data-lucide="waves" class="w-5 h-5"></i>
+    <header class="glass-panel absolute top-0 left-0 right-0 z-30 px-3 py-2 md:px-4 md:py-2.5 mx-2 my-2 md:mx-3 md:my-3 rounded-2xl flex flex-wrap items-center justify-between gap-2 border border-slate-800">
+        <div class="flex items-center gap-2.5">
+            <div class="p-1.5 md:p-2 bg-cyan-glow/10 rounded-xl border border-cyan-glow/30 text-cyan-glow">
+                <i data-lucide="waves" class="w-4 h-4 md:w-5 md:h-5"></i>
             </div>
             <div>
                 <div class="flex items-center gap-2">
-                    <h1 class="text-sm font-bold text-white tracking-wide">Thailand Macro Water System Canvas</h1>
-                    <span id="telemetry-badge" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-glow/20 text-cyan-glow border border-cyan-glow/30">Loading Telemetry...</span>
+                    <h1 class="text-xs md:text-sm font-bold text-white tracking-wide">Thailand Macro Water System Canvas</h1>
+                    <span id="telemetry-badge" class="text-[9px] md:text-[10px] font-mono px-1.5 md:px-2 py-0.5 rounded-full bg-cyan-glow/20 text-cyan-glow border border-cyan-glow/30">Loading Telemetry...</span>
                 </div>
-                <p class="text-[11px] text-slate-400">Northern Reservoirs &rarr; Central Confluences &rarr; Bangkok Strategic Gates &rarr; Gulf Estuary</p>
+                <p class="text-[10px] md:text-[11px] text-slate-400 hidden sm:block">Northern Reservoirs &rarr; Central Confluences &rarr; Bangkok Strategic Gates &rarr; Gulf Estuary</p>
             </div>
         </div>
 
@@ -109,7 +111,7 @@
                 </button>
             </div>
 
-            <div class="flex items-center gap-2 bg-navy-900/90 px-3 py-1.5 rounded-xl border border-slate-800 font-mono">
+            <div class="flex items-center gap-2 bg-navy-900/90 px-3 py-1.5 rounded-xl border border-slate-800 font-mono hidden md:flex">
                 <span id="system-status-dot" class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                 <span class="text-slate-400">Telemetry Feed:</span>
                 <span id="system-status-text" class="text-emerald-400 font-bold">DYNAMIC_FEED_CONNECTING</span>
@@ -133,22 +135,7 @@
             <div id="tooltip-subtitle" class="text-cyan-glow text-[11px]">Subtitle</div>
             <div id="tooltip-status" class="text-[10px] font-bold">Status Badge</div>
             <div id="tooltip-detail" class="text-slate-300 text-[10px]">Detail text</div>
-            <div class="text-[9px] text-slate-400 italic mt-1">&bull; Click node to open 2D Hydraulic Inspector &bull;</div>
-        </div>
-
-        <!-- STRATEGIC WATER GATES & PUMPING STATIONS QUICK PANEL -->
-        <div id="strategic-panel" class="absolute top-20 right-4 z-20 glass-panel p-3.5 rounded-2xl border border-slate-800 max-w-sm w-80 shadow-2xl space-y-2.5 hidden md:block">
-            <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="shield-alert" class="w-4 h-4 text-cyan-glow"></i>
-                    <h3 class="text-xs font-bold text-white uppercase tracking-wider font-mono">BMA Strategic Gates & Pumps</h3>
-                </div>
-                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Active Feed</span>
-            </div>
-
-            <div id="strategic-gates-list" class="space-y-1.5 max-h-[380px] overflow-y-auto pr-1">
-                <!-- Dynamically populated by renderStrategicPanel() -->
-            </div>
+            <div class="text-[9px] text-slate-400 italic mt-1">&bull; Tap/Click node to open 2D Hydraulic Inspector &bull;</div>
         </div>
 
         <!-- STANDARDIZED WATER LEVEL STATUS LEGEND -->
@@ -167,15 +154,15 @@
     <!-- ========================================================= -->
     <!-- INTERACTIVE 2D CANAL & NODE INSPECTOR MODAL               -->
     <!-- ========================================================= -->
-    <div id="inspector-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-navy-950/80 backdrop-blur-md">
+    <div id="inspector-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 md:p-4 bg-navy-950/80 backdrop-blur-md">
         <div class="glass-panel w-full max-w-4xl rounded-3xl border border-slate-800 overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
-            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-navy-900/90">
+            <div class="px-4 py-3 md:px-6 md:py-4 border-b border-slate-800 flex items-center justify-between bg-navy-900/90">
                 <div class="flex items-center gap-3">
-                    <div id="modal-node-icon" class="p-2.5 rounded-xl bg-cyan-glow/10 text-cyan-glow border border-cyan-glow/30">
+                    <div id="modal-node-icon" class="p-2 md:p-2.5 rounded-xl bg-cyan-glow/10 text-cyan-glow border border-cyan-glow/30">
                         <i data-lucide="waves" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h2 id="modal-node-title" class="text-lg font-bold text-white">Node Name</h2>
+                        <h2 id="modal-node-title" class="text-base md:text-lg font-bold text-white">Node Name</h2>
                         <p id="modal-node-subtitle" class="text-xs text-cyan-glow font-mono">Location & Basin Specs</p>
                     </div>
                 </div>
@@ -184,7 +171,7 @@
                 </button>
             </div>
 
-            <div class="p-6 overflow-y-auto space-y-6">
+            <div class="p-4 md:p-6 overflow-y-auto space-y-6">
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
@@ -196,11 +183,11 @@
                         </span>
                     </div>
 
-                    <div class="relative w-full h-[300px] rounded-2xl bg-navy-950 border border-slate-800 overflow-hidden shadow-inner">
+                    <div class="relative w-full h-[240px] md:h-[300px] rounded-2xl bg-navy-950 border border-slate-800 overflow-hidden shadow-inner">
                         <canvas id="cross-section-canvas" class="w-full h-full"></canvas>
 
                         <!-- DYNAMIC HUD OVERLAY FOR SELECTED STATION TYPE -->
-                        <div id="station-hud" class="absolute top-3 right-3 glass-panel p-3 rounded-xl border border-cyan-glow/30 font-mono text-[11px] space-y-1 text-slate-300 pointer-events-none min-w-[210px]">
+                        <div id="station-hud" class="absolute top-3 right-3 glass-panel p-3 rounded-xl border border-cyan-glow/30 font-mono text-[11px] space-y-1 text-slate-300 pointer-events-none min-w-[180px] md:min-w-[210px]">
                             <!-- Dynamically rendered by updateHud() -->
                         </div>
                     </div>
@@ -396,6 +383,17 @@
             selectedNode: null
         };
 
+        let touchStartState = {
+            startDist: 0,
+            startScale: 1,
+            startX: 0,
+            startY: 0,
+            centerX: 0,
+            centerY: 0,
+            hasMoved: false,
+            tapTarget: null
+        };
+
         let riverParticles = [];
         let mapCv, mapCtx;
         let crossCv, crossCtx;
@@ -411,22 +409,32 @@
             crossCtx = crossCv.getContext('2d');
 
             resizeMapCanvas();
+            if (window.innerWidth < 768) {
+                fitMapToScreen();
+            }
+
             window.addEventListener('resize', () => {
                 resizeMapCanvas();
                 if (simState.selectedNode) render2DCrossSection();
             });
 
+            // Mouse Events
             mapCv.addEventListener('mousedown', onMouseDown);
             window.addEventListener('mousemove', onMouseMove);
             window.addEventListener('mouseup', onMouseUp);
             mapCv.addEventListener('wheel', onWheel, { passive: false });
+
+            // Touch Events for Mobile Panning & Pinch-to-Zoom
+            mapCv.addEventListener('touchstart', onTouchStart, { passive: true });
+            mapCv.addEventListener('touchmove', onTouchMove, { passive: true });
+            mapCv.addEventListener('touchend', onTouchEnd, { passive: true });
+            mapCv.addEventListener('touchcancel', onTouchEnd, { passive: true });
 
             initRiverParticles();
 
             // FETCH & UPDATE DYNAMIC WATER LEVEL TELEMETRY
             await fetchTelemetryData();
 
-            renderStrategicPanel();
             requestAnimationFrame(globalAnimationLoop);
         });
 
@@ -559,13 +567,13 @@
                 }
 
                 badge.innerText = 'DYNAMIC JSON TELEMETRY VERIFIED';
-                badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-                statusText.innerText = 'LIVE_TELEMETRY_ONLINE';
+                badge.className = 'text-[9px] md:text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                if (statusText) statusText.innerText = 'LIVE_TELEMETRY_ONLINE';
             } catch (err) {
                 console.warn('Telemetry fetch fallback to embedded structure:', err);
                 badge.innerText = 'EMBEDDED TELEMETRY ACTIVE';
-                badge.className = 'text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30';
-                statusText.innerText = 'OFFLINE_CACHE_ACTIVE';
+                badge.className = 'text-[9px] md:text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30';
+                if (statusText) statusText.innerText = 'OFFLINE_CACHE_ACTIVE';
             }
         }
 
@@ -698,52 +706,6 @@
             mapCv.height = window.innerHeight;
         }
 
-        function renderStrategicPanel() {
-            const listContainer = document.getElementById('strategic-gates-list');
-            if (!listContainer) return;
-            listContainer.innerHTML = '';
-
-            const strategicKeys = [
-                'pump_phra_khanong',
-                'pump_bangsue',
-                'khlong_songsaitai',
-                'pump_hokwa_sai_lang',
-                'gate_mahasawat_khunsi',
-                'pump_bangkok_yai',
-                'khlong_lam_pla_thio_132',
-                'khlong_bang_talat_123'
-            ];
-
-            strategicKeys.forEach(key => {
-                const node = waterNodes[key];
-                if (!node) return;
-
-                const status = getNodeWaterStatus(node);
-                const stVal = (node.stage !== undefined && node.stage !== null && node.stage !== -99) ? `${node.stage >= 0 ? '+' : ''}${node.stage.toFixed(2)}m` : 'OFFLINE';
-                const idTag = node.waterId ? `ID:${node.waterId}` : 'BMA';
-
-                const item = document.createElement('div');
-                item.className = 'glass-panel p-2.5 rounded-xl border border-slate-800/80 hover:border-cyan-glow/50 cursor-pointer transition flex items-center justify-between text-xs font-mono';
-                item.onclick = () => focusNodeAndInspect(node);
-
-                item.innerHTML = `
-                    <div class="space-y-0.5 max-w-[170px]">
-                        <div class="font-bold text-white text-[11px] truncate flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full" style="background-color: ${status.color}"></span>
-                            ${node.name}
-                        </div>
-                        <div class="text-[10px] text-slate-400 truncate">${node.subtitle}</div>
-                    </div>
-                    <div class="text-right">
-                        <span class="badge px-1.5 py-0.5 text-[9px] rounded font-bold ${status.bgClass}">${stVal}</span>
-                        <div class="text-[9px] font-bold mt-1" style="color: ${status.color}">${status.badge}</div>
-                    </div>
-                `;
-
-                listContainer.appendChild(item);
-            });
-        }
-
         function focusNodeAndInspect(node) {
             simState.scale = 1.2;
             simState.offsetX = (window.innerWidth / 2) - (node.worldX * simState.scale);
@@ -820,6 +782,78 @@
             zoomMap(zoomFactor, e.clientX, e.clientY);
         }
 
+        // Touch event handlers for mobile panning & pinch zooming
+        function onTouchStart(e) {
+            if (e.target !== mapCv) return;
+
+            if (e.touches.length === 1) {
+                const t = e.touches[0];
+                const worldPos = screenToWorld(t.clientX, t.clientY);
+                touchStartState.tapTarget = findNodeAt(worldPos.x, worldPos.y);
+                
+                simState.isDragging = true;
+                simState.dragStartX = t.clientX - simState.offsetX;
+                simState.dragStartY = t.clientY - simState.offsetY;
+                
+                touchStartState.startX = t.clientX;
+                touchStartState.startY = t.clientY;
+                touchStartState.hasMoved = false;
+            } else if (e.touches.length === 2) {
+                simState.isDragging = false;
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                touchStartState.startDist = dist;
+                touchStartState.startScale = simState.scale;
+                touchStartState.centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                touchStartState.centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            }
+        }
+
+        function onTouchMove(e) {
+            if (e.touches.length === 1 && simState.isDragging) {
+                const t = e.touches[0];
+                const dx = t.clientX - touchStartState.startX;
+                const dy = t.clientY - touchStartState.startY;
+                if (Math.hypot(dx, dy) > 8) {
+                    touchStartState.hasMoved = true;
+                }
+                simState.offsetX = t.clientX - simState.dragStartX;
+                simState.offsetY = t.clientY - simState.dragStartY;
+            } else if (e.touches.length === 2) {
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                if (touchStartState.startDist > 0) {
+                    const factor = dist / touchStartState.startDist;
+                    const newScale = Math.max(0.3, Math.min(2.5, touchStartState.startScale * factor));
+                    const cX = touchStartState.centerX;
+                    const cY = touchStartState.centerY;
+                    simState.offsetX = cX - (cX - simState.offsetX) * (newScale / simState.scale);
+                    simState.offsetY = cY - (cY - simState.offsetY) * (newScale / simState.scale);
+                    simState.scale = newScale;
+                }
+            }
+        }
+
+        function onTouchEnd(e) {
+            if (e.touches.length === 0) {
+                if (!touchStartState.hasMoved && touchStartState.tapTarget) {
+                    openInspectorModal(touchStartState.tapTarget);
+                }
+                simState.isDragging = false;
+                touchStartState.tapTarget = null;
+                touchStartState.hasMoved = false;
+            } else if (e.touches.length === 1) {
+                const t = e.touches[0];
+                simState.isDragging = true;
+                simState.dragStartX = t.clientX - simState.offsetX;
+                simState.dragStartY = t.clientY - simState.offsetY;
+            }
+        }
+
         function zoomMap(factor, mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2) {
             const newScale = Math.max(0.3, Math.min(2.5, simState.scale * factor));
             simState.offsetX = mouseX - (mouseX - simState.offsetX) * (newScale / simState.scale);
@@ -834,9 +868,9 @@
         }
 
         function resetMapView() {
-            simState.scale = 0.72;
-            simState.offsetX = 80;
-            simState.offsetY = 40;
+            simState.scale = window.innerWidth < 768 ? Math.min(window.innerWidth / 1700, window.innerHeight / 2100) : 0.72;
+            simState.offsetX = window.innerWidth < 768 ? (window.innerWidth - 1700 * simState.scale) / 2 : 80;
+            simState.offsetY = window.innerWidth < 768 ? 30 : 40;
         }
 
         function screenToWorld(sx, sy) {
