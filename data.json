@@ -1,21 +1,48 @@
 {
-  "timestamp_utc": "2026-10-26T03:00:43.788793+00:00",
-  "updated_at_utc": "2026-10-26T03:00:43.788793+00:00",
+  "timestamp_utc": "2026-10-26T09:13:43.447334+00:00",
+  "updated_at_utc": "2026-10-26T09:13:43.447334+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 10,
   "successful_count": 10,
   "failed_count": 0,
   "summary": {
-    "paknam_tide_msl": 0.221,
-    "gravity_drainage_window": "OPEN (+1.84m Head)",
-    "critical_alert_sectors": "0 Overtopping / 9 Warning",
-    "critical_overflow_count": 0,
+    "paknam_tide_msl": 1.341,
+    "gravity_drainage_window": "OPEN (+0.72m Head)",
+    "critical_alert_sectors": "1 Overtopping / 9 Warning",
+    "critical_overflow_count": 1,
     "high_risk_count": 9,
     "total_monitored_stations": 13,
-    "avg_canal_capacity_pct": 73.8
+    "avg_canal_capacity_pct": 78.9
   },
   "canals": [
+    {
+      "id": 1331308582,
+      "name": "คลองบางกะเจ้า",
+      "district": "Phra Pradaeng District, Samut Prakan",
+      "province": "Samut Prakan",
+      "pump_station": "Wat Bangkachao Nok Gate",
+      "matched_station_name": "Wat Bangkachao Nok Gate",
+      "station_lat": 13.689612,
+      "station_lon": 100.554886,
+      "path": [
+        [
+          13.689612,
+          100.554886
+        ],
+        [
+          13.692612,
+          100.557886
+        ]
+      ],
+      "water_level_msl": 1.7,
+      "capacity_pct": 116.48,
+      "buffer_remaining_m": -0.44,
+      "situation_level": 5,
+      "drainage_mode": "OVERFLOW / OVERTOPPING",
+      "risk_level": "HIGH",
+      "live_data_found": true
+    },
     {
       "id": 1331104794,
       "name": "คลองมหาสวัสดิ์",
@@ -44,34 +71,7 @@
       "live_data_found": true
     },
     {
-      "id": 1331148898,
-      "name": "แม่น้ำเจ้าพระยา",
-      "district": "Dusit District, Bangkok",
-      "province": "Bangkok",
-      "pump_station": "กรมชลประทานสามเสน",
-      "matched_station_name": "กรมชลประทานสามเสน",
-      "station_lat": 13.78815,
-      "station_lon": 100.509148,
-      "path": [
-        [
-          13.78815,
-          100.509148
-        ],
-        [
-          13.79115,
-          100.512148
-        ]
-      ],
-      "water_level_msl": 1.53,
-      "capacity_pct": 95.65,
-      "buffer_remaining_m": 0.73,
-      "situation_level": 4,
-      "drainage_mode": "HIGH RISK (MONITORING)",
-      "risk_level": "ELEVATED",
-      "live_data_found": true
-    },
-    {
-      "id": 1331157890,
+      "id": 1331308643,
       "name": "แม่น้ำเจ้าพระยา",
       "district": "Thon Buri District, Bangkok",
       "province": "Bangkok",
@@ -89,43 +89,70 @@
           100.49577
         ]
       ],
-      "water_level_msl": 0.85,
-      "capacity_pct": 92.66,
-      "buffer_remaining_m": 1.31,
+      "water_level_msl": 1.27,
+      "capacity_pct": 95.01,
+      "buffer_remaining_m": 0.89,
       "situation_level": 4,
       "drainage_mode": "HIGH RISK (MONITORING)",
       "risk_level": "ELEVATED",
       "live_data_found": true
     },
     {
-      "id": 1331157828,
-      "name": "คลองบางกะเจ้า",
-      "district": "Phra Pradaeng District, Samut Prakan",
-      "province": "Samut Prakan",
-      "pump_station": "Wat Bangkachao Nok Gate",
-      "matched_station_name": "Wat Bangkachao Nok Gate",
-      "station_lat": 13.689612,
-      "station_lon": 100.554886,
+      "id": 1331290863,
+      "name": "แม่น้ำเจ้าพระยา",
+      "district": "Dusit District, Bangkok",
+      "province": "Bangkok",
+      "pump_station": "กรมชลประทานสามเสน",
+      "matched_station_name": "กรมชลประทานสามเสน",
+      "station_lat": 13.78815,
+      "station_lon": 100.509148,
       "path": [
         [
-          13.689612,
-          100.554886
+          13.78815,
+          100.509148
         ],
         [
-          13.692612,
-          100.557886
+          13.79115,
+          100.512148
         ]
       ],
-      "water_level_msl": 1.05,
-      "capacity_pct": 92.13,
-      "buffer_remaining_m": 0.21,
+      "water_level_msl": 1.16,
+      "capacity_pct": 93.44,
+      "buffer_remaining_m": 1.1,
       "situation_level": 4,
       "drainage_mode": "HIGH RISK (MONITORING)",
       "risk_level": "ELEVATED",
       "live_data_found": true
     },
     {
-      "id": 1331157836,
+      "id": 1331282759,
+      "name": "แม่น้ำเจ้าพระยา",
+      "district": "Phra Pradaeng District, Samut Prakan",
+      "province": "Samut Prakan",
+      "pump_station": "Khlong Lat Bang Yo 1 Gate",
+      "matched_station_name": "Khlong Lat Bang Yo 1 Gate",
+      "station_lat": 13.676162,
+      "station_lon": 100.553085,
+      "path": [
+        [
+          13.676162,
+          100.553085
+        ],
+        [
+          13.679162,
+          100.556085
+        ]
+      ],
+      "water_level_msl": 1.23,
+      "capacity_pct": 88.31,
+      "buffer_remaining_m": 0.28,
+      "situation_level": 4,
+      "drainage_mode": "HIGH RISK (MONITORING)",
+      "risk_level": "ELEVATED",
+      "live_data_found": true
+    },
+    {
+      "id": 1331308590,
       "name": "คลองลำปลาทิว",
       "district": "Lat Krabang District, Bangkok",
       "province": "Bangkok",
@@ -143,16 +170,16 @@
           100.79768
         ]
       ],
-      "water_level_msl": 0.16,
-      "capacity_pct": 87.85,
-      "buffer_remaining_m": 0.46,
+      "water_level_msl": 0.15,
+      "capacity_pct": 87.62,
+      "buffer_remaining_m": 0.47,
       "situation_level": 4,
       "drainage_mode": "HIGH RISK (MONITORING)",
       "risk_level": "ELEVATED",
       "live_data_found": true
     },
     {
-      "id": 1331157840,
+      "id": 1331308594,
       "name": "คลองหัวตะเข้",
       "district": "Bang Sao Thong District, Samut Prakan",
       "province": "Samut Prakan",
@@ -171,7 +198,7 @@
         ]
       ],
       "water_level_msl": 0.04,
-      "capacity_pct": 85.19,
+      "capacity_pct": 85.0,
       "buffer_remaining_m": 0.39,
       "situation_level": 4,
       "drainage_mode": "HIGH RISK (MONITORING)",
@@ -179,27 +206,27 @@
       "live_data_found": true
     },
     {
-      "id": 1331154285,
-      "name": "แม่น้ำเจ้าพระยา",
-      "district": "Phra Pradaeng District, Samut Prakan",
+      "id": 1331308686,
+      "name": "คลองสรรพสามิต",
+      "district": "Phra Samut Chedi District, Samut Prakan",
       "province": "Samut Prakan",
-      "pump_station": "Khlong Lat Bang Yo 1 Gate",
-      "matched_station_name": "Khlong Lat Bang Yo 1 Gate",
-      "station_lat": 13.676162,
-      "station_lon": 100.553085,
+      "pump_station": "Chulachomklao Fortress",
+      "matched_station_name": "Chulachomklao Fortress",
+      "station_lat": 13.57378,
+      "station_lon": 100.57396,
       "path": [
         [
-          13.676162,
-          100.553085
+          13.57378,
+          100.57396
         ],
         [
-          13.679162,
-          100.556085
+          13.57678,
+          100.57696
         ]
       ],
-      "water_level_msl": 1.07,
-      "capacity_pct": 81.69,
-      "buffer_remaining_m": 0.44,
+      "water_level_msl": 1.33,
+      "capacity_pct": 84.69,
+      "buffer_remaining_m": 0.53,
       "situation_level": 4,
       "drainage_mode": "HIGH RISK (MONITORING)",
       "risk_level": "ELEVATED",
@@ -233,7 +260,7 @@
       "live_data_found": true
     },
     {
-      "id": 1331157843,
+      "id": 1331308597,
       "name": "คลองหกวา",
       "district": "Lat Phrao District, Bangkok",
       "province": "Bangkok",
@@ -251,16 +278,16 @@
           100.64252
         ]
       ],
-      "water_level_msl": 1.29,
-      "capacity_pct": 77.18,
-      "buffer_remaining_m": 0.68,
+      "water_level_msl": 1.28,
+      "capacity_pct": 76.71,
+      "buffer_remaining_m": 0.69,
       "situation_level": 4,
       "drainage_mode": "HIGH RISK (MONITORING)",
       "risk_level": "ELEVATED",
       "live_data_found": true
     },
     {
-      "id": 1331157844,
+      "id": 1331308598,
       "name": "คลองบางบัว",
       "district": "Bang Khen District, Bangkok",
       "province": "Bangkok",
@@ -278,43 +305,16 @@
           100.59046
         ]
       ],
-      "water_level_msl": 1.42,
-      "capacity_pct": 69.01,
-      "buffer_remaining_m": 0.78,
+      "water_level_msl": 1.36,
+      "capacity_pct": 66.64,
+      "buffer_remaining_m": 0.84,
       "situation_level": 3,
       "drainage_mode": "NORMAL DISCHARGE",
       "risk_level": "NORMAL",
       "live_data_found": true
     },
     {
-      "id": 1331157931,
-      "name": "คลองสรรพสามิต",
-      "district": "Phra Samut Chedi District, Samut Prakan",
-      "province": "Samut Prakan",
-      "pump_station": "Chulachomklao Fortress",
-      "matched_station_name": "Chulachomklao Fortress",
-      "station_lat": 13.57378,
-      "station_lon": 100.57396,
-      "path": [
-        [
-          13.57378,
-          100.57396
-        ],
-        [
-          13.57678,
-          100.57696
-        ]
-      ],
-      "water_level_msl": 0.29,
-      "capacity_pct": 54.21,
-      "buffer_remaining_m": 1.57,
-      "situation_level": 3,
-      "drainage_mode": "NORMAL DISCHARGE",
-      "risk_level": "NORMAL",
-      "live_data_found": true
-    },
-    {
-      "id": 1331157800,
+      "id": 1331308555,
       "name": "คลองแสนแสบ",
       "district": "Vadhana District, Bangkok",
       "province": "Bangkok",
@@ -332,16 +332,16 @@
           100.565164
         ]
       ],
-      "water_level_msl": 1.29,
-      "capacity_pct": 41.8,
-      "buffer_remaining_m": 1.1,
+      "water_level_msl": 1.36,
+      "capacity_pct": 45.5,
+      "buffer_remaining_m": 1.03,
       "situation_level": 3,
       "drainage_mode": "NORMAL DISCHARGE",
       "risk_level": "NORMAL",
       "live_data_found": true
     },
     {
-      "id": 1331157832,
+      "id": 1331308586,
       "name": "คลองภาษีเจริญ",
       "district": "Bang Khae District, Bangkok",
       "province": "Bangkok",
@@ -359,9 +359,9 @@
           100.38427
         ]
       ],
-      "water_level_msl": -6.16,
-      "capacity_pct": 5.5,
-      "buffer_remaining_m": 7.58,
+      "water_level_msl": -5.91,
+      "capacity_pct": 8.72,
+      "buffer_remaining_m": 7.33,
       "situation_level": 1,
       "drainage_mode": "NORMAL DISCHARGE",
       "risk_level": "NORMAL",
@@ -421,28 +421,28 @@
     "chao_phraya_4dam_combined": {
       "label": "Chao Phraya 4-Dam Combined Storage",
       "value": "76.4%",
-      "unit": "18,926 / 24,783 MCM (Usable: 12,219 MCM)",
+      "unit": "18,934 / 24,783 MCM (Usable: 12,227 MCM)",
       "period": "Latest Report",
       "description": "Primary BKK & Samut Prakan Water Supply & Salinity Buffer"
     },
     "dam_bhumibol": {
       "label": "Bhumibol Dam (Ping River)",
       "value": "71.0%",
-      "unit": "9,547 / 13,462 MCM (Usable: 5,747 MCM)",
+      "unit": "9,558 / 13,462 MCM (Usable: 5,758 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Upper Basin Headwater Storage"
     },
     "dam_sirikit": {
       "label": "Sirikit Dam (Nan River)",
       "value": "82.0%",
-      "unit": "7,767 / 9,510 MCM (Usable: 4,917 MCM)",
+      "unit": "7,763 / 9,510 MCM (Usable: 4,913 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Upper Basin Headwater Storage"
     },
     "dam_kwai_noi": {
       "label": "Kwai Noi Bamrung Dan Dam",
       "value": "86.0%",
-      "unit": "805 / 939 MCM (Usable: 762 MCM)",
+      "unit": "806 / 939 MCM (Usable: 763 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Mid-Basin Flow Regulation"
     },
@@ -456,22 +456,22 @@
     "dam_srinagarind": {
       "label": "Srinagarind Dam (Mae Klong Basin)",
       "value": "99.0%",
-      "unit": "17,544 / 17,745 MCM (Usable: 7,279 MCM)",
+      "unit": "17,528 / 17,745 MCM (Usable: 7,263 MCM)",
       "period": "Latest Report",
       "description": "Western Diversion & Samut Prakan Salinity Repulsion"
     },
     "dam_vajiralongkorn": {
       "label": "Vajiralongkorn Dam (Mae Klong Basin)",
       "value": "97.0%",
-      "unit": "8,621 / 8,860 MCM (Usable: 5,609 MCM)",
+      "unit": "8,614 / 8,860 MCM (Usable: 5,602 MCM)",
       "period": "Latest Report",
       "description": "Western Diversion & Samut Prakan Salinity Repulsion"
     },
     "chao_phraya_estuary_realtime_level": {
       "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
-      "value": "+0.221",
+      "value": "+1.341",
       "unit": "m MSL",
-      "period": "2026-10-26 09:50",
+      "period": "2026-10-26 16:10",
       "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
     },
     "chao_phraya_estuary_predicted_tide": {
@@ -490,7 +490,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.317,
+      "response_time_sec": 0.283,
       "error": null
     },
     {
@@ -500,7 +500,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.417,
+      "response_time_sec": 0.759,
       "error": null
     },
     {
@@ -510,7 +510,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.126,
+      "response_time_sec": 0.21,
       "error": null
     },
     {
@@ -520,7 +520,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.271,
+      "response_time_sec": 0.345,
       "error": null
     },
     {
@@ -530,7 +530,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.28,
+      "response_time_sec": 0.387,
       "error": null
     },
     {
@@ -540,7 +540,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.213,
+      "response_time_sec": 0.186,
       "error": null
     },
     {
@@ -550,7 +550,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.289,
+      "response_time_sec": 0.245,
       "error": null
     },
     {
@@ -560,7 +560,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 1.989,
+      "response_time_sec": 1.931,
       "error": null
     },
     {
@@ -579,7 +579,7 @@
       "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 1.561,
+      "response_time_sec": 1.844,
       "error": null
     }
   ]
