@@ -1,0 +1,38 @@
+name: River Basin Telemetry Data Fetcher
+
+on:
+  schedule:
+    # Runs every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch-telemetry:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests pandas
+
+      - name: Run River Data Collector
+        env:
+          DWR_SESSION_COOKIE: ${{ secrets.DWR_SESSION_COOKIE }}
+        run: |
+          python extra_canal_data.py
+
+      - name: Upload Telemetry Data Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: river-basin-telemetry-${{ github.run_id }}
+          path: data/
+          retention-days: 14
