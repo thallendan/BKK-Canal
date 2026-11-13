@@ -1,6 +1,6 @@
 {
   "master_type": "WATER_LEVEL_AND_HYDROLOGICAL_TELEMETRY",
-  "timestamp_utc": "2026-11-13T14:36:44.499200+00:00",
+  "timestamp_utc": "2026-11-13T21:08:15.601557+00:00",
   "total_endpoints": 11,
   "successful_count": 7,
   "failed_count": 5,
@@ -56,8 +56,8 @@
       "preview": "<!DOCTYPE html><html lang=\"en\"><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width\"/><title>ผังลุ่มน้ำ ลุ่มน้ำเจ้าพระยา</title><meta name=\"twitter:card\" content=\"summary_la"
     },
     "chaophraya_full": {
-      "text_length": 252345,
-      "preview": "<!-- itc_water2026-11-13 CACHE HIT | total: 1.8258094787598 ms | mtime: 0.010967254638672 ms | read: 0.15497207641602 ms | unserialize: 1.6100406646729 ms | size: 138920 bytes --> <!-- d_dam2026-11-13"
+      "text_length": 236089,
+      "preview": "<!-- itc_water2026-11-14 CACHE HIT | total: 3.4668445587158 ms | mtime: 0.012874603271484 ms | read: 0.35595893859863 ms | unserialize: 1.8141269683838 ms | size: 140814 bytes --> <!-- d_dam2026-11-14"
     },
     "chaophraya_small": {
       "text_length": 66883,
@@ -71,7 +71,7 @@
       "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 2.322,
+      "response_time_sec": 2.246,
       "error": null
     },
     {
@@ -80,7 +80,7 @@
       "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/watergate_load",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 0.411,
+      "response_time_sec": 0.424,
       "error": null
     },
     {
@@ -89,7 +89,7 @@
       "url": "https://tiwrmdev.hii.or.th/v3/sealevel",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 7.57,
+      "response_time_sec": 10.395,
       "error": "Expecting value: line 1 column 1 (char 0)"
     },
     {
@@ -98,7 +98,7 @@
       "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 0.257,
+      "response_time_sec": 0.226,
       "error": null
     },
     {
@@ -107,7 +107,7 @@
       "url": "https://waterchart.thaiwater.net/basin/chaophraya",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 1.745,
+      "response_time_sec": 1.306,
       "error": null
     },
     {
@@ -116,7 +116,7 @@
       "url": "https://tiwrm.hii.or.th/DATA/REPORT/php/chart/chaopraya/2013/chaopraya.php",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 2.908,
+      "response_time_sec": 2.615,
       "error": null
     },
     {
@@ -125,7 +125,7 @@
       "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/chart/chaopraya/small/chaopraya.php",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 0.618,
+      "response_time_sec": 0.65,
       "error": null
     },
     {
@@ -134,7 +134,7 @@
       "url": "https://weather.bangkok.go.th/Flood/PageMap/GetData?id=0",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 1.145,
+      "response_time_sec": 0.654,
       "error": "HTTP Error 403: Forbidden"
     },
     {
@@ -143,7 +143,7 @@
       "url": "https://weather.bangkok.go.th/Water/PageMap/GetData",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.042,
+      "response_time_sec": 0.034,
       "error": "HTTP Error 403: Forbidden"
     },
     {
@@ -152,7 +152,7 @@
       "url": "https://weather.bangkok.go.th/Flow/PageMap/GetData",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.038,
+      "response_time_sec": 0.032,
       "error": "HTTP Error 403: Forbidden"
     },
     {
@@ -161,7 +161,7 @@
       "url": "https://weather.bangkok.go.th/Flow/PageMap/GetDataTable",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.028,
+      "response_time_sec": 0.038,
       "error": "HTTP Error 403: Forbidden"
     }
   ]
