@@ -1,9 +1,9 @@
 {
   "master_type": "WATER_LEVEL_AND_HYDROLOGICAL_TELEMETRY",
-  "timestamp_utc": "2026-10-23T09:19:38.229266+00:00",
+  "timestamp_utc": "2026-11-13T14:36:44.499200+00:00",
   "total_endpoints": 11,
-  "successful_count": 3,
-  "failed_count": 8,
+  "successful_count": 7,
+  "failed_count": 5,
   "parsed_summary": {
     "waterlevel_thaiwater": {
       "record_count": 0,
@@ -13,9 +13,55 @@
       "watergate_count": 0,
       "sample_watergate": {}
     },
+    "dam_storage": {
+      "bhumibol": {
+        "capacity_mcm": 13462.0,
+        "storage_mcm": 0.0,
+        "storage_pct": 0.0,
+        "usable_mcm": 0.0
+      },
+      "sirikit": {
+        "capacity_mcm": 9510.0,
+        "storage_mcm": 0.0,
+        "storage_pct": 0.0,
+        "usable_mcm": 0.0
+      },
+      "kwai_noi": {
+        "capacity_mcm": 939.0,
+        "storage_mcm": 0.0,
+        "storage_pct": 0.0,
+        "usable_mcm": 0.0
+      },
+      "pasak": {
+        "capacity_mcm": 960.0,
+        "storage_mcm": 0.0,
+        "storage_pct": 0.0,
+        "usable_mcm": 0.0
+      },
+      "srinagarind": {
+        "capacity_mcm": 17745.0,
+        "storage_mcm": 0.0,
+        "storage_pct": 0.0,
+        "usable_mcm": 0.0
+      },
+      "vajiralongkorn": {
+        "capacity_mcm": 8860.0,
+        "storage_mcm": 0.0,
+        "storage_pct": 0.0,
+        "usable_mcm": 0.0
+      }
+    },
+    "chaophraya_compact": {
+      "text_length": 66883,
+      "preview": "<!DOCTYPE html><html lang=\"en\"><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width\"/><title>ผังลุ่มน้ำ ลุ่มน้ำเจ้าพระยา</title><meta name=\"twitter:card\" content=\"summary_la"
+    },
     "chaophraya_full": {
-      "text_length": 254400,
-      "preview": "<!-- itc_water2026-10-23 CACHE HIT | total: 1.9428730010986 ms | mtime: 0.0078678131103516 ms | read: 0.19598007202148 ms | unserialize: 1.6899108886719 ms | size: 138269 bytes --> <!-- d_dam2026-10-2"
+      "text_length": 252345,
+      "preview": "<!-- itc_water2026-11-13 CACHE HIT | total: 1.8258094787598 ms | mtime: 0.010967254638672 ms | read: 0.15497207641602 ms | unserialize: 1.6100406646729 ms | size: 138920 bytes --> <!-- d_dam2026-11-13"
+    },
+    "chaophraya_small": {
+      "text_length": 66883,
+      "preview": "<!DOCTYPE html><html lang=\"en\"><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width\"/><title>ผังลุ่มน้ำ ลุ่มน้ำเจ้าพระยา</title><meta name=\"twitter:card\" content=\"summary_la"
     }
   },
   "endpoint_diagnostics": [
@@ -25,7 +71,7 @@
       "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 2.709,
+      "response_time_sec": 2.322,
       "error": null
     },
     {
@@ -34,35 +80,35 @@
       "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/watergate_load",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 0.76,
+      "response_time_sec": 0.411,
       "error": null
     },
     {
       "key": "estuary_tide",
       "name": "Chao Phraya Estuary Sea Level & Tide (Fort Phrachulachomklao)",
       "url": "https://tiwrmdev.hii.or.th/v3/sealevel",
-      "success": false,
-      "status_code": null,
-      "response_time_sec": 0.765,
-      "error": "HTTPSConnectionPool(host='tiwrmdev.hii.or.th', port=443): Max retries exceeded with url: /v3/sealevel (Caused by NewConnectionError(\"HTTPSConnection(host='tiwrmdev.hii.or.th', port=443): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+      "success": true,
+      "status_code": 200,
+      "response_time_sec": 7.57,
+      "error": "Expecting value: line 1 column 1 (char 0)"
     },
     {
       "key": "dam_storage",
       "name": "Thailand Dam Storage Report (RID/HII)",
       "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en",
-      "success": false,
-      "status_code": null,
-      "response_time_sec": 0.777,
-      "error": "HTTPSConnectionPool(host='tiwrmdev.hii.or.th', port=443): Max retries exceeded with url: /DATA/REPORT/php/rid_dam_1.php?lang=en (Caused by NewConnectionError(\"HTTPSConnection(host='tiwrmdev.hii.or.th', port=443): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+      "success": true,
+      "status_code": 200,
+      "response_time_sec": 0.257,
+      "error": null
     },
     {
       "key": "chaophraya_compact",
       "name": "Chao Phraya Basin Compact Report",
       "url": "https://waterchart.thaiwater.net/basin/chaophraya",
-      "success": false,
-      "status_code": null,
-      "response_time_sec": 0.548,
-      "error": "HTTPSConnectionPool(host='waterchart.thaiwater.net', port=443): Max retries exceeded with url: /basin/chaophraya (Caused by NewConnectionError(\"HTTPSConnection(host='waterchart.thaiwater.net', port=443): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+      "success": true,
+      "status_code": 200,
+      "response_time_sec": 1.745,
+      "error": null
     },
     {
       "key": "chaophraya_full",
@@ -70,17 +116,17 @@
       "url": "https://tiwrm.hii.or.th/DATA/REPORT/php/chart/chaopraya/2013/chaopraya.php",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 2.994,
+      "response_time_sec": 2.908,
       "error": null
     },
     {
       "key": "chaophraya_small",
       "name": "Chao Phraya Basin Small Overview Chart",
       "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/chart/chaopraya/small/chaopraya.php",
-      "success": false,
-      "status_code": null,
-      "response_time_sec": 0.255,
-      "error": "HTTPSConnectionPool(host='tiwrmdev.hii.or.th', port=443): Max retries exceeded with url: /DATA/REPORT/php/chart/chaopraya/small/chaopraya.php (Caused by NewConnectionError(\"HTTPSConnection(host='tiwrmdev.hii.or.th', port=443): Failed to establish a new connection: [Errno 111] Connection refused\"))"
+      "success": true,
+      "status_code": 200,
+      "response_time_sec": 0.618,
+      "error": null
     },
     {
       "key": "bma_roadside_flood",
@@ -88,7 +134,7 @@
       "url": "https://weather.bangkok.go.th/Flood/PageMap/GetData?id=0",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.949,
+      "response_time_sec": 1.145,
       "error": "HTTP Error 403: Forbidden"
     },
     {
@@ -97,7 +143,7 @@
       "url": "https://weather.bangkok.go.th/Water/PageMap/GetData",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.118,
+      "response_time_sec": 0.042,
       "error": "HTTP Error 403: Forbidden"
     },
     {
@@ -106,7 +152,7 @@
       "url": "https://weather.bangkok.go.th/Flow/PageMap/GetData",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.132,
+      "response_time_sec": 0.038,
       "error": "HTTP Error 403: Forbidden"
     },
     {
@@ -115,7 +161,7 @@
       "url": "https://weather.bangkok.go.th/Flow/PageMap/GetDataTable",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.119,
+      "response_time_sec": 0.028,
       "error": "HTTP Error 403: Forbidden"
     }
   ]
