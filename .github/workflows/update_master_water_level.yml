@@ -1,6 +1,9 @@
 name: Update Master Water Level Data
 
 on:
+  schedule:
+    # Runs every 30 minutes
+    - cron: '*/30 * * * *'
   workflow_dispatch:     # Allows manual trigger from the GitHub Actions tab
 
 jobs:
