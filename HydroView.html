@@ -145,6 +145,8 @@
         </div>
     </main>
 
+    <div id="wx-strip" class="glass-panel absolute bottom-2 left-2 right-2 md:left-3 md:right-3 z-30 px-3 py-2 rounded-2xl border border-slate-800 text-[11px] font-mono text-slate-400">Loading weather context…</div>
+
     <!-- ========================================================= -->
     <!-- INTERACTIVE 2D CANAL & NODE INSPECTOR MODAL               -->
     <!-- ========================================================= -->
@@ -431,8 +433,18 @@
         function getNodeWaterStatus(node) {
             const wl = (node.stage !== undefined && node.stage !== null) ? node.stage : (node.wlIn !== undefined ? node.wlIn : null);
             
+            // No live feed, or stale: never present embedded reference values as live
+            const ageH = node.asOf ? (Date.now() - node.asOf.getTime()) / 3.6e6 : 0;
+            if (node.live !== true) {
+                return { tier: 'No live data', color: '#9E9E9E', bgClass: 'bg-slate-700/40 text-slate-300 border-slate-600/50',
+                         badge: '⚪ No live data (reference values)', code: 'NODATA' };
+            }
+            if (ageH > (node.type === 'dam' ? 72 : 6)) {
+                return { tier: 'Stale', color: '#9E9E9E', bgClass: 'bg-slate-700/40 text-slate-300 border-slate-600/50',
+                         badge: `⚪ Stale (${Math.round(ageH)} h old)`, code: 'STALE' };
+            }
             // Sensor Disconnected or -99 m MSL
-            if (wl === undefined || wl === null || wl === -99 || node.isOffline) {
+            if (!(node.type === 'dam' && node.pctFull != null) && (wl === undefined || wl === null || wl === -99 || node.isOffline)) {
                 return {
                     tier: 'Offline / Offline RTU',
                     color: '#9E9E9E',
@@ -535,35 +547,99 @@
             return topColor;
         }
 
-        async function fetchTelemetryData() {
-            const badge = document.getElementById('telemetry-badge');
-            const statusText = document.getElementById('system-status-text');
+        let klongAsOf = null;
+        const health = {};
+        const SRC_NAV = [['Macro drivers','/BKK-Rain/'],['Rain gauges','/BKK-Rain/BKKraingaugegrid.html'],['Monsoon winds','/BKK-Rain/BKKmonsoon.html'],['Bangna canals','/BKK-Canal/localKlongsV.html']];
 
+        async function getJ(name, url) {
             try {
-                const [klongRes, masterRes] = await Promise.allSettled([
-                    fetch(ENDPOINTS.klongmap),
-                    fetch(ENDPOINTS.masterWater)
-                ]);
+                const r = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now());
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                const j = await r.json();
+                const lm = r.headers.get('last-modified');
+                health[name] = { ok: true, at: lm ? new Date(lm) : null };
+                return { j, lm: lm ? new Date(lm) : null };
+            } catch (e) { health[name] = { ok: false, err: String(e.message || e) }; return null; }
+        }
 
-                if (klongRes.status === 'fulfilled' && klongRes.value.ok) {
-                    const klongData = await klongRes.value.json();
-                    parseKlongmapData(klongData);
+        function applyDataJson(j) {
+            const asOf = new Date(j.updated_at_utc || j.timestamp_utc);
+            health['data.json'].at = isNaN(asOf) ? health['data.json'].at : asOf;
+            const map = { bhumibol:'bhumibol', sirikit:'sirikit', kwainoi:'kwai_noi', pasak:'pasak', srinagarind:'srinagarind', vajiralongkorn:'vajiralongkorn' };
+            for (const k in map) {
+                const d = j.dams && j.dams[map[k]], n = waterNodes[k];
+                if (n && d && d.current_storage_pct > 0) {
+                    n.pctFull = d.current_storage_pct;
+                    n.storageMcm = Math.round(n.capMcm * d.current_storage_pct / 100);
+                    n.operation = `${n.pctFull}% Filled (${n.storageMcm.toLocaleString()} MCM)`;
+                    n.live = true; n.asOf = asOf;
                 }
-
-                if (masterRes.status === 'fulfilled' && masterRes.value.ok) {
-                    const masterData = await masterRes.value.json();
-                    parseMasterWaterData(masterData);
-                }
-
-                badge.innerText = 'DYNAMIC JSON TELEMETRY VERIFIED';
-                badge.className = 'text-[9px] md:text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-                if (statusText) statusText.innerText = 'LIVE_TELEMETRY_ONLINE';
-            } catch (err) {
-                console.warn('Telemetry fetch fallback to embedded structure:', err);
-                badge.innerText = 'EMBEDDED TELEMETRY ACTIVE';
-                badge.className = 'text-[9px] md:text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30';
-                if (statusText) statusText.innerText = 'OFFLINE_CACHE_ACTIVE';
             }
+            const g = j.paknam_gauge, e = waterNodes.fort_chula;
+            if (e && g && typeof g.water_level_msl === 'number') {
+                e.tideLevel = g.water_level_msl; e.stage = g.water_level_msl;
+                if (g.flood_wall_threshold_msl != null) e.warningLevel = g.flood_wall_threshold_msl;
+                if (g.tide_state) e.operation = 'Tide: ' + g.tide_state;
+                const t = new Date(String(g.period).replace(' ', 'T') + ':00+07:00');
+                e.live = true; e.asOf = isNaN(t) ? asOf : t;
+            }
+        }
+
+        function fmtAge(d) {
+            if (!d) return 'time unknown';
+            const h = (Date.now() - d.getTime()) / 3.6e6;
+            return h < 1 ? Math.round(h * 60) + ' min ago' : h < 48 ? h.toFixed(1) + ' h ago' : Math.round(h / 24) + ' d ago';
+        }
+        function provenance(node) {
+            return node.live === true ? `LIVE · ${fmtAge(node.asOf)}` : 'NO LIVE FEED · embedded reference values, not current';
+        }
+
+        function updateStatusBadge() {
+            const badge = document.getElementById('telemetry-badge'), st = document.getElementById('system-status-text');
+            const all = Object.values(waterNodes);
+            const live = all.filter(n => getNodeWaterStatus(n).code !== 'NODATA' && getNodeWaterStatus(n).code !== 'STALE').length;
+            const ratio = live / all.length;
+            const cls = ratio >= 0.6 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                      : ratio > 0 ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-red-500/20 text-red-300 border-red-500/30';
+            badge.innerText = `${live}/${all.length} NODES LIVE`;
+            badge.className = `text-[9px] md:text-[10px] font-mono px-1.5 md:px-2 py-0.5 rounded-full border ${cls}`;
+            if (st) st.innerText = ratio >= 0.6 ? 'LIVE_FEED_OK' : ratio > 0 ? 'PARTIAL_FEED' : 'NO_LIVE_DATA';
+        }
+
+        function renderWx(w, d) {
+            const el = document.getElementById('wx-strip'); if (!el) return;
+            const RN = { SW:'SW monsoon', NE:'NE monsoon', E:'Easterly', N:'Northerly', WEAK:'Weak winds' };
+            const parts = [];
+            if (w && w.series) {
+                const s = w.series, i = w.now_index;
+                const rain = s.bkk_rain_mm.slice(i, i + 24).reduce((a, b) => a + (b || 0), 0);
+                parts.push(`🌬 ${RN[s.regime[i]]} ${s.core_spd850[i]} m/s`, `☔ BKK rain 24 h: ${rain.toFixed(0)} mm`);
+                const cy = w.cyclones && w.cyclones[0];
+                parts.push(cy ? `🌀 ${cy.name} ${cy.km} km` : '🌀 no active cyclone');
+            } else parts.push('🌬 weather feed unavailable');
+            const e = waterNodes.fort_chula;
+            if (e.live) parts.push(`🌊 Pak Nam ${e.tideLevel >= 0 ? '+' : ''}${e.tideLevel.toFixed(2)} m (wall ${e.warningLevel} m)`);
+            const tc = d && d.teleconnections;
+            if (tc && tc.mjo_phase != null) parts.push(`MJO P${tc.mjo_phase}/${tc.mjo_amplitude}`);
+            const hl = Object.entries(health).map(([k, v]) => v.ok ? `✓ ${k} ${fmtAge(v.at)}` : `✗ ${k} (${v.err})`).join(' · ');
+            el.innerHTML = `<details class="group"><summary class="cursor-pointer list-none text-[11px] font-mono text-slate-200">${parts.join(' &nbsp;·&nbsp; ')} <span class="text-cyan-glow">▾</span></summary>
+              <div class="mt-2 pt-2 border-t border-slate-700 space-y-1.5 text-[11px] font-mono">
+                <div class="flex flex-wrap gap-x-3">${SRC_NAV.map(n => `<a class="text-cyan-glow underline" href="${n[1]}">${n[0]}</a>`).join('')}</div>
+                <div class="text-slate-400">Data sources: ${hl}</div>
+                <div class="text-slate-500">Grey nodes have no live feed or stale data; their numbers are embedded reference values.</div></div></details>`;
+        }
+
+        async function fetchTelemetryData() {
+            const [k, m, d, w] = await Promise.all([
+                getJ('klongmap', ENDPOINTS.klongmap), getJ('master_water', ENDPOINTS.masterWater),
+                getJ('data.json', '/BKK-Rain/data.json'), getJ('monsoon.json', '/BKK-Rain/monsoon.json')]);
+            klongAsOf = k ? k.lm : null;
+            if (m) { window.__masterAsOf = new Date(m.j.timestamp_utc); health['master_water'].at = window.__masterAsOf; }
+            if (k) parseKlongmapData(k.j);
+            if (m) parseMasterWaterData(m.j);
+            if (d) applyDataJson(d.j);
+            updateStatusBadge();
+            renderWx(w && w.j, d && d.j);
         }
 
         function parseKlongmapData(data) {
@@ -579,7 +655,7 @@
                 for (let k in waterNodes) {
                     const node = waterNodes[k];
                     if (node.waterId === wId) {
-                        const lastLvl = st.water_level_last || {};
+                        const lastLvl = st.water_level_last || st;
                         const pumpLast = st.water_pump_last || {};
 
                         if (lastLvl.wl_in !== undefined && lastLvl.wl_in !== null) {
@@ -588,6 +664,10 @@
                                 node.stage = -99;
                                 node.wlIn = -99;
                             } else {
+                                node.live = true;
+                                const ts = lastLvl.site_timestamp || st.site_timestamp;
+                                const tsd = ts ? new Date(String(ts).replace(' ', 'T') + (/[zZ]|[+-]\d\d:?\d\d$/.test(String(ts)) ? '' : '+07:00')) : null;
+                                node.asOf = (tsd && !isNaN(tsd)) ? tsd : klongAsOf;
                                 node.stage = lastLvl.wl_in;
                                 node.wlIn = lastLvl.wl_in;
                                 node.isOffline = false;
@@ -644,37 +724,37 @@
 
             if (summary.dam_analyst_v3) {
                 const damMap = summary.dam_analyst_v3;
-                if (damMap.bhumibol && waterNodes.bhumibol) {
+                if (damMap.bhumibol && waterNodes.bhumibol && damMap.bhumibol.storage_pct > 0) { waterNodes.bhumibol.live = true; waterNodes.bhumibol.asOf = window.__masterAsOf || null;
                     waterNodes.bhumibol.capMcm = damMap.bhumibol.capacity_mcm;
                     waterNodes.bhumibol.storageMcm = damMap.bhumibol.storage_mcm;
                     waterNodes.bhumibol.pctFull = damMap.bhumibol.storage_pct;
                     waterNodes.bhumibol.operation = `${damMap.bhumibol.storage_pct}% Filled (${damMap.bhumibol.storage_mcm.toLocaleString()} MCM)`;
                 }
-                if (damMap.sirikit && waterNodes.sirikit) {
+                if (damMap.sirikit && waterNodes.sirikit && damMap.sirikit.storage_pct > 0) { waterNodes.sirikit.live = true; waterNodes.sirikit.asOf = window.__masterAsOf || null;
                     waterNodes.sirikit.capMcm = damMap.sirikit.capacity_mcm;
                     waterNodes.sirikit.storageMcm = damMap.sirikit.storage_mcm;
                     waterNodes.sirikit.pctFull = damMap.sirikit.storage_pct;
                     waterNodes.sirikit.operation = `${damMap.sirikit.storage_pct}% Filled (${damMap.sirikit.storage_mcm.toLocaleString()} MCM)`;
                 }
-                if (damMap.kwai_noi && waterNodes.kwainoi) {
+                if (damMap.kwai_noi && waterNodes.kwainoi && damMap.kwai_noi.storage_pct > 0) { waterNodes.kwainoi.live = true; waterNodes.kwainoi.asOf = window.__masterAsOf || null;
                     waterNodes.kwainoi.capMcm = damMap.kwai_noi.capacity_mcm;
                     waterNodes.kwainoi.storageMcm = damMap.kwai_noi.storage_mcm;
                     waterNodes.kwainoi.pctFull = damMap.kwai_noi.storage_pct;
                     waterNodes.kwainoi.operation = `${damMap.kwai_noi.storage_pct}% Filled (${damMap.kwai_noi.storage_mcm.toLocaleString()} MCM)`;
                 }
-                if (damMap.pasak && waterNodes.pasak) {
+                if (damMap.pasak && waterNodes.pasak && damMap.pasak.storage_pct > 0) { waterNodes.pasak.live = true; waterNodes.pasak.asOf = window.__masterAsOf || null;
                     waterNodes.pasak.capMcm = damMap.pasak.capacity_mcm;
                     waterNodes.pasak.storageMcm = damMap.pasak.storage_mcm;
                     waterNodes.pasak.pctFull = damMap.pasak.storage_pct;
                     waterNodes.pasak.operation = `${damMap.pasak.storage_pct}% Filled (${damMap.pasak.storage_mcm.toLocaleString()} MCM)`;
                 }
-                if (damMap.srinagarind && waterNodes.srinagarind) {
+                if (damMap.srinagarind && waterNodes.srinagarind && damMap.srinagarind.storage_pct > 0) { waterNodes.srinagarind.live = true; waterNodes.srinagarind.asOf = window.__masterAsOf || null;
                     waterNodes.srinagarind.capMcm = damMap.srinagarind.capacity_mcm;
                     waterNodes.srinagarind.storageMcm = damMap.srinagarind.storage_mcm;
                     waterNodes.srinagarind.pctFull = damMap.srinagarind.storage_pct;
                     waterNodes.srinagarind.operation = `${damMap.srinagarind.storage_pct}% Filled (${damMap.srinagarind.storage_mcm.toLocaleString()} MCM)`;
                 }
-                if (damMap.vajiralongkorn && waterNodes.vajiralongkorn) {
+                if (damMap.vajiralongkorn && waterNodes.vajiralongkorn && damMap.vajiralongkorn.storage_pct > 0) { waterNodes.vajiralongkorn.live = true; waterNodes.vajiralongkorn.asOf = window.__masterAsOf || null;
                     waterNodes.vajiralongkorn.capMcm = damMap.vajiralongkorn.capacity_mcm;
                     waterNodes.vajiralongkorn.storageMcm = damMap.vajiralongkorn.storage_mcm;
                     waterNodes.vajiralongkorn.pctFull = damMap.vajiralongkorn.storage_pct;
@@ -753,7 +833,7 @@
                         const distCrit = (node.criticalLevel - (node.stage || 0)).toFixed(2);
                         detailStr += ` | Distance to Critical: ${distCrit}m`;
                     }
-                    document.getElementById('tooltip-detail').innerText = detailStr;
+                    document.getElementById('tooltip-detail').innerText = detailStr + ' | ' + provenance(node);
                 } else {
                     simState.hoveredNode = null;
                     tooltip.classList.add('hidden');
@@ -1308,7 +1388,7 @@
             ctx.lineWidth = 2.5;
             ctx.stroke();
 
-            const tLvl = node.tideLevel !== undefined ? node.tideLevel : null;
+            const tLvl = (node.live === true && node.tideLevel !== undefined) ? node.tideLevel : null;
 
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 15px font-sans';
@@ -1323,7 +1403,7 @@
             
             const titleStr = node.waterId ? `${node.name} (water_id: ${node.waterId})` : node.name;
             document.getElementById('modal-node-title').innerText = titleStr;
-            document.getElementById('modal-node-subtitle').innerText = node.subtitle;
+            document.getElementById('modal-node-subtitle').innerText = node.subtitle + ' · ' + provenance(node);
 
             const status = getNodeWaterStatus(node);
             const alertBadge = document.getElementById('modal-alert-badge');
