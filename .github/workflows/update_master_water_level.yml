@@ -2,13 +2,20 @@ name: Update Master Water Level Data
 
 on:
   schedule:
-    # Runs every 30 minutes
-    - cron: '*/30 * * * *'
-  workflow_dispatch:     # Allows manual trigger from the GitHub Actions tab
+    - cron: "7,37 * * * *"   # every 30 minutes (GitHub may delay scheduled runs a few minutes)
+  workflow_dispatch:          # manual trigger from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: master-water-level
+  cancel-in-progress: false
 
 jobs:
   run-fetch-script:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -33,4 +40,4 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add master_water_level_data.json
-          git diff --staged --quiet || (git commit -m "auto: update master_water_level_data.json" && git push)
+          git diff --staged --quiet || (git commit -m "auto: update master_water_level_data.json" && git pull --rebase && git push)
