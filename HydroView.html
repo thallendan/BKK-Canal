@@ -473,16 +473,16 @@
                 };
             }
 
-            // Dam Reservoir Storage Tier Classification
+            // Dam reservoir storage: informational tiers (full reservoirs are normal at the end of the rainy season)
             if (node.type === 'dam' && node.pctFull !== undefined && node.pctFull !== null) {
                 if (node.pctFull >= 95) {
-                    return { tier: 'Danger / Critical', color: '#F44336', bgClass: 'bg-red-500/20 text-red-300 border-red-500/30', badge: '🔴 Danger / Critical', code: 'CRITICAL' };
-                } else if (node.pctFull >= 85) {
-                    return { tier: 'Warning Level', color: '#FF9800', bgClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30', badge: '🟠 Warning Level', code: 'WARNING' };
+                    return { tier: 'Near full (little flood buffer)', color: '#FF9800', bgClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30', badge: '🟠 Near full (little buffer)', code: 'WARNING' };
+                } else if (node.pctFull >= 80) {
+                    return { tier: 'High storage', color: '#4CAF50', bgClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30', badge: '🟢 High storage', code: 'NORMAL' };
                 } else if (node.pctFull >= 50) {
-                    return { tier: 'Medium / Normal', color: '#4CAF50', bgClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30', badge: '🟢 Medium / Normal', code: 'NORMAL' };
+                    return { tier: 'Normal storage', color: '#4CAF50', bgClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30', badge: '🟢 Normal storage', code: 'NORMAL' };
                 } else {
-                    return { tier: 'Low Water', color: '#2196F3', bgClass: 'bg-blue-500/20 text-blue-300 border-blue-500/30', badge: '🔵 Low Water', code: 'LOW' };
+                    return { tier: 'Low storage', color: '#2196F3', bgClass: 'bg-blue-500/20 text-blue-300 border-blue-500/30', badge: '🔵 Low storage', code: 'LOW' };
                 }
             }
 
@@ -571,7 +571,12 @@
                 try { const r = await fetch(u + (u.includes('?') ? '&' : '?') + 't=' + Date.now()); if (!r.ok) throw new Error(r.status); return await r.json(); }
                 catch (e) { console.warn('Feed failed:', u, e); return null; }
             };
-            const [klong, master, dj, mj] = await Promise.all([get(ENDPOINTS.klongmap), get(ENDPOINTS.masterWater), get(ENDPOINTS.dataJson), get(ENDPOINTS.monsoon)]);
+            const CDN = 'https://d2jyi6rznjny0r.cloudfront.net/';   // your S3 data via CloudFront (kept fresh by the Lambdas)
+            const getAny = async (urls) => { for (const u of urls) { const r = await get(u); if (r) return r; } return null; };
+            const [klong, master, dj, mj] = await Promise.all([
+                getAny([CDN + 'klongmap-latest.json', ENDPOINTS.klongmap]),
+                getAny([CDN + 'master_water_level_data.json', ENDPOINTS.masterWater]),
+                get(ENDPOINTS.dataJson), get(ENDPOINTS.monsoon)]);
             if (klong) parseKlongmapData(klong);
             if (master) parseMasterWaterData(master);
             if (dj) parseDataJson(dj);
@@ -697,7 +702,21 @@
                 (cy ? ` · Nearest cyclone: <b class="text-white">${cy.name}</b> ${cy.km} km` : ' · No active cyclone');
         }
 
+        let lastFeeds = {};
+        function showHealth() {
+            const old = document.getElementById('health-panel'); if (old) { old.remove(); return; }
+            const rows = Object.values(waterNodes).map(n => {
+                const s = getNodeWaterStatus(n), dot = s.code === 'OFFLINE' ? '#9E9E9E' : s.color;
+                return `<div style="display:flex;justify-content:space-between;gap:8px;padding:2px 0"><span><span style="color:${dot}">●</span> ${n.name}</span><span style="color:#94a3b8;white-space:nowrap">${ageText(n)}</span></div>`;
+            }).join('');
+            const feeds = Object.entries(lastFeeds).map(([k, v]) => `<span style="margin-right:10px;color:${v ? '#6ee7b7' : '#fca5a5'}">${v ? '✓' : '✗'} ${k}</span>`).join('');
+            const d = document.createElement('div'); d.id = 'health-panel';
+            d.style.cssText = 'position:fixed;inset:70px 10px 10px 10px;z-index:60;overflow:auto;background:rgba(8,14,33,.97);border:1px solid #334155;border-radius:16px;padding:14px;font:11px/1.5 JetBrains Mono,monospace;color:#e2e8f0';
+            d.innerHTML = `<div style="display:flex;justify-content:space-between;margin-bottom:8px"><b>DATA HEALTH</b><span onclick="this.parentNode.parentNode.remove()" style="cursor:pointer;color:#00f5d4">close ✕</span></div><div style="margin-bottom:8px">${feeds}</div>${rows}<div style="margin-top:10px;color:#94a3b8">Grey = no live source or reading older than 12 h (dams 72 h). Dams and Pak Nam come from BKK-Rain data.json; canal stations from klongmap-latest.json (CloudFront, falling back to the repo copy).</div>`;
+            document.body.appendChild(d);
+        }
         function updateStatusBadge(src) {
+            lastFeeds = src;
             const nodes = Object.values(waterNodes);
             const live = nodes.filter(n => getNodeWaterStatus(n).code !== 'OFFLINE').length;
             const newest = Math.min(...nodes.filter(n => n.liveAsOf).map(n => ageHours(n)), Infinity);
@@ -707,7 +726,7 @@
             badge.innerText = `LIVE ${live}/${nodes.length} NODES` + (isFinite(newest) ? ` · newest ${newest < 1 ? Math.round(newest * 60) + ' min' : newest.toFixed(1) + ' h'} old` : '');
             const failed = Object.entries(src).filter(([k, v]) => !v).map(([k]) => k);
             if (txt) txt.innerText = failed.length ? 'MISSING: ' + failed.join(', ').toUpperCase() : 'ALL_FEEDS_LOADED';
-            badge.title = nodes.map(n => `${n.name}: ${ageText(n)}`).join('\n');
+            badge.style.cursor = 'pointer'; badge.onclick = showHealth; badge.title = 'Tap for data health';
         }
 
         function startClock() {
