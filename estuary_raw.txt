@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>
+                        Thaiwater.net
+                    </title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"> <!-- fix bug -->
+        
+        <!-- Combined and Minified css -->
+        <link href="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/dist/all.css" rel="stylesheet">
+
+        
+<link href="https://tiwrmdev.hii.or.th/v3/vendor/datatables/media/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="https://tiwrmdev.hii.or.th/v3/vendor/leaflet/dist/leaflet.css" />
+<link rel="stylesheet" href="https://tiwrmdev.hii.or.th/v3/vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.css">
+<link rel="stylesheet" href="https://tiwrmdev.hii.or.th/v3/vendor/Leaflet.label/dist/leaflet.label.css">
+<link rel="stylesheet" href="https://tiwrmdev.hii.or.th/v3/vendor/leaflet.loading/src/Control.Loading.css">
+<link rel="stylesheet" href="https://tiwrmdev.hii.or.th/v3/vendor/weather-icons/css/weather-icons.min.css">
+<link rel="stylesheet" href="https://tiwrmdev.hii.or.th/v3/vendor/ekko-lightbox/dist/ekko-lightbox.min.css">
+<link rel="stylesheet" href="https://tiwrmdev.hii.or.th/v3/resources/js/Leaflet.defaultextent-master/dist/leaflet.defaultextent.css">
+
+
+        <style>
+        @import  url(https://fonts.googleapis.com/css?family=Kanit:400,400italic,500,500italic,600,700,900,800,200,300&subset=latin,thai);
+        /* map */
+.info {
+    padding: 6px 8px;
+    font: 14px/16px sans-serif, Arial, Helvetica;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
+}
+.legend {
+    line-height: 22px;
+    color: #555;
+}
+.legend i {
+    width: 18px;
+    height: 22px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+/* blue box */
+.table-container {
+    margin: 5px 0px;
+}
+.table-row {
+    display: table;
+    width: 100%;
+}
+.table-row [class^="col"] {
+    display: table-cell;
+    padding: 15px;
+    float: none;
+}
+.blue {
+    background-color: #66CBD7;
+    height: 100%;
+    text-align: center ;
+    vertical-align: middle;
+}
+.sky {
+    background-color: #C5E8EC;
+    height: 100%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.modal-dialog{
+  margin:0 auto;
+  width:850px;
+}
+
+.modal-content{
+   margin:0 auto;
+   width:850px;
+}
+
+
+.modal-body iframe {
+  width:830px;
+  height:670px;
+}
+
+        </style>
+
+        <!-- PDPA -->
+        <script src="https://tiwrmdev.hii.or.th/v3/resources/js/glowCookies.js"></script>
+        <script>
+            glowCookies.start('th', { 
+                style: 1,
+                policyLink: 'https://pdpa.hii.or.th/cookies-policy/tiwrm-hii-or-th/'
+            });
+        </script>
+        
+    </head>
+
+    <body class="background">
+        <!--[if lt IE 8]>
+        <p>You are using an <strong>outdated</strong> browser. Please upgrade your browser to improve your experience.</p>
+        <![endif]-->
+
+        <!-- menu -->
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header hidden-sm">
+           
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" style="border:1px solid #0B4D61" >
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar" style="background:#fff"></span>
+                <span class="icon-bar" style="background:#fff"></span>
+                <span class="icon-bar" style="background:#fff"></span>
+
+            </button>
+            
+
+            <a class="navbar-brand" href="https://tiwrmdev.hii.or.th/v3">THAIWATER </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <!-- menu-->
+            <ul class="nav navbar-nav">
+               <!-- <li id="tab_active_home">
+                    <a href="https://tiwrmdev.hii.or.th/v3">
+                        <span class="hidden-sm"><i class="fa fa-home"></i></span>
+                        <span class="visible-sm"><i class="fa fa-home"></i></span>
+                    </a>
+                    </li> -->
+                <li id="tab_active_weather"><a href="https://tiwrmdev.hii.or.th/v3/weather">ติดตามสภาพอากาศ  </a></li>
+                <li id="tab_active_hydro"><a href="https://tiwrmdev.hii.or.th/v3/hydro">ติดตามสถานการณ์น้ำ </a></li>
+                <li id="tab_active_hydro"><a href="http://web.thaiwater.net/thaiwater30" target="_blank">แผนที่ติดตามสถานการณ์น้ำ </a></li>
+                <li id="tab_active_archive"><a href="https://tiwrmdev.hii.or.th/v3/archive">บันทึกเหตุการณ์น้ำ </a></li>
+                <li id="tab_active_research"><a href="https://tiwrmdev.hii.or.th/v3/research">งานวิจัย</a></li>
+                <li id="tab_active_about"><a href="https://tiwrmdev.hii.or.th/v3/about">เกี่ยวกับ</a></li>
+            </ul>
+            <!-- // menu-->
+
+                       <!-- flag -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="https://tiwrmdev.hii.or.th/v3/lang/th">
+                        <img title="th. version" alt="japan" src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/flag/flag_th.png">
+                    </a>
+                </li>
+                <li>
+                    <a href="https://tiwrmdev.hii.or.th/v3/lang/jap">
+                        <img title="jap. version" alt="japan" src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/flag/flag_jp.png">
+                    </a>
+                </li>
+                <li>
+                    <a href="https://tiwrmdev.hii.or.th/v3/lang/en">
+                        <img title="en. version" alt="english" src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/flag/flag_en.png">
+                    </a>
+                </li>
+            </ul>
+            <!-- // flag -->
+        </div>
+    </div>
+</nav>        <!-- menu -->
+
+        <!-- Container -->
+        <div class="container box-shadow " id="main-container" style="margin-top: 50px;">
+            <!-- banner -->
+            <div class="row">
+                <img src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/content/banner_L5.png" class="img-responsive">
+            </div>
+            <div class="row">
+                <a href="https://tiwrm.hii.or.th/" target="_blank"> 
+                    <img src="https://tiwrmdev.hii.or.th/v3/images/thaiwater-banner-1170px.gif" class="img-responsive">
+                </a>
+            </div>
+            <!--/ banner -->
+
+            <!-- breadcrumb -->
+            <div class="row box-shadow">
+                <ol class="breadcrumb">
+                                                        </ol>
+            </div>
+            <!-- // breadcrumb -->
+
+
+            <!-- Content -->
+            <!-- menu -->
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header hidden-sm">
+           
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" style="border:1px solid #0B4D61" >
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar" style="background:#fff"></span>
+                <span class="icon-bar" style="background:#fff"></span>
+                <span class="icon-bar" style="background:#fff"></span>
+
+            </button>
+            
+
+            <a class="navbar-brand" href="https://tiwrmdev.hii.or.th/v3">THAIWATER </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <!-- menu-->
+            <ul class="nav navbar-nav">
+               <!-- <li id="tab_active_home">
+                    <a href="https://tiwrmdev.hii.or.th/v3">
+                        <span class="hidden-sm"><i class="fa fa-home"></i></span>
+                        <span class="visible-sm"><i class="fa fa-home"></i></span>
+                    </a>
+                    </li> -->
+                <li id="tab_active_weather"><a href="https://tiwrmdev.hii.or.th/v3/weather">ติดตามสภาพอากาศ  </a></li>
+                <li id="tab_active_hydro"><a href="https://tiwrmdev.hii.or.th/v3/hydro">ติดตามสถานการณ์น้ำ </a></li>
+                <li id="tab_active_hydro"><a href="http://web.thaiwater.net/thaiwater30" target="_blank">แผนที่ติดตามสถานการณ์น้ำ </a></li>
+                <li id="tab_active_archive"><a href="https://tiwrmdev.hii.or.th/v3/archive">บันทึกเหตุการณ์น้ำ </a></li>
+                <li id="tab_active_research"><a href="https://tiwrmdev.hii.or.th/v3/research">งานวิจัย</a></li>
+                <li id="tab_active_about"><a href="https://tiwrmdev.hii.or.th/v3/about">เกี่ยวกับ</a></li>
+            </ul>
+            <!-- // menu-->
+
+                       <!-- flag -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="https://tiwrmdev.hii.or.th/v3/lang/th">
+                        <img title="th. version" alt="japan" src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/flag/flag_th.png">
+                    </a>
+                </li>
+                <li>
+                    <a href="https://tiwrmdev.hii.or.th/v3/lang/jap">
+                        <img title="jap. version" alt="japan" src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/flag/flag_jp.png">
+                    </a>
+                </li>
+                <li>
+                    <a href="https://tiwrmdev.hii.or.th/v3/lang/en">
+                        <img title="en. version" alt="english" src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/flag/flag_en.png">
+                    </a>
+                </li>
+            </ul>
+            <!-- // flag -->
+        </div>
+    </div>
+</nav><!-- menu -->
+
+
+
+  <div id="ajax_data" class="page-content">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-12">
+          <h3>ข้อมูลระดับน้ำบริเวณอ่าวไทย และฝั่งอันดามัน</h3>
+
+          <!-- map -->
+          <div id="map" style="width:100%; height:740px"></div>
+          <!-- /map -->
+        </div>
+      </div>
+          </div>
+    <div class="col-md-6">
+
+      <div role="tabpanel">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs nav-style" role="tablist">
+          <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">ระดับน้ำตรวจวัดจริง</a></li>
+          <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">ระดับน้ำทำนาย</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content" style="width: 100%;height: 690px;overflow: scroll;">
+          <div role="tabpanel" class="tab-pane active" id="home">
+            <div class="table-responsive">
+              <table id="table_data" class="table table-striped table-hover">
+                <thead>
+                  <tr align="top" class="bg-style">
+                    <th align="center"><i class="fa fa-location-arrow"></i> แหล่งข้อมูล</th>
+                    <th align="center">สถานี</th>
+                    <th align="center">วันที่</th>
+                    <th align="center">เวลา</th>
+                    <th align="center">ระดับน้ำ <small>(ม.รทก.) </small></th>
+                  </tr>
+                </thead>
+                <tbody>
+                                  <tr rel="GLF001">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#00CCFF">&nbsp;<b>สถานีโทรมาตรวัดระดับน้ำ โดย สสน. (ข้อมูลรายชั่วโมง ปรับปรุงอัตโนมัติทุก 10 นาที)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=GLF001" target="_blank" >ป้อมพระจุลจอมเกล้า</a> <a href="javascript:gotoMarker('GLF001', 13.5737904, 100.5739712)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2026-11-14</td>
+                    <td align="center">21:40</td>
+                    <td align="center">-0.055</td><!--data-toggle="lightbox"-->
+                  </tr>
+                                    <tr rel="GLF002">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#00CCFF">&nbsp;<b>สถานีโทรมาตรวัดระดับน้ำ โดย สสน. (ข้อมูลรายชั่วโมง ปรับปรุงอัตโนมัติทุก 10 นาที)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=GLF002" target="_blank" >ปากแม่น้ำท่าจีน</a> <a href="javascript:gotoMarker('GLF002', 13.5178048, 100.2749952)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2026-11-14</td>
+                    <td align="center">21:40</td>
+                    <td align="center">0.017</td><!--data-toggle="lightbox"-->
+                  </tr>
+                                    <tr rel="GLF003">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#00CCFF">&nbsp;<b>สถานีโทรมาตรวัดระดับน้ำ โดย สสน. (ข้อมูลรายชั่วโมง ปรับปรุงอัตโนมัติทุก 10 นาที)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=GLF003" target="_blank" >บางตะบูน</a> <a href="javascript:gotoMarker('GLF003', 13.2655632, 99.9418624)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2026-11-14</td>
+                    <td align="center">21:40</td>
+                    <td align="center">0.367</td><!--data-toggle="lightbox"-->
+                  </tr>
+                                                    <tr rel="AP">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=AP" target="_blank" >อ่าวปอ</a> <a href="javascript:gotoMarker('AP', 8.057222, 98.439167)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.41</td>
+                  </tr>
+                                    <tr rel="AU">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=AU" target="_blank" >อ่าวอุดม</a> <a href="javascript:gotoMarker('AU', 13.123611, 100.896111)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">18:00</td>
+                    <td align="center">3.25</td>
+                  </tr>
+                                    <tr rel="BK">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=BK" target="_blank" >บางประกง</a> <a href="javascript:gotoMarker('BK', 13.483333, 101.006389)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.6</td>
+                  </tr>
+                                    <tr rel="BL">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=BL" target="_blank" >บ้านแหลม</a> <a href="javascript:gotoMarker('BL', 13.263056, 99.945556)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.45</td>
+                  </tr>
+                                    <tr rel="KB">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=KB" target="_blank" >กระบี่</a> <a href="javascript:gotoMarker('KB', 8.043889, 98.908889)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.58</td>
+                  </tr>
+                                    <tr rel="KT">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=KT" target="_blank" >กันตัง</a> <a href="javascript:gotoMarker('KT', 7.308889, 99.405278)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.36</td>
+                  </tr>
+                                    <tr rel="KV">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=KV" target="_blank" >คลองวาฬ</a> <a href="javascript:gotoMarker('KV', 11.731944, 99.785556)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2015-01-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">-0.04</td>
+                  </tr>
+                                    <tr rel="LG">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=LG" target="_blank" >แหลมงอบ</a> <a href="javascript:gotoMarker('LG', 12.168611, 102.395833)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.21</td>
+                  </tr>
+                                    <tr rel="LS">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=LS" target="_blank" >หลังสวน</a> <a href="javascript:gotoMarker('LS', 9.943889, 99.160556)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.42</td>
+                  </tr>
+                                    <tr rel="MK">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=MK" target="_blank" >สมุทรสงคราม</a> <a href="javascript:gotoMarker('MK', 13.376667, 99.995556)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.67</td>
+                  </tr>
+                                    <tr rel="NR">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=NR" target="_blank" >นราธิวาส</a> <a href="javascript:gotoMarker('NR', 6.423889, 101.83)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">3.41</td>
+                  </tr>
+                                    <tr rel="PN">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=PN" target="_blank" >ปากพนัง</a> <a href="javascript:gotoMarker('PN', 8.353056, 100.202222)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.6</td>
+                  </tr>
+                                    <tr rel="PS">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=PS" target="_blank" >ประแสร์</a> <a href="javascript:gotoMarker('PS', 12.694722, 101.705833)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2015-01-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">-0.16</td>
+                  </tr>
+                                    <tr rel="PT">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=PT" target="_blank" >ปัตตานี</a> <a href="javascript:gotoMarker('PT', 6.902222, 101.249167)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">3.12</td>
+                  </tr>
+                                    <tr rel="RN">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=RN" target="_blank" >ระนอง</a> <a href="javascript:gotoMarker('RN', 10.002778, 98.609722)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.4</td>
+                  </tr>
+                                    <tr rel="RY">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=RY" target="_blank" >ระยอง</a> <a href="javascript:gotoMarker('RY', 12.658333, 101.274444)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.19</td>
+                  </tr>
+                                    <tr rel="SC">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=SC" target="_blank" >สิชล</a> <a href="javascript:gotoMarker('SC', 9.0125, 99.918611)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.47</td>
+                  </tr>
+                                    <tr rel="TC">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=TC" target="_blank" >สมุทรสาคร</a> <a href="javascript:gotoMarker('TC', 13.51, 100.277778)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.75</td>
+                  </tr>
+                                    <tr rel="TL">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=TL" target="_blank" >ท่าแฉลบ</a> <a href="javascript:gotoMarker('TL', 12.531667, 102.061389)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">2.3</td>
+                  </tr>
+                                    <tr rel="TM">
+                    <td align="center"><i class="fa fa-circle text-center" style="color:#FF7415">&nbsp;<b>สถานีวัดระดับน้ำ โดยกรมเจ้าท่า (ข้อมูลรายชั่วโมง  ปรับปรุงทุก 1 เดือน)</b></td>
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph/station_id=TM" target="_blank" >ตำมะลัง</a> <a href="javascript:gotoMarker('TM', 6.531667, 100.071944)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">2019-12-31</td>
+                    <td align="center">23:00</td>
+                    <td align="center">1.96</td>
+                  </tr>
+                                  </tbody>
+              </table>
+            </div>
+          </div>
+          <div role="tabpanel" class="tab-pane" id="profile">
+            <div class="table-responsive">
+              <table id="table_navy" class="table table-striped table-hover">
+                <thead>
+                  <tr align="top" >
+                    <td align="center" colspan="9"><i class="fa fa-circle text-center" style="color:#9966FF">&nbsp;<b> สถานีน้ำทำนาย โดยกรมอุทกศาสตร์ กองทัพเรือ<br/>
+                      <small>(ข้อมูลรายชั่วโมง ทำนายล่วงหน้า 1 ปี) </small></b></td>
+                  </tr>
+                  <tr align="top">
+                    <th align="center" rowspan="2">สถานี</th>
+                    <th align="center" rowspan="2">ต่ำสุด(เวลา)</th>
+                    <th align="center" rowspan="2">สูงสุด(เวลา)</th>
+                    <th align="center" colspan="6">ทำนายล่วงหน้าทุก 4 ชั่วโมง</th>
+                  </tr>
+                  <tr align="top" >
+                    <td align="center"><small>00:00</small></td>
+                    <td align="center"><small>04:00</small></td>
+                    <td align="center"><small>08:00</small></td>
+                    <td align="center"><small>12:00</small></td>
+                    <td align="center"><small>16:00</small></td>
+                    <td align="center"><small>20:00</small></td>
+                  </tr>
+                </thead>
+                <tbody>
+                                   <tr rel="N01">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N01" target="_blank" >กองบัญชาการกองทัพเรือ</a> <a href="javascript:gotoMarker('N01', 13.7425, 100.4925)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">1.05 <br> (13:00:00)</td>
+                    <td align="center">-0.05 <br> (06:00:00)</td>
+                    <td align="center">1.05</td>
+                    <td align="center">0.85</td>
+                    <td align="center">0.45</td>
+                    <td align="center">0.35</td>
+                    <td align="center">0.15</td>
+                    <td align="center">0.05</td>
+                  </tr>
+                                    <tr rel="N02">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N02" target="_blank" >ท่าเรือกรุงเทพ</a> <a href="javascript:gotoMarker('N02', 13.7, 100.583889)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">1.18 <br> (12:00:00)</td>
+                    <td align="center">-0.12 <br> (21:00:00)</td>
+                    <td align="center">1.18</td>
+                    <td align="center">0.88</td>
+                    <td align="center">0.48</td>
+                    <td align="center">0.28</td>
+                    <td align="center">0.08</td>
+                    <td align="center">-0.02</td>
+                  </tr>
+                                    <tr rel="N03">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N03" target="_blank" >ป้อมพระจุลจอมเกล้า</a> <a href="javascript:gotoMarker('N03', 13.551667, 100.578889)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">1.16 <br> (11:00:00)</td>
+                    <td align="center">-0.24 <br> (04:00:00)</td>
+                    <td align="center">1.16</td>
+                    <td align="center">0.86</td>
+                    <td align="center">0.36</td>
+                    <td align="center">0.06</td>
+                    <td align="center">-0.04</td>
+                    <td align="center">-0.24</td>
+                  </tr>
+                                    <tr rel="N04">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N04" target="_blank" >สันดอนเจ้าพระยา</a> <a href="javascript:gotoMarker('N04', 13.438611, 100.595556)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">1.04 <br> (12:00:00)</td>
+                    <td align="center">-0.56 <br> (19:00:00)</td>
+                    <td align="center">1.04</td>
+                    <td align="center">0.64</td>
+                    <td align="center">0.04</td>
+                    <td align="center">-0.16</td>
+                    <td align="center">-0.36</td>
+                    <td align="center">-0.46</td>
+                  </tr>
+                                    <tr rel="N05">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N05" target="_blank" >ท่าจีน</a> <a href="javascript:gotoMarker('N05', 13.530556, 100.275)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">1.28 <br> (11:00:00)</td>
+                    <td align="center">-0.22 <br> (04:00:00)</td>
+                    <td align="center">1.28</td>
+                    <td align="center">0.98</td>
+                    <td align="center">0.38</td>
+                    <td align="center">0.18</td>
+                    <td align="center">-0.02</td>
+                    <td align="center">-0.12</td>
+                  </tr>
+                                    <tr rel="N06">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N06" target="_blank" >หัวหิน</a> <a href="javascript:gotoMarker('N06', 12.572778, 99.963333)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.89 <br> (11:00:00)</td>
+                    <td align="center">-0.31 <br> (03:00:00)</td>
+                    <td align="center">0.89</td>
+                    <td align="center">0.59</td>
+                    <td align="center">0.09</td>
+                    <td align="center">-0.11</td>
+                    <td align="center">-0.21</td>
+                    <td align="center">-0.31</td>
+                  </tr>
+                                    <tr rel="N07">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N07" target="_blank" >ปากน้ำระยอง</a> <a href="javascript:gotoMarker('N07', 12.658333, 101.274444)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.88 <br> (10:00:00)</td>
+                    <td align="center">0.08 <br> (00:00:00)</td>
+                    <td align="center">0.88</td>
+                    <td align="center">0.78</td>
+                    <td align="center">0.48</td>
+                    <td align="center">0.18</td>
+                    <td align="center">0.08</td>
+                    <td align="center">0.08</td>
+                  </tr>
+                                    <tr rel="N08">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N08" target="_blank" >อ่าวสัตหีบ</a> <a href="javascript:gotoMarker('N08', 12.645, 100.881944)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.71 <br> (10:00:00)</td>
+                    <td align="center">-0.29 <br> (03:00:00)</td>
+                    <td align="center">0.71</td>
+                    <td align="center">0.61</td>
+                    <td align="center">0.21</td>
+                    <td align="center">-0.09</td>
+                    <td align="center">-0.09</td>
+                    <td align="center">-0.19</td>
+                  </tr>
+                                    <tr rel="N09">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N09" target="_blank" >เกาะสีชัง</a> <a href="javascript:gotoMarker('N09', 13.158333, 100.811389)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.92 <br> (11:00:00)</td>
+                    <td align="center">-0.48 <br> (04:00:00)</td>
+                    <td align="center">0.92</td>
+                    <td align="center">0.62</td>
+                    <td align="center">0.02</td>
+                    <td align="center">-0.18</td>
+                    <td align="center">-0.28</td>
+                    <td align="center">-0.48</td>
+                  </tr>
+                                    <tr rel="N10">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N10" target="_blank" >แหลมงอบ</a> <a href="javascript:gotoMarker('N10', 12.168611, 102.395833)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.42 <br> (08:00:00)</td>
+                    <td align="center">-0.18 <br> (00:00:00)</td>
+                    <td align="center">0.42</td>
+                    <td align="center">0.42</td>
+                    <td align="center">0.22</td>
+                    <td align="center">0.02</td>
+                    <td align="center">-0.08</td>
+                    <td align="center">-0.18</td>
+                  </tr>
+                                    <tr rel="N11">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N11" target="_blank" >แม่กลอง</a> <a href="javascript:gotoMarker('N11', 13.376667, 99.995556)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">1.26 <br> (11:00:00)</td>
+                    <td align="center">-0.14 <br> (04:00:00)</td>
+                    <td align="center">1.26</td>
+                    <td align="center">0.96</td>
+                    <td align="center">0.46</td>
+                    <td align="center">0.26</td>
+                    <td align="center">0.06</td>
+                    <td align="center">-0.04</td>
+                  </tr>
+                                    <tr rel="N12">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N12" target="_blank" >เกาะหลัก</a> <a href="javascript:gotoMarker('N12', 11.795, 99.816111)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.51 <br> (11:00:00)</td>
+                    <td align="center">-0.29 <br> (22:00:00)</td>
+                    <td align="center">0.51</td>
+                    <td align="center">0.41</td>
+                    <td align="center">0.21</td>
+                    <td align="center">0.01</td>
+                    <td align="center">-0.19</td>
+                    <td align="center">-0.19</td>
+                  </tr>
+                                    <tr rel="N13">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N13" target="_blank" >เกาะมัตโพน</a> <a href="javascript:gotoMarker('N13', 10.444444, 99.256944)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.63 <br> (12:00:00)</td>
+                    <td align="center">-0.07 <br> (00:00:00)</td>
+                    <td align="center">0.63</td>
+                    <td align="center">0.53</td>
+                    <td align="center">0.43</td>
+                    <td align="center">0.33</td>
+                    <td align="center">0.13</td>
+                    <td align="center">-0.07</td>
+                  </tr>
+                                    <tr rel="N14">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N14" target="_blank" >เกาะสมุย</a> <a href="javascript:gotoMarker('N14', 9.479722, 99.927778)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.75 <br> (15:00:00)</td>
+                    <td align="center">0.15 <br> (00:00:00)</td>
+                    <td align="center">0.75</td>
+                    <td align="center">0.65</td>
+                    <td align="center">0.65</td>
+                    <td align="center">0.55</td>
+                    <td align="center">0.35</td>
+                    <td align="center">0.25</td>
+                  </tr>
+                                    <tr rel="N15">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N15" target="_blank" >บางปะกง</a> <a href="javascript:gotoMarker('N15', 13.500833, 100.987778)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">1.13 <br> (11:00:00)</td>
+                    <td align="center">-0.27 <br> (04:00:00)</td>
+                    <td align="center">1.13</td>
+                    <td align="center">0.83</td>
+                    <td align="center">0.43</td>
+                    <td align="center">0.13</td>
+                    <td align="center">-0.07</td>
+                    <td align="center">-0.17</td>
+                  </tr>
+                                    <tr rel="N16">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N16" target="_blank" >เกาะปราบ</a> <a href="javascript:gotoMarker('N16', 9.263056, 99.438333)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.67 <br> (15:00:00)</td>
+                    <td align="center">-0.13 <br> (00:00:00)</td>
+                    <td align="center">0.67</td>
+                    <td align="center">0.57</td>
+                    <td align="center">0.47</td>
+                    <td align="center">0.47</td>
+                    <td align="center">0.17</td>
+                    <td align="center">-0.03</td>
+                  </tr>
+                                    <tr rel="N17">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N17" target="_blank" >แหลมสิงห์</a> <a href="javascript:gotoMarker('N17', 12.474167, 102.0625)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.62 <br> (09:00:00)</td>
+                    <td align="center">-0.08 <br> (00:00:00)</td>
+                    <td align="center">0.62</td>
+                    <td align="center">0.52</td>
+                    <td align="center">0.32</td>
+                    <td align="center">0.12</td>
+                    <td align="center">0.02</td>
+                    <td align="center">-0.08</td>
+                  </tr>
+                                    <tr rel="N18">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N18" target="_blank" >ปากพนัง</a> <a href="javascript:gotoMarker('N18', 8.352778, 100.202222)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.4 <br> (07:00:00)</td>
+                    <td align="center">0.1 <br> (00:00:00)</td>
+                    <td align="center">0.4</td>
+                    <td align="center">0.4</td>
+                    <td align="center">0.3</td>
+                    <td align="center">0.3</td>
+                    <td align="center">0.3</td>
+                    <td align="center">0.2</td>
+                  </tr>
+                                    <tr rel="N19">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N19" target="_blank" >สงขลา</a> <a href="javascript:gotoMarker('N19', 7.216111, 100.580556)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.22 <br> (04:00:00)</td>
+                    <td align="center">0.02 <br> (09:00:00)</td>
+                    <td align="center">0.22</td>
+                    <td align="center">0.22</td>
+                    <td align="center">0.12</td>
+                    <td align="center">0.12</td>
+                    <td align="center">0.12</td>
+                    <td align="center">0.02</td>
+                  </tr>
+                                    <tr rel="N20">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N20" target="_blank" >ปากน้ำปัตตานี</a> <a href="javascript:gotoMarker('N20', 6.892778, 101.26)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.42 <br> (03:00:00)</td>
+                    <td align="center">0.12 <br> (08:00:00)</td>
+                    <td align="center">0.42</td>
+                    <td align="center">0.32</td>
+                    <td align="center">0.32</td>
+                    <td align="center">0.22</td>
+                    <td align="center">0.22</td>
+                    <td align="center">0.12</td>
+                  </tr>
+                                    <tr rel="N21">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N21" target="_blank" >ปากน้ำบางนรา</a> <a href="javascript:gotoMarker('N21', 6.439444, 101.83)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.52 <br> (01:00:00)</td>
+                    <td align="center">0.02 <br> (09:00:00)</td>
+                    <td align="center">0.52</td>
+                    <td align="center">0.42</td>
+                    <td align="center">0.42</td>
+                    <td align="center">0.32</td>
+                    <td align="center">0.22</td>
+                    <td align="center">0.12</td>
+                  </tr>
+                                    <tr rel="N22">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N22" target="_blank" >ปากน้ำระนอง</a> <a href="javascript:gotoMarker('N22', 9.950833, 98.5875)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.64 <br> (18:00:00)</td>
+                    <td align="center">-1.19 <br> (12:00:00)</td>
+                    <td align="center">0.64</td>
+                    <td align="center">0.47</td>
+                    <td align="center">0.09</td>
+                    <td align="center">-0.39</td>
+                    <td align="center">-0.71</td>
+                    <td align="center">-0.91</td>
+                  </tr>
+                                    <tr rel="N23">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N23" target="_blank" >คุระบุรี</a> <a href="javascript:gotoMarker('N23', 9.225, 98.376944)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.25 <br> (18:00:00)</td>
+                    <td align="center">-1.15 <br> (12:00:00)</td>
+                    <td align="center">0.25</td>
+                    <td align="center">0.09</td>
+                    <td align="center">-0.18</td>
+                    <td align="center">-0.53</td>
+                    <td align="center">-0.76</td>
+                    <td align="center">-0.93</td>
+                  </tr>
+                                    <tr rel="N24">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N24" target="_blank" >อ่าวทับละมุ</a> <a href="javascript:gotoMarker('N24', 8.573889, 98.224722)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.05 <br> (18:00:00)</td>
+                    <td align="center">-1.16 <br> (12:00:00)</td>
+                    <td align="center">0.05</td>
+                    <td align="center">-0.14</td>
+                    <td align="center">-0.32</td>
+                    <td align="center">-0.56</td>
+                    <td align="center">-0.8</td>
+                    <td align="center">-1</td>
+                  </tr>
+                                    <tr rel="N25">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N25" target="_blank" >เกาะตะเภาน้อย</a> <a href="javascript:gotoMarker('N25', 7.831667, 98.425)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.29 <br> (19:00:00)</td>
+                    <td align="center">-0.97 <br> (12:00:00)</td>
+                    <td align="center">0.29</td>
+                    <td align="center">0.15</td>
+                    <td align="center">-0.06</td>
+                    <td align="center">-0.33</td>
+                    <td align="center">-0.55</td>
+                    <td align="center">-0.74</td>
+                  </tr>
+                                    <tr rel="N26">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N26" target="_blank" >ปากน้ำกระบี่</a> <a href="javascript:gotoMarker('N26', 8.043889, 98.908889)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.49 <br> (19:00:00)</td>
+                    <td align="center">-0.91 <br> (12:00:00)</td>
+                    <td align="center">0.49</td>
+                    <td align="center">0.34</td>
+                    <td align="center">0.08</td>
+                    <td align="center">-0.2</td>
+                    <td align="center">-0.45</td>
+                    <td align="center">-0.69</td>
+                  </tr>
+                                    <tr rel="N27">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N27" target="_blank" >ปากน้ำตรัง</a> <a href="javascript:gotoMarker('N27', 7.403611, 99.5125)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.54 <br> (19:00:00)</td>
+                    <td align="center">-1.03 <br> (12:00:00)</td>
+                    <td align="center">0.54</td>
+                    <td align="center">0.34</td>
+                    <td align="center">0.17</td>
+                    <td align="center">-0.12</td>
+                    <td align="center">-0.48</td>
+                    <td align="center">-0.78</td>
+                  </tr>
+                                    <tr rel="N28">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N28" target="_blank" >เกาะตะรุเตา</a> <a href="javascript:gotoMarker('N28', 6.701667, 99.65)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.51 <br> (18:00:00)</td>
+                    <td align="center">-0.79 <br> (12:00:00)</td>
+                    <td align="center">0.51</td>
+                    <td align="center">0.41</td>
+                    <td align="center">0.21</td>
+                    <td align="center">0.01</td>
+                    <td align="center">-0.29</td>
+                    <td align="center">-0.49</td>
+                  </tr>
+                                    <tr rel="N29">
+                    <td align="center"><a href="https://tiwrmdev.hii.or.th/v3/sealevel/graph2/station_id=N29" target="_blank" >มาบตาพุด</a> <a href="javascript:gotoMarker('N29', 12.6739, 101.1386)" title="ดูตำแหน่งบนแผนที่"><i class="fa fa-map-o"></i></a></td>
+                    <td align="center">0.78 <br> (10:00:00)</td>
+                    <td align="center">-0.12 <br> (01:00:00)</td>
+                    <td align="center">0.78</td>
+                    <td align="center">0.58</td>
+                    <td align="center">0.28</td>
+                    <td align="center">0.08</td>
+                    <td align="center">-0.02</td>
+                    <td align="center">-0.12</td>
+                  </tr>
+                                 </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+            <!-- // content -->
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" aria-hidden="true" data-backdrop="true">
+    <div class="modal-dialog "><!--modal-lg         modal-sm-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 id="modalTitle" class="modal-title"></h4>
+            </div>
+            <div id="modalBody" class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->            <!-- // Modal -->
+        </div>
+        <!-- // container -->
+
+        <!-- Container _footer-->
+        <div class="container-fluid" id="main-container">
+            <div class="container">
+            <!-- footer -->
+            <br/>
+<div class="row hidden-xs">
+    <div class="col-md-3 col-sm-6">
+        <h2><a href="https://tiwrmdev.hii.or.th/v3">Thaiwater.net</a></h2>
+        <h5><i class="fa fa-home" aria-hidden="true"></i>  <a href="https://tiwrmdev.hii.or.th/v3">หน้าแรก</a></h5>
+
+        <h5><a href="https://tiwrmdev.hii.or.th/v3/weather">ติดตามสภาพอากาศ  </a></h5>
+        <h6><a href="https://tiwrmdev.hii.or.th/v3/weather_daily/tmd">  สถานีตรวจวัดอากาศ</a></h6>
+        <h6><a href="https://tiwrmdev.hii.or.th/v3/wrf/swan">  ความสูงและทิศทางของคลื่นทะเล</a></h6>
+        <br/>
+        <hr/>
+        <a href="/web "> <h5><i class="fa fa-undo" aria-hidden="true"></i>
+  กลับไปเว็บเก่า</h5></a>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <h5><a href="https://tiwrmdev.hii.or.th/v3/hydro">ติดตามสถานการณ์น้ำ </a></h5>
+        <h6><a href="https://tiwrmdev.hii.or.th/v3/archive_report "> รายงานข้อมูลน้ำรายสัปดาห์ </a>  </h6>
+        <h6><a href="https://tiwrmdev.hii.or.th/v3/salinity"> ข้อมูลคุณภาพน้ำ</a></h6>
+        <h6><a href="https://tiwrmdev.hii.or.th/v3/sealevel"> ข้อมูลระดับน้ำบริเวณอ่าวไทย และฝั่งอันดามัน</a></h6>
+        <h6><a href="https://tiwrmdev.hii.or.th/v3/bangpakong"> ผังน้ำบางปะกง</a></h6>
+
+         <h5><a href="http://web.thaiwater.net/thaiwater30/" target="_blank">แผนที่ติดตามสถานการณ์น้ำ </a></h5>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <h5>อื่นๆ</h5>
+        <h6><a href="https://tiwrmdev.hii.or.th/v3/archive">บันทึกเหตุการณ์น้ำ</a> </h6>
+        <h6><a href="https://tiwrmdev.hii.or.th/v3/research">งานวิจัย</a> </h6>
+        <h6><a href="https://tiwrmdev.hii.or.th/v3/about">เกี่ยวกับ</a></h6>
+        <h6>
+            <!-- <a href="http://thaiwater.net/web/manual.html">คู่มือใช้งาน </a> -->
+            <a href="https://tiwrmdev.hii.or.th/v3/uploads/manual_2017.pdf">คู่มือใช้งาน (7.17 MB)</a>
+        </h6>
+        <br/>
+        <h5>แหล่งความรู้</h5>
+        <h6><a href="http://www.hii.or.th/" target="_blank">HII</a> </h6>
+        <h6><a href="http://www2.hii.or.th/thailandwaterchallenge/" target="_blank">Thailand Water Challenge</a> </h6>
+        <h6><a href="http://www.hii.or.th/wiki/" target="_blank">Water Wiki</a> </h6>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <h5>Mobile Application</h5>
+        <div class="media">
+            <div class="media-left media-top">
+               <img src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/icon/thaiwater-moblie-app.png" alt="thaiwater app" title="thaiwater app">
+            </div>
+            <div class="media-body">
+                <h4>Thaiwater</h4>
+                <h6>ข้อมูลสภาพน้ำ และภูมิกาศ พร้อมให้บริการบนมือถือ ทั้้ง Android และ Ios แล้ววันนี้...</h6>
+            </div>
+        </div>
+        <br/>
+
+        <span class="fa-stack fa-lg">
+            <i class="fa fa-circle fa-stack-2x"></i>
+            <i class="fa fa-apple fa-stack-1x fa-inverse"></i>
+        </span>
+        <a href="https://itunes.apple.com/us/app/thaiwater/id1097487200?mt=8" target="_blank">iOS : APP STORE </a><br>
+
+        <span class="fa-stack fa-lg">
+            <i class="fa fa-circle fa-stack-2x"></i>
+            <i class="fa fa-android fa-stack-1x fa-inverse"></i>
+        </span>
+        <a href="https://play.google.com/store/apps/details?id=mobile.nhc.thaiwater" target="_blank">ANDROID : PLAY STORE </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+    <hr/>
+    </div>
+    <div class="col-md-5">
+        <address><h5>
+            <strong><a href="http://www.hii.or.th" target="_blank">สถาบันสารสนเทศทรัพยากรน้ำ (องค์การมหาชน) </a></strong></h5>
+            <h6>
+            เลขที่ 901 ถนนงามวงศ์วาน  แขวงลาดยาว เขตจตุจักร  กรุงเทพมหานคร 10900<br>
+            <i class="fa fa-phone" aria-hidden="true"></i>  02 158 0901,   &nbsp;&nbsp;&nbsp;<i class="fa fa-fax" aria-hidden="true">  :  </i>  02 158 0910  &nbsp;&nbsp;&nbsp;  <i class="fa fa-envelope-o" aria-hidden="true"></i>  :    info_thaiwater<i class="fa fa-at" aria-hidden="true"></i>haii.or.th<br></h6>
+        </address>
+        <!-- /power by -->
+    </div>
+
+    <div class="col-xs-12 col-sm-6 col-md-2 text-center">
+
+        <h5>ขอขอบคุณ</h5>
+        <a href="http://www.rid.go.th" target="_blank"><img src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/logo/logo-rid.jpg" alt="กรมชลประทาน" title="กรมชลประทาน"></a>
+        <a href="http://www.royalrain.go.th" target="_blank"><img src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/logo/logo-rain.jpg" alt="กรมฝนหลวง" title="กรมฝนหลวง"></a>
+        <a href="http://www.tmd.go.th" target="_blank"><img src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/logo/logo-tmd.jpg" alt="กรมอุตุนิยมวิทยา" title="กรมอุตุนิยมวิทยา"></a>
+        <a href="http://www.egat.co.th" target="_blank"><img src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/logo/logo-pea.jpg" alt="การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย" title="การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย"></a>
+        <a href="http://www.ais.co.th/king2014" target="_blank"><img src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/logo/logo-ais.jpg" alt="บริษัท แอดวานซ์ อินโฟร์ เซอร์วิส จำกัด" title="บริษัท แอดวานซ์ อินโฟร์ เซอร์วิส จำกัด"></a>
+    </div>
+
+    <div class="col-xs-6 col-sm-4 col-md-3 text-center">
+        <img src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/images/thaiwater/logo/jica-haii.jpg">
+    </div>
+
+    <div class="col-xs-6 col-sm-2 col-md-2 text-center">
+        <h5>สถิติเว็บไซต์</h5>
+                <a href="http://directory.truehits.net/trafficweb/index.php?url=www.thaiwater.net"><img src="http://webrank.truehits.net/webrank2/pic/t0029749.png"></a>
+        <!-- <a href="http://government.truehits.net/nextpage_to5.php"><img src="https://webrank.truehits.net/webrank2/pic/t0029749.png"></a> -->
+    </div>
+    <!--
+    <div class="col-xs-6 col-md-3 text-center">
+        <h5>พร้อมใช้งาน IPv6</h5>
+        <div id=ipv6_enabled_www_test_logo></div>
+        <script language="JavaScript" type="text/javascript">
+            var Ipv6_Js_Server = (("https:" == document.location.protocol) ? "https://" : "http://");
+            document.write(unescape("%3Cscript src='" + Ipv6_Js_Server + "www.ipv6forum.com/ipv6_enabled/sa/SA1.php?id=5378' type='text/javascript'%3E%3C/script%3E"));
+        </script>
+    </div>
+    -->
+</div>
+
+
+<div class="row">
+    <div class="col-md-12 text-center">
+         <!-- social -->
+        <h2>
+            <a href="https://www.facebook.com/hii.most" target="_blank"><i class="fa fa-facebook-square"></i></a>
+            <a href="https://www.youtube.com/channel/UCZsoQJ2H5cjViaNj44CjuEg/videos" target="_blank"><i class="fa fa-youtube"></i></a>
+            <a href="https://www.instagram.com/hii.most/" target="_blank"><i class="fa fa-instagram"></i></a>
+        </h2>
+        <span><h6>Copyright © 2016 | <a href="http://www.hii.or.th">HII</a> - All rights reserved.</h6></span>
+        <!-- /social -->
+    </div>
+</div>
+            <!-- // Footer -->
+            </div>
+        </div>
+        <!-- // container _footer-->
+
+        <!-- Combined and Minified Javascript  -->
+        <script src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/dist/all.js"></script>
+
+        <script src="https://tiwrmdev.hii.or.th/v3/vendor/datatables/media/js/jquery.dataTables.min.js"></script>
+<!--<script src="https://tiwrmdev.hii.or.th/v3/js/sealevel/index.js"></script>
+<script src="https://tiwrmdev.hii.or.th/v3/js/sealevel/map.js"></script> -->
+
+<script src="https://tiwrmdev.hii.or.th/v3/vendor/leaflet/dist/leaflet.js"></script>
+<script src="https://tiwrmdev.hii.or.th/v3/vendor/leaflet-ajax/dist/leaflet.ajax.min.js"></script>
+<script src="https://tiwrmdev.hii.or.th/v3/vendor/Leaflet.awesome-markers/dist/leaflet.awesome-markers.js"></script>
+<script src="https://tiwrmdev.hii.or.th/v3/vendor/Leaflet.label/dist/leaflet.label.js"></script>
+<script src="https://tiwrmdev.hii.or.th/v3/vendor/leaflet-providers/leaflet-providers.js"></script>
+<script src="https://tiwrmdev.hii.or.th/v3/vendor/leaflet.loading/src/Control.Loading.js"></script>
+<script src="https://tiwrmdev.hii.or.th/v3/vendor/ekko-lightbox/dist/ekko-lightbox.min.js"></script>
+<script src="https://tiwrmdev.hii.or.th/v3/resources/js/Leaflet.defaultextent-master/dist/leaflet.defaultextent.js"></script>
+<script src="https://tiwrmdev.hii.or.th/v3/resources/themes/thaiwater-fifteen/js/sealevel.js"></script>
+
+<script type="text/javascript">
+$( document ).ready( function( $ ) {
+    initmap();
+
+    $(document).delegate('*[data-toggle="lightbox"]', 'click', function(event) {
+        event.preventDefault();
+        $(this).ekkoLightbox();
+    });
+
+  $('#table_data').dataTable({
+      "paging":   false,
+      "ordering": false,
+      "bFilter": false,
+      "info":     false,
+      "pagingType": "simple_numbers",
+      "aoColumns": [ { "bVisible": false },null,null,null,null ],
+      "drawCallback": function ( settings ) {
+        var api = this.api();
+        var rows = api.rows( {page:'current'} ).nodes();
+        var last=null;
+
+        api.column(0, {page:'current'} ).data().each( function ( source, i ) {
+          //console.log(source);
+          if ( last !== source ) {
+            $(rows).eq( i ).before(
+              '<tr ><td colspan="4"><b>'+source+'</b></td></tr>'
+            );
+
+            last = source;
+          }
+        } );
+
+      }
+    });
+
+    $('#myModal').on('hidden.bs.modal', function () {
+          $('#myModal').removeData('bs.modal');
+    })
+
+});
+</script>
+
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-83737647-2"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'UA-83737647-2');
+        </script>
+    </body>
+</html>
