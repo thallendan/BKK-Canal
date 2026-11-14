@@ -7,6 +7,7 @@ Outputs consolidated data to master_water_level_data.json.
 """
 
 import json
+import os
 import re
 import time
 from datetime import datetime, timezone
@@ -37,12 +38,12 @@ def get_bma_headers(referer_path="flood"):
 def parse_dam_storage_html(html_text):
     """Parses RID/HII Dam report HTML and ensures capacities are populated."""
     dams_data = {
-        "bhumibol": {"capacity_mcm": DAM_CAPACITY_BASICS["bhumibol"], "storage_mcm": 0.0, "storage_pct": 0.0, "usable_mcm": 0.0},
-        "sirikit": {"capacity_mcm": DAM_CAPACITY_BASICS["sirikit"], "storage_mcm": 0.0, "storage_pct": 0.0, "usable_mcm": 0.0},
-        "kwai_noi": {"capacity_mcm": DAM_CAPACITY_BASICS["kwai_noi"], "storage_mcm": 0.0, "storage_pct": 0.0, "usable_mcm": 0.0},
-        "pasak": {"capacity_mcm": DAM_CAPACITY_BASICS["pasak"], "storage_mcm": 0.0, "storage_pct": 0.0, "usable_mcm": 0.0},
-        "srinagarind": {"capacity_mcm": DAM_CAPACITY_BASICS["srinagarind"], "storage_mcm": 0.0, "storage_pct": 0.0, "usable_mcm": 0.0},
-        "vajiralongkorn": {"capacity_mcm": DAM_CAPACITY_BASICS["vajiralongkorn"], "storage_mcm": 0.0, "storage_pct": 0.0, "usable_mcm": 0.0}
+        "bhumibol": {"capacity_mcm": DAM_CAPACITY_BASICS["bhumibol"], "storage_mcm": None, "storage_pct": None, "usable_mcm": None},
+        "sirikit": {"capacity_mcm": DAM_CAPACITY_BASICS["sirikit"], "storage_mcm": None, "storage_pct": None, "usable_mcm": None},
+        "kwai_noi": {"capacity_mcm": DAM_CAPACITY_BASICS["kwai_noi"], "storage_mcm": None, "storage_pct": None, "usable_mcm": None},
+        "pasak": {"capacity_mcm": DAM_CAPACITY_BASICS["pasak"], "storage_mcm": None, "storage_pct": None, "usable_mcm": None},
+        "srinagarind": {"capacity_mcm": DAM_CAPACITY_BASICS["srinagarind"], "storage_mcm": None, "storage_pct": None, "usable_mcm": None},
+        "vajiralongkorn": {"capacity_mcm": DAM_CAPACITY_BASICS["vajiralongkorn"], "storage_mcm": None, "storage_pct": None, "usable_mcm": None}
     }
 
     dam_patterns = {
@@ -70,6 +71,8 @@ def parse_dam_storage_html(html_text):
                         stor = val1
 
                     pct = round((stor / cap) * 100.0, 1) if cap > 0 else 0.0
+                    if not (0 < pct <= 110):
+                        continue  # implausible match; leave as None
                     dams_data[dam_key] = {
                         "capacity_mcm": cap,
                         "storage_mcm": stor,
@@ -200,6 +203,14 @@ def main():
             if res.status_code == 200:
                 diag["success"] = True
                 successful_count += 1
+                # Save raw page once so parsers can be written/debugged. Only when SAVE_RAW=1 (set in the GitHub workflow, not in Lambda)
+                raw_names = {"chaophraya_full": "chaophraya_full_raw.html", "dam_storage": "rid_dam_raw.html", "estuary_tide": "estuary_raw.txt"}
+                if os.environ.get("SAVE_RAW") == "1" and ep["key"] in raw_names and not os.path.exists(raw_names[ep["key"]]):
+                    try:
+                        with open(raw_names[ep["key"]], "w", encoding="utf-8") as rf:
+                            rf.write(res.text)
+                    except OSError as e:
+                        print("could not save raw snapshot:", e)   # never let this break the data fetch
                 
                 # Dynamic parsing per endpoint response type
                 if ep["key"] == "waterlevel_thaiwater":
@@ -217,8 +228,13 @@ def main():
                         "sample_watergate": records[0] if isinstance(records, list) and records else {}
                     }
                 elif ep["key"] == "estuary_tide":
-                    data = res.json()
-                    parsed_summary[ep["key"]] = {
+                    try:
+                        data = res.json()
+                    except ValueError:
+                        parsed_summary[ep["key"]] = {"parse_error": "response was not JSON", "preview": re.sub(r"\s+", " ", res.text[:300]).strip()}
+                        data = None
+                    if data is not None:
+                      parsed_summary[ep["key"]] = {
                         "realtime_glf001_msl": data.get("waterlevel_msl"),
                         "predicted_n03_bounds": data.get("tide_summary"),
                         "period": data.get("datetime")
@@ -261,8 +277,12 @@ def main():
             diag["error"] = str(err)
             failed_count += 1
 
+        ps = parsed_summary.get(ep["key"], {})
+        empty = (ps.get("record_count") == 0 or ps.get("watergate_count") == 0 or "parse_error" in ps
+                 or (ep["key"] == "dam_storage" and all(v["storage_pct"] is None for v in ps.values())))
+        diag["data_ok"] = bool(diag["success"] and not empty and not diag.get("error"))  # HTTP 200 is not the same as usable data
         diagnostics.append(diag)
-        print(f"[{'OK' if diag['success'] else 'FAIL'}] {ep['name']} -> Code {diag['status_code']} ({diag['response_time_sec']}s)")
+        print(f"[{'OK' if diag['data_ok'] else ('EMPTY' if diag['success'] else 'FAIL')}] {ep['name']} -> Code {diag['status_code']} ({diag['response_time_sec']}s)")
 
     # Construct Master Data Payload
     master_payload = {
