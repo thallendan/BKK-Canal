@@ -64,6 +64,9 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
 
+    <div id="bkk-nav"></div>
+    <script src="https://thallendan.github.io/BKK-Rain/bkk-nav.js" defer></script>
+
     <!-- Header Section -->
     <header class="bg-indigo-950 text-white shadow-xl border-b border-indigo-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -75,8 +78,8 @@
                 <p class="text-slate-300 text-sm mt-1">ระบบติดตามสถานะระดับน้ำ ประตูระบายน้ำ และสถานีสูบน้ำพื้นที่โซนบางนา</p>
             </div>
             <div class="flex items-center gap-3 text-xs bg-indigo-900/80 px-4 py-2 rounded-lg border border-indigo-700/50">
-                <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>CloudFront Telemetry Active</span>
+                <span id="feedDot" class="inline-block w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                <span id="feedStatus" aria-live="polite">Loading telemetry…</span>
             </div>
         </div>
     </header>
@@ -471,7 +474,27 @@
         document.addEventListener('DOMContentLoaded', () => {
             initStaticMap();
             loadS3Data();
+            setInterval(loadS3Data, 5 * 60 * 1000);   // refresh every 5 minutes
         });
+
+        // Header badge: shows the real state of the feed instead of a fixed "Active".
+        function setFeedStatus(kind, text) {
+            const dot = document.getElementById('feedDot'), label = document.getElementById('feedStatus');
+            if (!dot || !label) return;
+            const colors = { ok: 'bg-emerald-400', warn: 'bg-amber-400', bad: 'bg-red-500' };
+            dot.className = 'inline-block w-2.5 h-2.5 rounded-full ' + (colors[kind] || 'bg-slate-400') + (kind === 'ok' ? ' animate-pulse' : '');
+            label.textContent = text;
+        }
+
+        function newestReadingMs(arr) {
+            let best = null;
+            arr.forEach(item => {
+                const wl = item.water_level_last || {};
+                const m = /-?\d+/.exec(String(wl.site_timestamp ?? wl.dt ?? item.dt ?? ''));
+                if (m && wl.wl_in !== -99) { const ms = +m[0]; if (best === null || ms > best) best = ms; }
+            });
+            return best;
+        }
 
         function formatVal(val, unit = '') {
             if (val === null || val === undefined || val === '' || val === 'N/A' || Number.isNaN(val)) {
@@ -541,8 +564,19 @@
                 const stationsArray = data.waterStation || data.data?.waterStation || data.data || [];
                 rawStations = normalizeS3Data(stationsArray);
                 processAndRender();
+
+                const newest = newestReadingMs(Array.isArray(stationsArray) ? stationsArray : []);
+                if (newest === null) {
+                    setFeedStatus('warn', 'Loaded, but no reading times found');
+                } else {
+                    const ageMin = Math.round((Date.now() - newest) / 60000);
+                    const hhmm = new Date(newest).toLocaleTimeString('en-GB', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit' });
+                    if (ageMin > 45) setFeedStatus('warn', `Data delayed: last reading ${hhmm} ICT (${ageMin} min ago)`);
+                    else setFeedStatus('ok', `Live: last reading ${hhmm} ICT`);
+                }
             } catch (err) {
                 console.error('Failed to load JSON from CloudFront:', err);
+                setFeedStatus('bad', rawStations && rawStations.length ? 'Feed unavailable, showing earlier data' : 'Feed unavailable, no data');
             }
         }
 
