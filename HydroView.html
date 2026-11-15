@@ -346,7 +346,7 @@
             if (a === null) return 'no live data';
             return a < 1 ? `${Math.max(1, Math.round(a * 60))} min ago` : a < 48 ? `${a.toFixed(1)} h ago` : `${Math.round(a / 24)} days ago`;
         }
-        function isStale(node) { const a = ageHours(node); return a !== null && a > (node.type === 'dam' ? 72 : 12); }
+        function isStale(node) { const a = ageHours(node); return a !== null && a > (node.maxAgeH || (node.type === 'dam' ? 72 : 12)); }   // maxAgeH: daily stations
 
         const riverPaths = [
             { id: 'ping', stroke: '#2196F3', width: 5, name: 'Ping River', labelPt: { x: 480, y: 380 }, connectedNodes: ['bhumibol', 'c2_nakhonsawan'], points: [
@@ -581,6 +581,13 @@
             if (master) parseMasterWaterData(master);
             if (dj) parseDataJson(dj);
             renderWeatherStrip(mj);
+            const cpb = master && master.parsed_summary && master.parsed_summary.chaophraya_full;
+            lastNotes = [
+                'master file written: ' + (master && master.timestamp_utc ? new Date(master.timestamp_utc).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok' }) + ' (Bangkok)' : 'not loaded'),
+                'Chao Phraya block: ' + (!master ? 'n/a' : !cpb ? 'MISSING - the master file is an old version (CDN cache?)' : cpb.parse_error ? 'parse error' : 'ok, ' + cpb.station_count + ' stations'),
+                'klongmap stations: ' + (klong && klong.waterStation ? klong.waterStation.length : 'not loaded'),
+                'BKK-Rain data.json: ' + (dj && dj.timestamp_utc ? new Date(dj.timestamp_utc).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok' }) + ' (Bangkok)' : 'not loaded')
+            ];
             updateStatusBadge({ klongmap: !!klong, master_water: !!master, data_json: !!dj, monsoon: !!mj });
         }
 
@@ -658,6 +665,35 @@
         }
 
         function parseMasterWaterData(master) {
+            // ---- Chao Phraya page (parsed by fetch_master_water_level.py): river stations, telemetry gauges, dams ----
+            const cp = master && master.parsed_summary && master.parsed_summary.chaophraya_full;
+            const newer = (node, iso) => !node.liveAsOf || Date.parse(iso) > Date.parse(node.liveAsOf);
+            if (cp && !cp.parse_error) {
+                const river = (node, r) => {
+                    if (!node || !r || typeof r.level_msl !== 'number' || !newer(node, r.obs)) return;
+                    node.stage = r.level_msl;
+                    if (typeof r.flow_cms === 'number') node.discharge = r.flow_cms;
+                    node.liveAsOf = r.obs; node.isOffline = false;
+                    if (r.obs.slice(11, 19) === '00:00:00') node.maxAgeH = 36;   // daily value (midnight stamp)
+                };
+                river(waterNodes.c2_nakhonsawan, cp.itc && cp.itc.C2);                 // C.2 Nakhon Sawan
+                river(waterNodes.c13_chaophraya_dam, cp.itc && cp.itc.C13);            // C.13 Chao Phraya Dam
+                river(waterNodes.ayutthaya_confluence, cp.tele && cp.tele.CPY011);     // Ayutthaya telemetry gauge
+                const ft = cp.tele && cp.tele.GLF001, fc = waterNodes.fort_chula;      // Fort Chula (Pak Nam) tide gauge
+                if (ft && fc && newer(fc, ft.obs)) {
+                    fc.tideLevel = fc.stage = ft.level_msl; fc.liveAsOf = ft.obs; fc.operation = 'RID telemetry gauge'; fc.isOffline = false;
+                }
+                const damMap = { '1': 'bhumibol', '2': 'sirikit', '41': 'kwainoi', '19': 'pasak' };
+                (cp.dams || []).forEach(d => {
+                    const n = waterNodes[damMap[d.dam_id]];
+                    if (!n || typeof d.pct !== 'number') return;
+                    const iso = d.date + 'T12:00:00+07:00';
+                    if (!newer(n, iso)) return;
+                    n.pctFull = d.pct; n.storageMcm = d.storage_mcm; n.liveAsOf = iso;
+                    if (typeof d.released_mcm === 'number') n.discharge = Math.round(d.released_mcm * 1e6 / 86400);   // MCM/day -> m3/s
+                    n.operation = `${d.pct}% filled (${Math.round(d.storage_mcm).toLocaleString()} MCM) · in ${d.inflow_mcm} / out ${d.released_mcm} MCM per day`;
+                });
+            }
             // Only use dam figures from this file if they are real (the fetcher writes 0.0 when it cannot parse the source).
             const dm = master && master.parsed_summary && master.parsed_summary.dam_storage;
             if (!dm) return;
@@ -677,13 +713,14 @@
             for (const k in map) {
                 const d = dj.dams && dj.dams[k], n = waterNodes[map[k]];
                 if (!d || !n || typeof d.current_storage_pct !== 'number') continue;
+                if (n.liveAsOf && Date.parse(n.liveAsOf) >= Date.parse(dj.timestamp_utc)) continue;   // fresher data already loaded
                 n.pctFull = d.current_storage_pct;
                 n.storageMcm = n.capMcm ? Math.round(n.capMcm * d.current_storage_pct / 100) : null; // estimated from % x capacity
                 n.liveAsOf = dj.timestamp_utc;
                 n.operation = `${d.current_storage_pct}% filled (est. ${n.storageMcm ? n.storageMcm.toLocaleString() : '?'} MCM)`;
             }
             const p = dj.paknam_gauge, f = waterNodes.fort_chula;
-            if (p && f && typeof p.water_level_msl === 'number') {
+            if (p && f && typeof p.water_level_msl === 'number' && !(f.liveAsOf && f.liveAsOf >= (p.period ? new Date(p.period.replace(' ', 'T') + ':00+07:00').toISOString() : dj.timestamp_utc))) {
                 f.tideLevel = p.water_level_msl; f.stage = p.water_level_msl;
                 if (typeof p.flood_wall_threshold_msl === 'number') f.warningLevel = p.flood_wall_threshold_msl;
                 f.liveAsOf = p.period ? new Date(p.period.replace(' ', 'T') + ':00+07:00').toISOString() : dj.timestamp_utc;
@@ -702,7 +739,7 @@
                 (cy ? ` · Nearest cyclone: <b class="text-white">${cy.name}</b> ${cy.km} km` : ' · No active cyclone');
         }
 
-        let lastFeeds = {};
+        let lastFeeds = {}, lastNotes = [];
         function showHealth() {
             const old = document.getElementById('health-panel'); if (old) { old.remove(); return; }
             const rows = Object.values(waterNodes).map(n => {
@@ -712,7 +749,7 @@
             const feeds = Object.entries(lastFeeds).map(([k, v]) => `<span style="margin-right:10px;color:${v ? '#6ee7b7' : '#fca5a5'}">${v ? '✓' : '✗'} ${k}</span>`).join('');
             const d = document.createElement('div'); d.id = 'health-panel';
             d.style.cssText = 'position:fixed;inset:70px 10px 10px 10px;z-index:60;overflow:auto;background:rgba(8,14,33,.97);border:1px solid #334155;border-radius:16px;padding:14px;font:11px/1.5 JetBrains Mono,monospace;color:#e2e8f0';
-            d.innerHTML = `<div style="display:flex;justify-content:space-between;margin-bottom:8px"><b>DATA HEALTH</b><span onclick="this.parentNode.parentNode.remove()" style="cursor:pointer;color:#00f5d4">close ✕</span></div><div style="margin-bottom:8px">${feeds}</div>${rows}<div style="margin-top:10px;color:#94a3b8">Grey = no live source or reading older than 12 h (dams 72 h). Dams and Pak Nam come from BKK-Rain data.json; canal stations from klongmap-latest.json (CloudFront, falling back to the repo copy).</div>`;
+            d.innerHTML = `<div style="display:flex;justify-content:space-between;margin-bottom:8px"><b>DATA HEALTH</b><span onclick="this.parentNode.parentNode.remove()" style="cursor:pointer;color:#00f5d4">close ✕</span></div><div style="margin-bottom:8px">${feeds}</div><div style="margin-bottom:8px;color:#94a3b8">${lastNotes.join('<br>')}</div>${rows}<div style="margin-top:10px;color:#94a3b8">Grey = no live source or reading older than 12 h (dams 72 h). Dams and Pak Nam come from BKK-Rain data.json; canal stations from klongmap-latest.json (CloudFront, falling back to the repo copy).</div>`;
             document.body.appendChild(d);
         }
         function updateStatusBadge(src) {
