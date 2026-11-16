@@ -1,23 +1,23 @@
 {
-  "timestamp_utc": "2026-11-15T23:42:10.354098+00:00",
-  "updated_at_utc": "2026-11-15T23:42:10.354098+00:00",
+  "timestamp_utc": "2026-11-16T04:21:09.016136+00:00",
+  "updated_at_utc": "2026-11-16T04:21:09.016136+00:00",
   "is_live": true,
   "status": "SUCCESS",
   "total_endpoints": 10,
   "successful_count": 10,
   "failed_count": 0,
   "summary": {
-    "paknam_tide_msl": 0.329,
-    "gravity_drainage_window": "OPEN (+29.18m Head)",
+    "paknam_tide_msl": 1.418,
+    "gravity_drainage_window": "OPEN (+28.09m Head)",
     "critical_alert_sectors": "0 Overtopping / 7 Warning",
     "critical_overflow_count": 0,
     "high_risk_count": 7,
     "total_monitored_stations": 14,
-    "avg_canal_capacity_pct": 59.8
+    "avg_canal_capacity_pct": 60.4
   },
   "canals": [
     {
-      "id": 1341692217,
+      "id": 1341746842,
       "name": "แม่น้ำเจ้าพระยา",
       "district": "Dusit District, Bangkok",
       "province": "Bangkok",
@@ -35,9 +35,9 @@
           100.512148
         ]
       ],
-      "water_level_msl": 0.32,
-      "capacity_pct": 88.44,
-      "buffer_remaining_m": 1.94,
+      "water_level_msl": 1.51,
+      "capacity_pct": 95.53,
+      "buffer_remaining_m": 0.75,
       "situation_level": 4,
       "drainage_mode": "HIGH RISK (MONITORING)",
       "risk_level": "ELEVATED",
@@ -448,57 +448,57 @@
     "chao_phraya_4dam_combined": {
       "label": "Chao Phraya 4-Dam Combined Storage",
       "value": "76.5%",
-      "unit": "18,967 / 24,783 MCM (Usable: 12,259 MCM)",
+      "unit": "18,969 / 24,783 MCM (Usable: 12,262 MCM)",
       "period": "Latest Report",
       "description": "Primary BKK & Samut Prakan Water Supply & Salinity Buffer"
     },
     "dam_bhumibol": {
       "label": "Bhumibol Dam (Ping River)",
       "value": "72.0%",
-      "unit": "9,691 / 13,462 MCM (Usable: 5,891 MCM)",
+      "unit": "9,693 / 13,462 MCM (Usable: 5,893 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Upper Basin Headwater Storage"
     },
     "dam_sirikit": {
       "label": "Sirikit Dam (Nan River)",
       "value": "79.0%",
-      "unit": "7,497 / 9,510 MCM (Usable: 4,647 MCM)",
+      "unit": "7,493 / 9,510 MCM (Usable: 4,643 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Upper Basin Headwater Storage"
     },
     "dam_kwai_noi": {
       "label": "Kwai Noi Bamrung Dan Dam",
-      "value": "92.0%",
-      "unit": "868 / 939 MCM (Usable: 825 MCM)",
+      "value": "93.0%",
+      "unit": "869 / 939 MCM (Usable: 826 MCM)",
       "period": "Latest Report",
       "description": "Chao Phraya Mid-Basin Flow Regulation"
     },
     "dam_pasak": {
       "label": "Pasak Jolasid Dam (Pasak River)",
       "value": "105.0%",
-      "unit": "911 / 872 MCM (Usable: 896 MCM)",
+      "unit": "914 / 872 MCM (Usable: 900 MCM)",
       "period": "Latest Report",
       "description": "Lower Chao Phraya / Eastern BKK Flow Buffer"
     },
     "dam_srinagarind": {
       "label": "Srinagarind Dam (Mae Klong Basin)",
       "value": "98.0%",
-      "unit": "17,378 / 17,745 MCM (Usable: 7,113 MCM)",
+      "unit": "17,362 / 17,745 MCM (Usable: 7,097 MCM)",
       "period": "Latest Report",
       "description": "Western Diversion & Samut Prakan Salinity Repulsion"
     },
     "dam_vajiralongkorn": {
       "label": "Vajiralongkorn Dam (Mae Klong Basin)",
       "value": "96.0%",
-      "unit": "8,515 / 8,860 MCM (Usable: 5,503 MCM)",
+      "unit": "8,511 / 8,860 MCM (Usable: 5,499 MCM)",
       "period": "Latest Report",
       "description": "Western Diversion & Samut Prakan Salinity Repulsion"
     },
     "chao_phraya_estuary_realtime_level": {
       "label": "Chao Phraya Estuary Real-Time Sea Level (Fort Phrachulachomklao)",
-      "value": "+0.329",
+      "value": "+1.418",
       "unit": "m MSL",
-      "period": "2026-11-16 06:40",
+      "period": "2026-11-16 11:20",
       "description": "Live Telemetry Sea Level at Chao Phraya River Mouth (HII Station GLF001)"
     },
     "chao_phraya_estuary_predicted_tide": {
@@ -517,7 +517,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.317,
+      "response_time_sec": 0.186,
       "error": null
     },
     {
@@ -527,7 +527,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=UTF-8",
-      "response_time_sec": 0.418,
+      "response_time_sec": 0.535,
       "error": null
     },
     {
@@ -537,7 +537,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.145,
+      "response_time_sec": 0.267,
       "error": null
     },
     {
@@ -547,7 +547,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.318,
+      "response_time_sec": 0.188,
       "error": null
     },
     {
@@ -557,7 +557,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.323,
+      "response_time_sec": 0.089,
       "error": null
     },
     {
@@ -567,7 +567,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "Unknown",
-      "response_time_sec": 0.326,
+      "response_time_sec": 0.184,
       "error": null
     },
     {
@@ -577,7 +577,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/plain; charset=utf-8",
-      "response_time_sec": 0.316,
+      "response_time_sec": 0.087,
       "error": null
     },
     {
@@ -587,7 +587,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 1.14,
+      "response_time_sec": 1.878,
       "error": null
     },
     {
@@ -597,7 +597,7 @@
       "success": true,
       "status_code": 200,
       "content_type": "text/html; charset=UTF-8",
-      "response_time_sec": 6.92,
+      "response_time_sec": 8.443,
       "error": null
     },
     {
@@ -606,7 +606,7 @@
       "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 1.419,
+      "response_time_sec": 2.114,
       "error": null
     }
   ]
