@@ -573,14 +573,15 @@
                 getAny([CDN + 'klongmap-latest.json', ENDPOINTS.klongmap]),
                 getAny([CDN + 'master_water_level_data.json', ENDPOINTS.masterWater]),
                 get(ENDPOINTS.dataJson), get(ENDPOINTS.monsoon)]);
-            if (klong) parseKlongmapData(klong);
-            if (master) parseMasterWaterData(master);
-            if (dj) parseDataJson(dj);
-            renderWeatherStrip(mj);
+            const safe = (name, fn, arg) => { try { fn(arg); } catch (e) { console.error(name + ' failed:', e); } };
+            if (klong) safe('klongmap', parseKlongmapData, klong);
+            if (master) safe('master', parseMasterWaterData, master);
+            if (dj) safe('data.json', parseDataJson, dj);
+            safe('weather strip', renderWeatherStrip, mj);
             const cpb = master && master.parsed_summary && master.parsed_summary.chaophraya_full;
             lastNotes = [
                 'master file written: ' + (master && master.timestamp_utc ? new Date(master.timestamp_utc).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok' }) + ' (Bangkok)' : 'not loaded'),
-                'Chao Phraya block: ' + (!master ? 'n/a' : !cpb ? 'MISSING - the master file is an old version (CDN cache?)' : cpb.parse_error ? 'parse error' : 'ok, ' + cpb.station_count + ' stations'),
+                'Chao Phraya block: ' + (!master ? 'n/a' : !cpb ? 'MISSING - the master file is an old version (CDN cache?)' : (cpb.parse_error || cpb.success === false) ? 'unavailable (' + (cpb.parse_error || cpb.error || 'fetch failed') + ')' : 'ok, ' + cpb.station_count + ' stations'),
                 'klongmap stations: ' + (klong && klong.waterStation ? klong.waterStation.length : 'not loaded'),
                 'BKK-Rain data.json: ' + (dj && dj.timestamp_utc ? new Date(dj.timestamp_utc).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok' }) + ' (Bangkok)' : 'not loaded')
             ];
@@ -664,7 +665,7 @@
             // ---- Chao Phraya page (parsed by fetch_master_water_level.py): river stations, telemetry gauges, dams ----
             const cp = master && master.parsed_summary && master.parsed_summary.chaophraya_full;
             const newer = (node, iso) => !node.liveAsOf || Date.parse(iso) > Date.parse(node.liveAsOf);
-            if (cp && !cp.parse_error) {
+            if (cp && !cp.parse_error && cp.success !== false) {
                 const river = (node, r) => {
                     if (!node || !r || typeof r.level_msl !== 'number' || !newer(node, r.obs)) return;
                     node.stage = r.level_msl;
@@ -703,6 +704,16 @@
         }
 
         // Dams + Pak Nam tide come from the BKK-Rain data.json (the fetcher that works reliably)
+        // "2026-11-21 20:00" (Bangkok time) -> ISO string; falls back instead of throwing on odd formats
+        function periodToIso(s, fallback) {
+            const clean = String(s || '').replace(/\s*(ICT|GMT\+7)$/i, '').trim().replace(' ', 'T');
+            for (const cand of [clean + ':00+07:00', clean + '+07:00']) {
+                const d = new Date(cand);
+                if (!isNaN(d.getTime())) return d.toISOString();
+            }
+            return fallback;
+        }
+
         function parseDataJson(dj) {
             if (!dj) return;
             const map = { bhumibol:'bhumibol', sirikit:'sirikit', kwai_noi:'kwainoi', pasak:'pasak', srinagarind:'srinagarind', vajiralongkorn:'vajiralongkorn' };
@@ -716,12 +727,25 @@
                 n.operation = `${d.current_storage_pct}% filled (est. ${n.storageMcm ? n.storageMcm.toLocaleString() : '?'} MCM)`;
             }
             const p = dj.paknam_gauge, f = waterNodes.fort_chula;
-            if (p && f && typeof p.water_level_msl === 'number' && !(f.liveAsOf && f.liveAsOf >= (p.period ? new Date(p.period.replace(' ', 'T') + ':00+07:00').toISOString() : dj.timestamp_utc))) {
+            const pIso = p ? periodToIso(p.period, dj.timestamp_utc) : null;
+            if (p && f && typeof p.water_level_msl === 'number' && !(f.liveAsOf && f.liveAsOf >= pIso)) {
                 f.tideLevel = p.water_level_msl; f.stage = p.water_level_msl;
                 if (typeof p.flood_wall_threshold_msl === 'number') f.warningLevel = p.flood_wall_threshold_msl;
-                f.liveAsOf = p.period ? new Date(p.period.replace(' ', 'T') + ':00+07:00').toISOString() : dj.timestamp_utc;
+                f.liveAsOf = pIso;
                 f.operation = p.tide_state || 'Tide gauge';
             }
+            // Chao Phraya river stations from the Thaiwater API (written into data.json by fetch_data.py)
+            const rs = dj.river_stations || {};
+            const riverFromDj = (node, r) => {
+                if (!node || !r || typeof r.level_msl !== 'number' || !r.obs) return;
+                if (node.liveAsOf && Date.parse(node.liveAsOf) >= Date.parse(r.obs)) return;
+                node.stage = r.level_msl;
+                if (typeof r.flow_cms === 'number') node.discharge = r.flow_cms;
+                node.liveAsOf = r.obs; node.isOffline = false;
+            };
+            riverFromDj(waterNodes.c2_nakhonsawan, rs['C.2']);
+            riverFromDj(waterNodes.c13_chaophraya_dam, rs['C.13']);
+            riverFromDj(waterNodes.ayutthaya_confluence, rs['CPY011']);
         }
 
         function renderWeatherStrip(m) {
