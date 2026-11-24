@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bkk-themed>
 <head>
+<script>try{var m=localStorage.getItem('bkk-theme');if(m==='light'||m==='dark')document.documentElement.setAttribute('data-theme',m)}catch(e){}</script>
+<link rel="stylesheet" href="https://thallendan.github.io/BKK-Rain/bkk-tokens.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bangna Local Water Level & Watergate Monitoring System</title>
@@ -61,6 +64,81 @@
             display: none;
         }
     </style>
+<style id="bkk-theme-layer">
+/* Dark mode for this light-designed page. Light mode is the original look, untouched. */
+@media (prefers-color-scheme:dark){
+:root:not([data-theme="light"]) body{background:var(--bg)!important;color:var(--tx)!important}
+:root:not([data-theme="light"]) .bg-white{background-color:var(--card)!important}
+:root:not([data-theme="light"]) .bg-slate-50,:root:not([data-theme="light"]) .bg-slate-100,:root:not([data-theme="light"]) .map-container{background-color:var(--card2)!important}
+:root:not([data-theme="light"]) .bg-slate-200,:root:not([data-theme="light"]) [class*="hover:bg-slate-200"]{background-color:var(--bar)!important}
+:root:not([data-theme="light"]) [class*="border-slate-"]{border-color:var(--bd)!important}
+:root:not([data-theme="light"]) [class*="border-red-"],:root:not([data-theme="light"]) [class*="border-amber-"],:root:not([data-theme="light"]) [class*="border-blue-200"],:root:not([data-theme="light"]) [class*="border-teal-"],:root:not([data-theme="light"]) [class*="border-purple-200"]{border-color:var(--bd)!important}
+:root:not([data-theme="light"]) .text-slate-900,:root:not([data-theme="light"]) .text-slate-800,:root:not([data-theme="light"]) .text-slate-700{color:var(--tx)!important}
+:root:not([data-theme="light"]) .text-slate-600,:root:not([data-theme="light"]) .text-slate-500,:root:not([data-theme="light"]) .text-slate-400{color:var(--mu)!important}
+:root:not([data-theme="light"]) [class*="bg-red-50"]{background-color:#3b1818!important}
+:root:not([data-theme="light"]) [class*="bg-amber-50"]{background-color:#35300f!important}
+:root:not([data-theme="light"]) [class*="bg-blue-50"]{background-color:#14263d!important}
+:root:not([data-theme="light"]) [class*="bg-indigo-50"]{background-color:#1b2147!important}
+:root:not([data-theme="light"]) [class*="bg-indigo-100"]{background-color:#232a5c!important}
+:root:not([data-theme="light"]) [class*="bg-teal-50"]{background-color:#0f2f2c!important}
+:root:not([data-theme="light"]) [class*="bg-teal-100"]{background-color:#123a36!important}
+:root:not([data-theme="light"]) [class*="bg-purple-50"]{background-color:#2a1b45!important}
+:root:not([data-theme="light"]) [class*="bg-purple-200"]{background-color:#35235a!important}
+:root:not([data-theme="light"]) [class*="text-red-800"],:root:not([data-theme="light"]) [class*="text-red-900"],:root:not([data-theme="light"]) [class*="text-red-950"]{color:#fca5a5!important}
+:root:not([data-theme="light"]) [class*="text-amber-800"],:root:not([data-theme="light"]) [class*="text-amber-900"],:root:not([data-theme="light"]) [class*="text-amber-950"]{color:#fcd34d!important}
+:root:not([data-theme="light"]) [class*="text-teal-800"]{color:#5eead4!important}
+:root:not([data-theme="light"]) [class*="text-blue-950"]{color:#93c5fd!important}
+:root:not([data-theme="light"]) [class*="text-indigo-900"],:root:not([data-theme="light"]) [class*="text-indigo-700"]{color:#a5b4fc!important}
+:root:not([data-theme="light"]) [class*="text-purple-700"]{color:#d8b4fe!important}
+:root:not([data-theme="light"]) [class*="text-indigo-600"],:root:not([data-theme="light"]) [class*="text-indigo-500"],:root:not([data-theme="light"]) [class*="text-blue-600"]{color:var(--link)!important}
+:root:not([data-theme="light"]) [class*="text-amber-600"]{color:var(--watch)!important}
+:root:not([data-theme="light"]) [class*="text-teal-600"]{color:#2dd4bf!important}
+:root:not([data-theme="light"]) [class*="text-purple-600"]{color:#c084fc!important}
+:root:not([data-theme="light"]) .badge-danger{background-color:#3b1818!important;color:#fca5a5!important;border-color:#7f2a2a!important}
+:root:not([data-theme="light"]) .badge-warning{background-color:#35300f!important;color:#fcd34d!important;border-color:#6b5a14!important}
+:root:not([data-theme="light"]) .badge-info{background-color:#14263d!important;color:#7dd3fc!important;border-color:#27507a!important}
+:root:not([data-theme="light"]) .badge-success{background-color:#0f2f26!important;color:#6ee7b7!important;border-color:#1f6b52!important}
+:root:not([data-theme="light"]) input,:root:not([data-theme="light"]) select,:root:not([data-theme="light"]) textarea{background-color:var(--card2)!important;color:var(--tx)!important;border-color:var(--bd)!important}
+:root:not([data-theme="light"]) .custom-scrollbar::-webkit-scrollbar-track{background:var(--card2)!important}
+:root:not([data-theme="light"]) .custom-scrollbar::-webkit-scrollbar-thumb{background:var(--bd)!important}
+:root:not([data-theme="light"]) .leaflet-popup-content-wrapper,:root:not([data-theme="light"]) .leaflet-popup-tip{background:var(--card)!important;color:var(--tx)!important}
+}
+:root[data-theme="dark"] body{background:var(--bg)!important;color:var(--tx)!important}
+:root[data-theme="dark"] .bg-white{background-color:var(--card)!important}
+:root[data-theme="dark"] .bg-slate-50,:root[data-theme="dark"] .bg-slate-100,:root[data-theme="dark"] .map-container{background-color:var(--card2)!important}
+:root[data-theme="dark"] .bg-slate-200,:root[data-theme="dark"] [class*="hover:bg-slate-200"]{background-color:var(--bar)!important}
+:root[data-theme="dark"] [class*="border-slate-"]{border-color:var(--bd)!important}
+:root[data-theme="dark"] [class*="border-red-"],:root[data-theme="dark"] [class*="border-amber-"],:root[data-theme="dark"] [class*="border-blue-200"],:root[data-theme="dark"] [class*="border-teal-"],:root[data-theme="dark"] [class*="border-purple-200"]{border-color:var(--bd)!important}
+:root[data-theme="dark"] .text-slate-900,:root[data-theme="dark"] .text-slate-800,:root[data-theme="dark"] .text-slate-700{color:var(--tx)!important}
+:root[data-theme="dark"] .text-slate-600,:root[data-theme="dark"] .text-slate-500,:root[data-theme="dark"] .text-slate-400{color:var(--mu)!important}
+:root[data-theme="dark"] [class*="bg-red-50"]{background-color:#3b1818!important}
+:root[data-theme="dark"] [class*="bg-amber-50"]{background-color:#35300f!important}
+:root[data-theme="dark"] [class*="bg-blue-50"]{background-color:#14263d!important}
+:root[data-theme="dark"] [class*="bg-indigo-50"]{background-color:#1b2147!important}
+:root[data-theme="dark"] [class*="bg-indigo-100"]{background-color:#232a5c!important}
+:root[data-theme="dark"] [class*="bg-teal-50"]{background-color:#0f2f2c!important}
+:root[data-theme="dark"] [class*="bg-teal-100"]{background-color:#123a36!important}
+:root[data-theme="dark"] [class*="bg-purple-50"]{background-color:#2a1b45!important}
+:root[data-theme="dark"] [class*="bg-purple-200"]{background-color:#35235a!important}
+:root[data-theme="dark"] [class*="text-red-800"],:root[data-theme="dark"] [class*="text-red-900"],:root[data-theme="dark"] [class*="text-red-950"]{color:#fca5a5!important}
+:root[data-theme="dark"] [class*="text-amber-800"],:root[data-theme="dark"] [class*="text-amber-900"],:root[data-theme="dark"] [class*="text-amber-950"]{color:#fcd34d!important}
+:root[data-theme="dark"] [class*="text-teal-800"]{color:#5eead4!important}
+:root[data-theme="dark"] [class*="text-blue-950"]{color:#93c5fd!important}
+:root[data-theme="dark"] [class*="text-indigo-900"],:root[data-theme="dark"] [class*="text-indigo-700"]{color:#a5b4fc!important}
+:root[data-theme="dark"] [class*="text-purple-700"]{color:#d8b4fe!important}
+:root[data-theme="dark"] [class*="text-indigo-600"],:root[data-theme="dark"] [class*="text-indigo-500"],:root[data-theme="dark"] [class*="text-blue-600"]{color:var(--link)!important}
+:root[data-theme="dark"] [class*="text-amber-600"]{color:var(--watch)!important}
+:root[data-theme="dark"] [class*="text-teal-600"]{color:#2dd4bf!important}
+:root[data-theme="dark"] [class*="text-purple-600"]{color:#c084fc!important}
+:root[data-theme="dark"] .badge-danger{background-color:#3b1818!important;color:#fca5a5!important;border-color:#7f2a2a!important}
+:root[data-theme="dark"] .badge-warning{background-color:#35300f!important;color:#fcd34d!important;border-color:#6b5a14!important}
+:root[data-theme="dark"] .badge-info{background-color:#14263d!important;color:#7dd3fc!important;border-color:#27507a!important}
+:root[data-theme="dark"] .badge-success{background-color:#0f2f26!important;color:#6ee7b7!important;border-color:#1f6b52!important}
+:root[data-theme="dark"] input,:root[data-theme="dark"] select,:root[data-theme="dark"] textarea{background-color:var(--card2)!important;color:var(--tx)!important;border-color:var(--bd)!important}
+:root[data-theme="dark"] .custom-scrollbar::-webkit-scrollbar-track{background:var(--card2)!important}
+:root[data-theme="dark"] .custom-scrollbar::-webkit-scrollbar-thumb{background:var(--bd)!important}
+:root[data-theme="dark"] .leaflet-popup-content-wrapper,:root[data-theme="dark"] .leaflet-popup-tip{background:var(--card)!important;color:var(--tx)!important}
+</style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
 
