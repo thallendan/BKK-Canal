@@ -1,6 +1,6 @@
 {
   "master_type": "WATER_LEVEL_AND_HYDROLOGICAL_TELEMETRY",
-  "timestamp_utc": "2026-11-24T05:53:47.930110+00:00",
+  "timestamp_utc": "2026-11-24T17:29:16.077915+00:00",
   "total_endpoints": 11,
   "successful_count": 6,
   "failed_count": 5,
@@ -15,7 +15,7 @@
     },
     "estuary_tide": {
       "parse_error": "response was not JSON",
-      "preview": "<html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 4027182385819160272<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>"
+      "preview": "<html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 4027182385817097081<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>"
     },
     "dam_storage": {
       "bhumibol": {
@@ -71,7 +71,7 @@
       "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 2.275,
+      "response_time_sec": 2.531,
       "error": null,
       "data_ok": false
     },
@@ -81,7 +81,7 @@
       "url": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/watergate_load",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 0.449,
+      "response_time_sec": 0.469,
       "error": null,
       "data_ok": false
     },
@@ -91,7 +91,7 @@
       "url": "https://tiwrmdev.hii.or.th/v3/sealevel",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 10.843,
+      "response_time_sec": 8.09,
       "error": null,
       "data_ok": false
     },
@@ -101,7 +101,7 @@
       "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/rid_dam_1.php?lang=en",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 2.139,
+      "response_time_sec": 1.402,
       "error": null,
       "data_ok": false
     },
@@ -111,7 +111,7 @@
       "url": "https://waterchart.thaiwater.net/basin/chaophraya",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 1.714,
+      "response_time_sec": 1.565,
       "error": null,
       "data_ok": true
     },
@@ -121,7 +121,7 @@
       "url": "https://tiwrm.hii.or.th/DATA/REPORT/php/chart/chaopraya/2013/chaopraya.php",
       "success": false,
       "status_code": null,
-      "response_time_sec": 13.586,
+      "response_time_sec": 12.924,
       "error": "HTTPSConnectionPool(host='tiwrm.hii.or.th', port=443): Read timed out. (read timeout=12)",
       "data_ok": false
     },
@@ -131,7 +131,7 @@
       "url": "https://tiwrmdev.hii.or.th/DATA/REPORT/php/chart/chaopraya/small/chaopraya.php",
       "success": true,
       "status_code": 200,
-      "response_time_sec": 2.116,
+      "response_time_sec": 1.429,
       "error": null,
       "data_ok": true
     },
@@ -141,7 +141,7 @@
       "url": "https://weather.bangkok.go.th/Flood/PageMap/GetData?id=0",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.801,
+      "response_time_sec": 0.805,
       "error": "HTTP Error 403: Forbidden",
       "data_ok": false
     },
@@ -151,7 +151,7 @@
       "url": "https://weather.bangkok.go.th/Water/PageMap/GetData",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.072,
+      "response_time_sec": 0.078,
       "error": "HTTP Error 403: Forbidden",
       "data_ok": false
     },
@@ -161,7 +161,7 @@
       "url": "https://weather.bangkok.go.th/Flow/PageMap/GetData",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.071,
+      "response_time_sec": 0.074,
       "error": "HTTP Error 403: Forbidden",
       "data_ok": false
     },
@@ -171,7 +171,7 @@
       "url": "https://weather.bangkok.go.th/Flow/PageMap/GetDataTable",
       "success": false,
       "status_code": 403,
-      "response_time_sec": 0.072,
+      "response_time_sec": 0.075,
       "error": "HTTP Error 403: Forbidden",
       "data_ok": false
     }
