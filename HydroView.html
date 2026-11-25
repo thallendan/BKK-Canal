@@ -581,7 +581,7 @@
             const cpb = master && master.parsed_summary && master.parsed_summary.chaophraya_full;
             lastNotes = [
                 'master file written: ' + (master && master.timestamp_utc ? new Date(master.timestamp_utc).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok' }) + ' (Bangkok)' : 'not loaded'),
-                'Chao Phraya block: ' + (!master ? 'n/a' : !cpb ? 'MISSING - the master file is an old version (CDN cache?)' : (cpb.parse_error || cpb.success === false) ? 'unavailable (' + (cpb.parse_error || cpb.error || 'fetch failed') + ')' : 'ok, ' + cpb.station_count + ' stations'),
+                'Chao Phraya block: ' + (!master ? 'n/a' : !cpb ? 'not collected (river data comes from data.json)' : (cpb.parse_error || cpb.success === false) ? 'unavailable (' + (cpb.parse_error || cpb.error || 'fetch failed') + ')' : 'ok, ' + cpb.station_count + ' stations'),
                 'klongmap stations: ' + (klong && klong.waterStation ? klong.waterStation.length : 'not loaded'),
                 'BKK-Rain data.json: ' + (dj && dj.timestamp_utc ? new Date(dj.timestamp_utc).toLocaleString('en-GB', { timeZone: 'Asia/Bangkok' }) + ' (Bangkok)' : 'not loaded')
             ];
