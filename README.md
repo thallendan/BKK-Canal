@@ -46,7 +46,9 @@ the hub ignores it in the overall banner. Staleness limits and thresholds are at
 
 NOAA CPC (ENSO, SOI, OLR, CPAC850, Pacific heat content), Australian BoM (MJO), NOAA PSL (IOD), HII/RID dam report,
 and the Thaiwater water-level API (`GLF001` Pak Nam tide, plus river stations `C.2`, `C.13`, `CPY011`). The Navy
-predicted tide (`fews2.hii.or.th/.../tide_table/summary.txt`) is optional. Each run writes `source_health`; look
+predicted tide (`fews2.hii.or.th/.../tide_table/summary.txt`) is optional, and so is the ThaiWater `analyst/dam` API,
+which adds inflow, release, spill and level per dam under `dams.<dam>.flow` (dam percentages still come from the HII report;
+the API's own percent field is 0 for the large dams). Each run writes `source_health`; look
 there first when a number is missing. Slow sources (indices, dams) keep their last good value for a limited time,
 marked `carried_from_utc`. The live tide is never carried over.
 
