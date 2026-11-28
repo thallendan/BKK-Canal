@@ -722,9 +722,14 @@
                 if (!d || !n || typeof d.current_storage_pct !== 'number') continue;
                 if (n.liveAsOf && Date.parse(n.liveAsOf) >= Date.parse(dj.timestamp_utc)) continue;   // fresher data already loaded
                 n.pctFull = d.current_storage_pct;
-                n.storageMcm = n.capMcm ? Math.round(n.capMcm * d.current_storage_pct / 100) : null; // estimated from % x capacity
+                n.storageMcm = (d.flow && typeof d.flow.storage_mcm === 'number') ? Math.round(d.flow.storage_mcm)
+                                 : (n.capMcm ? Math.round(n.capMcm * d.current_storage_pct / 100) : null); // else estimated from % x capacity
                 n.liveAsOf = dj.timestamp_utc;
-                n.operation = `${d.current_storage_pct}% filled (est. ${n.storageMcm ? n.storageMcm.toLocaleString() : '?'} MCM)`;
+                const fl = d.flow, hasFlow = fl && typeof fl.inflow === 'number' && typeof fl.released === 'number';
+                if (fl && typeof fl.released === 'number') n.discharge = Math.round(fl.released * 1e6 / 86400);   // million m3/day -> m3/s
+                n.operation = hasFlow
+                    ? `${d.current_storage_pct}% filled (${n.storageMcm ? n.storageMcm.toLocaleString() : '?'} MCM) · daily in ${fl.inflow} / out ${fl.released} million m³ (net ${(fl.inflow - fl.released) > 0 ? '+' : ''}${(fl.inflow - fl.released).toFixed(1)})`
+                    : `${d.current_storage_pct}% filled (est. ${n.storageMcm ? n.storageMcm.toLocaleString() : '?'} MCM)`;
             }
             const p = dj.paknam_gauge, f = waterNodes.fort_chula;
             const pIso = p ? periodToIso(p.period, dj.timestamp_utc) : null;
